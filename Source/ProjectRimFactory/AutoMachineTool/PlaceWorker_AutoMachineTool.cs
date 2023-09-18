@@ -13,12 +13,11 @@ namespace ProjectRimFactory.AutoMachineTool
                 {
                     return new AcceptanceReport("PRF.AutoMachineTool.PlaceNotAllowed".Translate());
                 }
+
                 return r;
             }
-            else
-            {
-                return r;
-            }
+
+            return r;
         }
     }
 }

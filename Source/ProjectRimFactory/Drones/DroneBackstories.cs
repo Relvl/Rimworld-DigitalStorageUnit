@@ -11,38 +11,38 @@ namespace ProjectRimFactory.Drones
         public static BackstoryDef childhood;
         public static BackstoryDef adulthood;
 
-
-
         static DroneBackstories()
         {
-            LongEventHandler.ExecuteWhenFinished(() =>
-            {
-                childhood = new BackstoryDef()
+            LongEventHandler.ExecuteWhenFinished(
+                () =>
                 {
-                    title = "PRFDroneName".Translate(),
-                    titleShort = "PRFDroneName".Translate(),
-                    identifier = "PRFNoneBracketsC",
-                    workDisables = WorkTags.Social,
-                    slot = BackstorySlot.Childhood,
-                    baseDesc = "NoneBrackets".Translate(),
-                    modContentPack = LoadedModManager.GetMod<ProjectRimFactory_ModComponent>().Content
-                };
+                    childhood = new BackstoryDef()
+                    {
+                        title = "PRFDroneName".Translate(),
+                        titleShort = "PRFDroneName".Translate(),
+                        identifier = "PRFNoneBracketsC",
+                        workDisables = WorkTags.Social,
+                        slot = BackstorySlot.Childhood,
+                        baseDesc = "NoneBrackets".Translate(),
+                        modContentPack = LoadedModManager.GetMod<ProjectRimFactory_ModComponent>().Content
+                    };
 
-                adulthood = new BackstoryDef()
-                {
-                    title = "PRFDroneName".Translate(),
-                    titleShort = "PRFDroneName".Translate(),
-                    identifier = "PRFNoneBracketsA",
-                    workDisables = WorkTags.Social,
-                    slot = BackstorySlot.Adulthood,
-                    baseDesc = "NoneBrackets".Translate(),
-                    modContentPack = LoadedModManager.GetMod<ProjectRimFactory_ModComponent>().Content
-                };
+                    adulthood = new BackstoryDef()
+                    {
+                        title = "PRFDroneName".Translate(),
+                        titleShort = "PRFDroneName".Translate(),
+                        identifier = "PRFNoneBracketsA",
+                        workDisables = WorkTags.Social,
+                        slot = BackstorySlot.Adulthood,
+                        baseDesc = "NoneBrackets".Translate(),
+                        modContentPack = LoadedModManager.GetMod<ProjectRimFactory_ModComponent>().Content
+                    };
 
-                var BackstoryDefs = DefDatabase<BackstoryDef>.AllDefsListForReading;
-                TryAddBacksoryDef(BackstoryDefs, childhood);
-                TryAddBacksoryDef(BackstoryDefs, adulthood);
-            });
+                    var BackstoryDefs = DefDatabase<BackstoryDef>.AllDefsListForReading;
+                    TryAddBacksoryDef(BackstoryDefs, childhood);
+                    TryAddBacksoryDef(BackstoryDefs, adulthood);
+                }
+            );
         }
 
         private static void TryAddBacksoryDef(List<BackstoryDef> BackstoryDefs, BackstoryDef backstoryDef)

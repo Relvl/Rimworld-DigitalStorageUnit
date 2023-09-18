@@ -8,12 +8,33 @@ namespace ProjectRimFactory.AutoMachineTool
 {
     public abstract class Building_BaseLimitation<T> : Building_BaseMachine<T>, IProductLimitation where T : Thing
     {
-        public int ProductLimitCount { get => this.productLimitCount; set => this.productLimitCount = value; }
-        public bool ProductLimitation { get => this.productLimitation; set => this.productLimitation = value; }
+        public int ProductLimitCount
+        {
+            get => productLimitCount;
+            set => productLimitCount = value;
+        }
+
+        public bool ProductLimitation
+        {
+            get => productLimitation;
+            set => productLimitation = value;
+        }
+
         private SlotGroup targetSlotGroup = null;
-        public SlotGroup TargetSlotGroup { get => targetSlotGroup; set => targetSlotGroup = value; }
-        public bool CountStacks { get => this.countStacks; set => this.countStacks = value; }
-        public virtual bool ProductLimitationDisable { get => false; }
+
+        public SlotGroup TargetSlotGroup
+        {
+            get => targetSlotGroup;
+            set => targetSlotGroup = value;
+        }
+
+        public bool CountStacks
+        {
+            get => countStacks;
+            set => countStacks = value;
+        }
+
+        public virtual bool ProductLimitationDisable => false;
 
         private int productLimitCount = 100;
         private bool productLimitation = false;
@@ -26,26 +47,28 @@ namespace ProjectRimFactory.AutoMachineTool
         {
             base.ExposeData();
 
-            Scribe_Values.Look<int>(ref this.productLimitCount, "productLimitCount", 100);
-            Scribe_Values.Look<bool>(ref this.productLimitation, "productLimitation", false);
-            Scribe_Values.Look<bool>(ref this.countStacks, "countStacks", false);
+            Scribe_Values.Look<int>(ref productLimitCount, "productLimitCount", 100);
+            Scribe_Values.Look<bool>(ref productLimitation, "productLimitation", false);
+            Scribe_Values.Look<bool>(ref countStacks, "countStacks", false);
 
             if (Scribe.mode == LoadSaveMode.Saving)
             {
-                this.slotGroupParentLabel = this.targetSlotGroup?.parent?.SlotYielderLabel();
-                this.slotGroupParent = this.targetSlotGroup?.parent as ILoadReferenceable;
+                slotGroupParentLabel = targetSlotGroup?.parent?.SlotYielderLabel();
+                slotGroupParent = targetSlotGroup?.parent as ILoadReferenceable;
             }
-            Scribe_References.Look<ILoadReferenceable>(ref this.slotGroupParent, "slotGroupParent");
-            Scribe_Values.Look<string>(ref this.slotGroupParentLabel, "slotGroupParentLabel", null);
+
+            Scribe_References.Look<ILoadReferenceable>(ref slotGroupParent, "slotGroupParent");
+            Scribe_Values.Look<string>(ref slotGroupParentLabel, "slotGroupParentLabel", null);
         }
 
         public override void PostMapInit()
         {
             //Maybe rewrite that
             //From my understanding this gets that saved slot group
-            this.targetSlotGroup = this.Map.haulDestinationManager.AllGroups
-                .Where(g => g.parent.SlotYielderLabel() == this.slotGroupParentLabel)
-                .Where(g => Option(slotGroupParent).Fold(true)(p => p == g.parent)).FirstOption().Value;
+            targetSlotGroup = Map.haulDestinationManager.AllGroups.Where(g => g.parent.SlotYielderLabel() == slotGroupParentLabel)
+                .Where(g => Option(slotGroupParent).Fold(true)(p => p == g.parent))
+                .FirstOption()
+                .Value;
             base.PostMapInit();
         }
 
@@ -76,39 +99,32 @@ namespace ProjectRimFactory.AutoMachineTool
 
             if (targetSG == null)
             {
-                return this.CountFromMap(thing.def) >= productLimitCount;
+                return CountFromMap(thing.def) >= productLimitCount;
             }
-            else
+
+            if (targetSG.parent is ILimitWatcher limitWatcher)
             {
-                if (targetSG.parent is ILimitWatcher limitWatcher)
-                {
-                    return (limitWatcher.ItemIsLimit(thing.def,this.countStacks, productLimitCount) || !targetSG.CellsList.Any(c => c.IsValidStorageFor(this.Map, thing)));
-                }
-                else
-                {
-                    return (this.CheckSlotGroup(targetSG, thing.def, productLimitCount) || !targetSG.CellsList.Any(c => c.IsValidStorageFor(this.Map, thing)));
-                }
-
-                
+                return (limitWatcher.ItemIsLimit(thing.def, countStacks, productLimitCount) || !targetSG.CellsList.Any(c => c.IsValidStorageFor(Map, thing)));
             }
 
+            return (CheckSlotGroup(targetSG, thing.def, productLimitCount) || !targetSG.CellsList.Any(c => c.IsValidStorageFor(Map, thing)));
         }
 
         private int CountFromMap(ThingDef def)
         {
-            return this.countStacks ? this.Map.listerThings.ThingsOfDef(def).Count : this.Map.resourceCounter.GetCount(def);
+            return countStacks ? Map.listerThings.ThingsOfDef(def).Count : Map.resourceCounter.GetCount(def);
         }
 
-        private bool CheckSlotGroup(SlotGroup s, ThingDef def,int Limit = int.MaxValue)
+        private bool CheckSlotGroup(SlotGroup s, ThingDef def, int Limit = int.MaxValue)
         {
-            int count = 0;
+            var count = 0;
             var Held = s.HeldThings;
-    
+
             foreach (var t in Held)
-            {    
+            {
                 if (t.def == def)
                 {
-                    if (this.countStacks)
+                    if (countStacks)
                     {
                         count++;
                     }
@@ -116,9 +132,11 @@ namespace ProjectRimFactory.AutoMachineTool
                     {
                         count += t.stackCount;
                     }
+
                     if (count >= Limit) return true;
                 }
             }
+
             return false;
         }
     }

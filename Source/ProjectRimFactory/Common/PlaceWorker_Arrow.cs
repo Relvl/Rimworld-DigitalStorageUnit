@@ -7,10 +7,12 @@ namespace ProjectRimFactory
     public class PlaceWorker_Arrow : PlaceWorker
     {
         public static readonly Material arrow;
+
         static PlaceWorker_Arrow()
         {
             arrow = FadedMaterialPool.FadedVersionOf(MaterialPool.MatFrom(RS.Arrow), .6f);
         }
+
         public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing thing = null)
         {
             base.DrawGhost(def, center, rot, ghostCol, thing);

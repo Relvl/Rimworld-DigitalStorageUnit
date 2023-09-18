@@ -1,5 +1,6 @@
 ﻿using System;
 using Verse;
+
 namespace ProjectRimFactory
 {
     /// <summary>
@@ -42,22 +43,23 @@ namespace ProjectRimFactory
             // 0x20
             // 0x40, etc, as powers of two
         }
+
         public static Flag activeFlags = (Flag)0; //Flag.PlaceThing | Flag.Conveyors...
 
         [System.Diagnostics.Conditional("DEBUG")]
-        public static void Message(Debug.Flag flag, string text, bool ignoreStopLoggingLimit = false)
+        public static void Message(Flag flag, string text, bool ignoreStopLoggingLimit = false)
         {
             if ((activeFlags & flag) > 0) Log.Message(text);
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
-        public static void Warning(Debug.Flag flag, string text, bool ignoreStopLoggingLimit = false)
+        public static void Warning(Flag flag, string text, bool ignoreStopLoggingLimit = false)
         {
             if ((activeFlags & flag) > 0) Log.Warning(text);
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
-        public static void Error(Debug.Flag flag, string text, bool ignoreStopLoggingLimit = false)
+        public static void Error(Flag flag, string text, bool ignoreStopLoggingLimit = false)
         {
             if ((activeFlags & flag) > 0) Log.Error(text);
         }

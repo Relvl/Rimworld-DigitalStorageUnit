@@ -12,12 +12,13 @@ namespace ProjectRimFactory.Common.HarmonyPatches
     {
         static bool Prefix(BillStack __instance, Bill bill, IBillGiver ___billGiver)
         {
-            Building_ProgrammableAssembler assembler = ___billGiver as Building_ProgrammableAssembler;
+            var assembler = ___billGiver as Building_ProgrammableAssembler;
             if (assembler != null)
             {
                 //Is an Assembler
                 return assembler.GetAllRecipes().Any(r => bill.recipe == r);
             }
+
             return true;
         }
     }

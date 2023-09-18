@@ -14,11 +14,8 @@ namespace ProjectRimFactory.Common
             {
                 return AcceptanceReport.WasAccepted;
             }
-            else
-            {
-                return new AcceptanceReport("PRF_PlaceWorker_GrowZonePuller".Translate());
-            }
-        }
 
+            return new AcceptanceReport("PRF_PlaceWorker_GrowZonePuller".Translate());
+        }
     }
 }

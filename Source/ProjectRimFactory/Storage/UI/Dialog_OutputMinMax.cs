@@ -14,6 +14,7 @@ namespace ProjectRimFactory.Storage.UI
             static string lastval = "";
 
             static Predicate<bool> predicate = (d) => false;
+
             /// <summary>
             /// True  => min = max;
             /// false => max = min;
@@ -40,6 +41,7 @@ namespace ProjectRimFactory.Storage.UI
                         LostFocus();
                     }
                 }
+
                 minIsMax = dir;
                 lastval = buff;
             }
@@ -50,6 +52,7 @@ namespace ProjectRimFactory.Storage.UI
                 min = 0,
                 undefined = -1
             }
+
             public static void CheckFocusLoss(LimitUpdateRequestFocus maxFocus)
             {
                 if (gracePeriod == -1) return;
@@ -62,6 +65,7 @@ namespace ProjectRimFactory.Storage.UI
                     LostFocus();
                 }
             }
+
             public static void LostFocus(bool force = false)
             {
                 if (gracePeriod == -1 && !force) return;
@@ -82,7 +86,6 @@ namespace ProjectRimFactory.Storage.UI
 
         public void OverrideBuffer(bool minIsMax)
         {
-
             if (minIsMax)
             {
                 minBufferString = maxBufferString;
@@ -116,10 +119,7 @@ namespace ProjectRimFactory.Storage.UI
 
         private Action postClose;
 
-        public override Vector2 InitialSize
-        {
-            get { return new Vector2(500f, 250f); }
-        }
+        public override Vector2 InitialSize => new Vector2(500f, 250f);
 
         private bool validator(bool data)
         {
@@ -128,6 +128,7 @@ namespace ProjectRimFactory.Storage.UI
                 maxBufferString = "0";
                 outputSettings.max = 0;
             }
+
             if (minBufferString.NullOrEmpty())
             {
                 minBufferString = "0";
@@ -143,14 +144,13 @@ namespace ProjectRimFactory.Storage.UI
             {
                 maxBufferString = outputSettings.max.ToString();
             }
+
             if (minBufferString == null)
             {
                 minBufferString = outputSettings.min.ToString();
             }
-            Listing_Standard list = new Listing_Standard(GameFont.Small)
-            {
-                ColumnWidth = rect.width
-            };
+
+            var list = new Listing_Standard(GameFont.Small) { ColumnWidth = rect.width };
 
             var focus = GUI.GetNameOfFocusedControl();
             if (focus == controlIdMaxInput)
@@ -177,10 +177,10 @@ namespace ProjectRimFactory.Storage.UI
             list.CheckboxLabeled("SmartHopper_Minimum_Label".Translate(), ref outputSettings.useMin, outputSettings.minTooltip.Translate());
             list.Gap();
             {
-                Rect rectLine = list.GetRect(Text.LineHeight);
-                Rect rectLeft = rectLine.LeftHalf().Rounded();
-                Rect rectRight = rectLine.RightHalf().Rounded();
-                TextAnchor anchorBuffer = Text.Anchor;
+                var rectLine = list.GetRect(Text.LineHeight);
+                var rectLeft = rectLine.LeftHalf().Rounded();
+                var rectRight = rectLine.RightHalf().Rounded();
+                var anchorBuffer = Text.Anchor;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Widgets.DrawHighlightIfMouseover(rectLine);
                 Widgets.Label(rectLeft, "SmartHopper_MinimumKeyword".Translate());
@@ -193,14 +193,15 @@ namespace ProjectRimFactory.Storage.UI
                 LimitUpdateRequest.Update(false, minBufferString);
                 //maxBufferString = minBufferString;
             }
+
             list.Gap();
             list.CheckboxLabeled("SmartHopper_Maximum_Label".Translate(), ref outputSettings.useMax, outputSettings.maxTooltip.Translate());
             list.Gap();
             {
-                Rect rectLine = list.GetRect(Text.LineHeight);
-                Rect rectLeft = rectLine.LeftHalf().Rounded();
-                Rect rectRight = rectLine.RightHalf().Rounded();
-                TextAnchor anchorBuffer = Text.Anchor;
+                var rectLine = list.GetRect(Text.LineHeight);
+                var rectLeft = rectLine.LeftHalf().Rounded();
+                var rectRight = rectLine.RightHalf().Rounded();
+                var anchorBuffer = Text.Anchor;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Widgets.DrawHighlightIfMouseover(rectLine);
                 Widgets.Label(rectLeft, "SmartHopper_MaximumKeyword".Translate());
@@ -213,10 +214,8 @@ namespace ProjectRimFactory.Storage.UI
                 LimitUpdateRequest.Update(true, maxBufferString);
                 //minBufferString = maxBufferString;
             }
+
             LimitUpdateRequest.Tick();
-
-
-
 
             list.End();
         }
@@ -225,7 +224,7 @@ namespace ProjectRimFactory.Storage.UI
         {
             LimitUpdateRequest.LostFocus(maxBufferString.NullOrEmpty() || minBufferString.NullOrEmpty());
             base.PostClose();
-            this.postClose?.Invoke();
+            postClose?.Invoke();
         }
 
         public override void PreOpen()

@@ -11,15 +11,18 @@ namespace ProjectRimFactory.Common
         // If something else wants to trade an item away, we don't
         //   know what we could do with it.
         public virtual bool AcceptsThing(Thing newThing, IPRF_Building giver) => false;
+
         // If something else wants to take an item from us
         public abstract Thing GetThingBy(Func<Thing, bool> optionalValidator = null);
-        public virtual IEnumerable<Thing> AvailableThings
+        public virtual IEnumerable<Thing> AvailableThings => Enumerable.Empty<Thing>();
+
+        public virtual void EffectOnPlaceThing(Thing t)
         {
-            get => Enumerable.Empty<Thing>();
         }
 
-        public virtual void EffectOnPlaceThing(Thing t) { }
-        public virtual void EffectOnAcceptThing(Thing t) { }
+        public virtual void EffectOnAcceptThing(Thing t)
+        {
+        }
 
         public virtual bool ForbidOnPlacing(Thing t) => ForbidOnPlacingDefault;
 
@@ -39,16 +42,14 @@ namespace ProjectRimFactory.Common
             get => obeysStorageFilters;
             set => obeysStorageFilters = value;
         }
+
         public virtual bool OutputToEntireStockpile
         {
             get => outputToEntireStockpile;
             set => outputToEntireStockpile = value;
         }
-        public virtual PRFBSetting SettingsOptions
-        {
-            get => PRFBSetting.optionObeysStorageFilters |
-                PRFBSetting.optionOutputToEntireStockpie;
-        }
+
+        public virtual PRFBSetting SettingsOptions => PRFBSetting.optionObeysStorageFilters | PRFBSetting.optionOutputToEntireStockpie;
 
         protected bool outputToEntireStockpile = false;
         protected bool obeysStorageFilters = true;
@@ -69,8 +70,8 @@ namespace ProjectRimFactory.Common
 
             //Try highlight Output Area
             if (OutputToEntireStockpile && OutputCell() != IntVec3.Invalid)
-            { 
-                var slotGroup = OutputCell().GetSlotGroup(this.Map);
+            {
+                var slotGroup = OutputCell().GetSlotGroup(Map);
                 if (slotGroup != null)
                 {
                     GenDraw.DrawFieldEdges(slotGroup.CellsList, CommonColors.outputZone);
@@ -78,11 +79,11 @@ namespace ProjectRimFactory.Common
             }
         }
     }
+
     [Flags] // PRF Building Settinsg
     public enum PRFBSetting
     {
         optionOutputToEntireStockpie = 0x1, // if the Settings ITab can change this
         optionObeysStorageFilters = 0x2, // if the Settings ITab can change this
-
     }
 }

@@ -5,8 +5,6 @@ using Verse;
 
 namespace ProjectRimFactory.Drones
 {
-
-
     public class Pawn_Drone : Pawn
     {
         public Building_DroneStation station;
@@ -17,13 +15,13 @@ namespace ProjectRimFactory.Drones
         public override void Kill(DamageInfo? dinfo, Hediff exactCulprit = null)
         {
             // don't call base.Kill
-            this.Destroy();
+            Destroy();
         }
 
         // or destroyed
         public override void Destroy(DestroyMode mode = DestroyMode.Vanish)
         {
-            if (this.Spawned) this.DeSpawn();
+            if (Spawned) DeSpawn();
             // don't call base.Destroy();
             // DO set mapIndexOrState to -2 to make "thing.Destroyed" true (needed for Work Tab Compatibility)
             ReflectionUtility.mapIndexOrState.SetValue(this, (sbyte)-2);
@@ -34,9 +32,9 @@ namespace ProjectRimFactory.Drones
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             //Kill all invalid spawns
-            if (this.station == null)
+            if (station == null)
             {
-                this.Kill(null);
+                Kill(null);
                 return;
             }
 
@@ -45,18 +43,13 @@ namespace ProjectRimFactory.Drones
             skillSettings = station.def.GetModExtension<ModExtension_Skills>();
             station.GetDroneSkillsRecord = DroneSkills.UpdateSkills(skills, station.GetDroneSkillsRecord, skillSettings, true);
 
-            story = new Pawn_StoryTracker(this)
-            {
-                bodyType = BodyTypeDefOf.Thin,
-                Childhood = DroneBackstories.childhood,
-                Adulthood = DroneBackstories.adulthood
-            };
+            story = new Pawn_StoryTracker(this) { bodyType = BodyTypeDefOf.Thin, Childhood = DroneBackstories.childhood, Adulthood = DroneBackstories.adulthood };
             drafter = new Pawn_DraftController(this);
             relations = new Pawn_RelationsTracker(this);
             Name = new NameSingle("PRFDroneName".Translate());
 
             //Set the AreaRestriction. null means Unrestricted
-            playerSettings.AreaRestriction = this.station.droneAllowedArea;
+            playerSettings.AreaRestriction = station.droneAllowedArea;
         }
 
         public override void Tick()

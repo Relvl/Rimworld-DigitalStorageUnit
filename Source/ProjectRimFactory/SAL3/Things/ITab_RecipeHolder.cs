@@ -5,34 +5,31 @@ using Verse;
 
 namespace ProjectRimFactory.SAL3.Things
 {
-
     interface IRecipeHolderInterface
     {
         //List of Recipes saved on the Recipie Holder
         List<RecipeDef> Saved_Recipes { get; set; }
+
         //List of Recipes Quered up to be Learnd / Saved to the Recipie Holder
         List<RecipeDef> Quered_Recipes { get; set; }
+
         //List of Recipes that could be Learnd by the Recipie Holder
         List<RecipeDef> Learnable_Recipes { get; }
+
         //
         RecipeDef Recipe_Learning { get; set; }
 
         float Progress_Learning { get; }
-
-
     }
-
 
     class ITab_RecipeHolder : ITab
     {
-
         private const int ROW_HIGHT = 30;
         private float scrollViewHeight;
 
         private static readonly Vector2 WinSize = new Vector2(520f, 500f);
 
-        private IRecipeHolderInterface parrentDB => this.SelThing as IRecipeHolderInterface;
-
+        private IRecipeHolderInterface parrentDB => SelThing as IRecipeHolderInterface;
 
         enum enum_RecipeStatus
         {
@@ -42,12 +39,10 @@ namespace ProjectRimFactory.SAL3.Things
             InPorogress
         }
 
-
-
         private void RefreshRecipeList()
         {
             Recipes = new Dictionary<RecipeDef, enum_RecipeStatus>();
-            foreach (RecipeDef r in parrentDB.Learnable_Recipes)
+            foreach (var r in parrentDB.Learnable_Recipes)
             {
                 if (parrentDB.Quered_Recipes.Contains(r))
                 {
@@ -62,7 +57,8 @@ namespace ProjectRimFactory.SAL3.Things
                     Recipes[r] = enum_RecipeStatus.Learnable;
                 }
             }
-            foreach (RecipeDef r in parrentDB.Saved_Recipes)
+
+            foreach (var r in parrentDB.Saved_Recipes)
             {
                 Recipes[r] = enum_RecipeStatus.Saved;
             }
@@ -70,16 +66,13 @@ namespace ProjectRimFactory.SAL3.Things
 
         private Dictionary<RecipeDef, enum_RecipeStatus> Recipes;
 
-
-
-
-
-
         public ITab_RecipeHolder()
         {
-            this.size = WinSize;
-            this.labelKey = "PRF_RecipeTab_TabName".Translate(); ;
+            size = WinSize;
+            labelKey = "PRF_RecipeTab_TabName".Translate();
+            ;
         }
+
         private Vector2 scrollPos;
 
         private bool showSaved = true;
@@ -111,21 +104,17 @@ namespace ProjectRimFactory.SAL3.Things
             return false;
         }
 
-
         protected override void FillTab()
         {
             RefreshRecipeList();
 
-            Listing_Standard list = new Listing_Standard();
-            Rect inRect = new Rect(0f, 0f, WinSize.x, WinSize.y).ContractedBy(10f);
+            var list = new Listing_Standard();
+            var inRect = new Rect(0f, 0f, WinSize.x, WinSize.y).ContractedBy(10f);
             Rect rect;
-
-
 
             float currY = 0;
             list.Begin(inRect);
             list.Gap();
-
 
             rect = list.GetRect(30);
 
@@ -141,29 +130,25 @@ namespace ProjectRimFactory.SAL3.Things
             currY += 10;
             Widgets.DrawLineHorizontal(0, rect.y, rect.width);
 
-
             var outRect = new Rect(5f, currY + 5, WinSize.x - 30, WinSize.y - currY - 30);
             var viewRect = new Rect(0f, 0, outRect.width - 16f, scrollViewHeight);
             Widgets.BeginScrollView(outRect, ref scrollPos, viewRect, true);
 
             currY = 0;
 
-
-            foreach (RecipeDef recipe in Recipes.Keys)
+            foreach (var recipe in Recipes.Keys)
             {
                 if (!ShouldDrawRow(recipe, ref currY, outRect.height, scrollPos.y)) continue;
 
                 DrawRecipeRow(recipe, ref currY, viewRect.width);
-
             }
+
             if (Event.current.type == EventType.Layout) scrollViewHeight = currY + 30f;
 
             Widgets.EndScrollView();
 
-
             list.End();
         }
-
 
         private void DrawRecipeRow(RecipeDef recipe, ref float currY, float viewRect_width)
         {
@@ -182,20 +167,17 @@ namespace ProjectRimFactory.SAL3.Things
                 Widgets.DefIcon(rect2, recipe.products[0].thingDef);
             }
 
-
             rect.x = 60;
             Widgets.Label(rect, "" + recipe.label);
 
             rect.width = 100;
             rect.x = 350;
 
-
             if (Recipes[recipe] == enum_RecipeStatus.Learnable)
             {
                 if (Widgets.ButtonText(rect, "PRF_RecipeTab_Button_Learn".Translate()))
                 {
                     parrentDB.Quered_Recipes.Add(recipe);
-
                 }
             }
             else if (Recipes[recipe] == enum_RecipeStatus.Quered)
@@ -206,9 +188,7 @@ namespace ProjectRimFactory.SAL3.Things
                     {
                         parrentDB.Quered_Recipes.Remove(recipe);
                     }
-
                 }
-
             }
             /*Temporaly Disabled Forget Recipe Functionality*/
             /*else if (Recipes[recipe] == enum_RecipeStatus.Saved)
@@ -228,9 +208,5 @@ namespace ProjectRimFactory.SAL3.Things
                 }
             }
         }
-
-
-
-
     }
 }

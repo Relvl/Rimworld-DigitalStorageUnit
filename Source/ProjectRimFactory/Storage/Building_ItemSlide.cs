@@ -25,26 +25,21 @@ namespace ProjectRimFactory.Storage
 
         public bool AcceptsThing(Thing newThing, IPRF_Building giver = null)
         {
-
-            if (base.Accepts(newThing))
+            if (Accepts(newThing))
             {
                 Notify_ReceivedThing(newThing);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public void EffectOnAcceptThing(Thing t)
         {
-
         }
 
         public void EffectOnPlaceThing(Thing t)
         {
-
         }
 
         //TODO
@@ -54,10 +49,8 @@ namespace ProjectRimFactory.Storage
             {
                 return ForbidOnPlacingDefault;
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
 
         public Thing GetThingBy(Func<Thing, bool> optionalValidator = null)
@@ -65,50 +58,54 @@ namespace ProjectRimFactory.Storage
             throw new NotImplementedException();
         }
 
-        private IntVec3 outputCell => this.Position + this.Rotation.FacingCell;
+        private IntVec3 outputCell => Position + Rotation.FacingCell;
 
         private void trySlideItem()
         {
-            IPRF_Building target_IPRF_Building = (IPRF_Building)outputCell.GetThingList(Map).Where(type => type is IPRF_Building).FirstOrDefault<Thing>();
+            var target_IPRF_Building = (IPRF_Building)outputCell.GetThingList(Map).Where(type => type is IPRF_Building).FirstOrDefault<Thing>();
             if (target_IPRF_Building != null)
             {
                 target_IPRF_Building.AcceptsThing(StoredItems[0], this);
             }
             else
             {
-                this.PRFTryPlaceThing(StoredItems[0], outputCell, this.Map);
+                this.PRFTryPlaceThing(StoredItems[0], outputCell, Map);
             }
         }
 
         public override void Tick()
         {
             base.Tick();
-            if (!this.Spawned) return;
+            if (!Spawned) return;
 
-            if (this.StoredItemsCount > 0)
+            if (StoredItemsCount > 0)
             {
                 trySlideItem();
             }
-
-
         }
-
     }
 
     class PlaceWorker_ItemSlide : PlaceWorker
     {
         public override AcceptanceReport AllowsPlacing(BuildableDef checkingDef, IntVec3 loc, Rot4 rot, Map map, Thing thingToIgnore = null, Thing thing = null)
         {
-            AcceptanceReport acceptanceBase = base.AllowsPlacing(checkingDef, loc, rot, map, thingToIgnore, thing);
+            var acceptanceBase = base.AllowsPlacing(checkingDef, loc, rot, map, thingToIgnore, thing);
             if (acceptanceBase.Accepted)
             {
                 //Check if the traget is another slide
-                IntVec3 outputCell = loc + rot.FacingCell;
-                List<Thing> thingList = map.thingGrid.ThingsListAt(outputCell);
-                if (thingList.Where(t => t is Building_ItemSlide || t.def.entityDefToBuild == checkingDef).Any()) return new AcceptanceReport("PRF_PlaceWorker_ItemSlide_Denied".Translate());
+                var outputCell = loc + rot.FacingCell;
+                var thingList = map.thingGrid.ThingsListAt(outputCell);
+                if (thingList.Where(t => t is Building_ItemSlide || t.def.entityDefToBuild == checkingDef).Any())
+                    return new AcceptanceReport("PRF_PlaceWorker_ItemSlide_Denied".Translate());
 
                 //Check if there is a slide placing there
-                if (GenAdj.CellsAdjacentCardinal(loc, rot, checkingDef.Size).Where(c => map.thingGrid.ThingsListAt(c).Where(t => (t is Building_ItemSlide || t.def.entityDefToBuild == checkingDef) && (t.Position + t.Rotation.FacingCell == loc)).Any()).Any())
+                if (GenAdj.CellsAdjacentCardinal(loc, rot, checkingDef.Size)
+                    .Where(
+                        c => map.thingGrid.ThingsListAt(c)
+                            .Where(t => (t is Building_ItemSlide || t.def.entityDefToBuild == checkingDef) && (t.Position + t.Rotation.FacingCell == loc))
+                            .Any()
+                    )
+                    .Any())
                 {
                     return new AcceptanceReport("PRF_PlaceWorker_ItemSlide_Denied".Translate());
                 }
@@ -119,12 +116,9 @@ namespace ProjectRimFactory.Storage
 
         public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing thing = null)
         {
+            var outputCell = center + rot.FacingCell;
 
-            IntVec3 outputCell = center + rot.FacingCell;
-
-
-            GenDraw.DrawFieldEdges(new List<IntVec3> { outputCell }, Common.CommonColors.outputCell);
-
+            GenDraw.DrawFieldEdges(new List<IntVec3> { outputCell }, CommonColors.outputCell);
         }
     }
 }

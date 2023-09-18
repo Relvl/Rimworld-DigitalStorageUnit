@@ -44,6 +44,5 @@ namespace ProjectRimFactory.Storage
         public bool Powered { get; }
 
         public bool CanUseIOPort { get; }
-
     }
 }

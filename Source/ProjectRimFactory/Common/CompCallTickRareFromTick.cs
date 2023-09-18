@@ -9,7 +9,7 @@ namespace ProjectRimFactory.Common
             base.CompTick();
             if (Find.TickManager.TicksGame % 250 == 0)
             {
-                this.parent?.TickRare();
+                parent?.TickRare();
             }
         }
     }

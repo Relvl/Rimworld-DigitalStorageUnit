@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
-
 namespace ProjectRimFactory.CultivatorTools
 {
     public abstract class Building_CellIterator : Building
     {
-
         public int currentPosition;
 
         public bool Fueled => GetComp<CompRefuelable>()?.HasFuel ?? true;
@@ -41,6 +39,7 @@ namespace ProjectRimFactory.CultivatorTools
             {
                 if (!DoIterationWork(cell)) return;
             }
+
             MoveNextInternal();
         }
 
@@ -59,7 +58,7 @@ namespace ProjectRimFactory.CultivatorTools
 
         protected void MoveNextInternal()
         {
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 currentPosition++;
                 if (currentPosition >= cellCount)
@@ -71,7 +70,5 @@ namespace ProjectRimFactory.CultivatorTools
                 }
             }
         }
-
-
     }
 }

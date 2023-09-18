@@ -12,25 +12,26 @@ namespace ProjectRimFactory.Storage.UI
             public const double Normal = 0.50;
             public const double Manual = 0.6;
             public const double Weak = 0.75;
-
         }
 
         private static int HammingDistance(this string source, string target)
         {
-            int distance = 0;
+            var distance = 0;
 
             if (source.Length == target.Length)
             {
-                for (int i = 0; i < source.Length; i++)
+                for (var i = 0; i < source.Length; i++)
                 {
                     if (!source[i].Equals(target[i]))
                     {
                         distance++;
                     }
                 }
+
                 return distance;
             }
-            else { return 99999; }
+
+            return 99999;
         }
 
         /// <summary>
@@ -58,8 +59,13 @@ namespace ProjectRimFactory.Storage.UI
                 return sourceLength;
 
             // Initialization of matrix with row size sourceLength and columns size targetLength
-            for (var i = 0; i <= sourceLength; matrix[i, 0] = i++) { }
-            for (var j = 0; j <= targetLength; matrix[0, j] = j++) { }
+            for (var i = 0; i <= sourceLength; matrix[i, 0] = i++)
+            {
+            }
+
+            for (var j = 0; j <= targetLength; matrix[0, j] = j++)
+            {
+            }
 
             // Calculate rows and collumns distances
             for (var i = 1; i <= sourceLength; i++)
@@ -67,11 +73,10 @@ namespace ProjectRimFactory.Storage.UI
                 for (var j = 1; j <= targetLength; j++)
                 {
                     var cost = (target[j - 1] == source[i - 1]) ? 0 : 1;
-                    matrix[i, j] = Math.Min(
-                        Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1),
-                        matrix[i - 1, j - 1] + cost);
+                    matrix[i, j] = Math.Min(Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1), matrix[i - 1, j - 1] + cost);
                 }
             }
+
             // return result
             return matrix[sourceLength, targetLength];
         }
@@ -102,11 +107,17 @@ namespace ProjectRimFactory.Storage.UI
         private static int LevenshteinDistanceUpperBounds(this string source, string target)
         {
             // If the two strings are the same length then the Hamming Distance is the upper bounds of the Levenshtien Distance.
-            if (source.Length == target.Length) { return source.HammingDistance(target); }
+            if (source.Length == target.Length)
+            {
+                return source.HammingDistance(target);
+            }
 
             // Otherwise, the upper bound is the length of the longer string.
 
-            if (source.Length > target.Length) { return source.Length; }
+            if (source.Length > target.Length)
+            {
+                return source.Length;
+            }
 
             return target.Length > source.Length ? target.Length : 9999;
         }
@@ -125,16 +136,14 @@ namespace ProjectRimFactory.Storage.UI
 
         public static double NormalizedFuzzyStrength(this string source, string target)
         {
-            return Convert.ToDouble(source.NormalizedLevenshteinDistance(target)) / Convert.ToDouble(
-                Math.Max(source.Length, target.Length) - source.LevenshteinDistanceLowerBounds(target));
+            return Convert.ToDouble(source.NormalizedLevenshteinDistance(target)) /
+                   Convert.ToDouble(Math.Max(source.Length, target.Length) - source.LevenshteinDistanceLowerBounds(target));
         }
 
         public static double FuzzyStrength(this string source, string target)
         {
-            return Convert.ToDouble(source.LevenshteinDistance(target)) /
-                           Convert.ToDouble(source.LevenshteinDistanceUpperBounds(target));
+            return Convert.ToDouble(source.LevenshteinDistance(target)) / Convert.ToDouble(source.LevenshteinDistanceUpperBounds(target));
             // Log.Warning($"Current strength: {strength.ToString(CultureInfo.InvariantCulture)}", true);;
         }
-
     }
 }

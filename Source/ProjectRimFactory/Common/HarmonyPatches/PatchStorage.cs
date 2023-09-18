@@ -15,7 +15,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             __result = true;
             if (t != null)
             {
-                Map thingmap = t.Map;
+                var thingmap = t.Map;
                 if (thingmap != null && t.def.category == ThingCategory.Item)
                 {
                     if (PatchStorageUtil.GetPRFMapComponent(thingmap)?.ShouldForbidPawnOutputAtPos(t.Position) ?? false)
@@ -24,6 +24,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     }
                 }
             }
+
             return true;
         }
     }
@@ -38,11 +39,12 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             {
                 //#699 #678
                 //This check is needed to support the use of the Limit function for the IO Ports
-                if (__instance.Position != t.Position) 
+                if (__instance.Position != t.Position)
                 {
                     return false;
                 }
             }
+
             return true;
         }
     }
@@ -56,6 +58,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 __result = new List<FloatMenuOption>();
                 return false;
             }
+
             __result = null;
             return true;
         }
@@ -72,6 +75,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     return false;
                 }
             }
+
             return true;
         }
     }
@@ -87,6 +91,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     return false;
                 }
             }
+
             return true;
         }
     }
@@ -102,6 +107,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     return false;
                 }
             }
+
             return true;
         }
     }
@@ -117,6 +123,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     return false;
                 }
             }
+
             return true;
         }
     }
@@ -135,6 +142,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 outval = map.GetComponent<PRFMapComponent>();
                 mapComps.Add(map, outval);
             }
+
             return outval;
         }
 
@@ -150,8 +158,9 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 cache.Clear();
                 lastTick = Find.TickManager.TicksGame;
             }
+
             var key = new Tuple<Map, IntVec3, Type>(map, pos, typeof(T));
-            if (!cache.TryGetValue(key, out object val))
+            if (!cache.TryGetValue(key, out var val))
             {
                 val = Get<T>(map, pos);
                 cache.Add(key, val);

@@ -11,7 +11,6 @@ using Verse.AI;
 
 namespace ProjectRimFactory.Drones
 {
-
     //This is basicly a clone of Area_Allowed it was created since the former one is limited to 10 in vanilla RimWorld
     public class DroneArea : Area
     {
@@ -21,18 +20,16 @@ namespace ProjectRimFactory.Drones
         {
         }
 
-
-
         public DroneArea(AreaManager areaManager, string label = null) : base(areaManager)
         {
-            base.areaManager = areaManager;
+            this.areaManager = areaManager;
             if (!label.NullOrEmpty())
             {
                 labelInt = label;
             }
             else
             {
-                int num = 1;
+                var num = 1;
                 while (true)
                 {
                     labelInt = "AreaDefaultLabel".Translate(num);
@@ -40,13 +37,14 @@ namespace ProjectRimFactory.Drones
                     {
                         break;
                     }
+
                     num++;
                 }
             }
+
             colorInt = new Color(Rand.Value, Rand.Value, Rand.Value);
             colorInt = Color.Lerp(colorInt, Color.gray, 0.5f);
         }
-
 
         private Color colorInt = Color.red;
 
@@ -80,9 +78,7 @@ namespace ProjectRimFactory.Drones
             Scribe_Values.Look(ref labelInt, "label");
             Scribe_Values.Look(ref colorInt, "color");
         }
-
     }
-
 
     //This Class is used for the Area Selection for Drones where the range is unlimeted (0)
     public class DroneAreaSelector : Designator
@@ -95,14 +91,12 @@ namespace ProjectRimFactory.Drones
 
         public static Area SelectedArea => selectedArea;
 
-
-
-
         public override AcceptanceReport CanDesignateCell(IntVec3 loc)
         {
-            return loc.InBounds(base.Map) && Designator_AreaAllowed.SelectedArea != null && !Designator_AreaAllowed.SelectedArea[loc];
+            return loc.InBounds(Map) && Designator_AreaAllowed.SelectedArea != null && !Designator_AreaAllowed.SelectedArea[loc];
             //throw new NotImplementedException();
         }
+
         public override void SelectedUpdate()
         {
             //    Log.Message("SelectedUpdate");
@@ -116,18 +110,23 @@ namespace ProjectRimFactory.Drones
                 {
                     //base.ProcessInput(ev);
                 }
-                AreaUtility.MakeAllowedAreaListFloatMenu(delegate (Area a)
-                {
-                    selectedArea = a;
-                    // base.ProcessInput(ev);
 
-                    /*
-                    selectedArea == null --> Unrestricted
-                    selectedArea != null --> User Area
-                     */
-                    selectAction(selectedArea);
+                AreaUtility.MakeAllowedAreaListFloatMenu(
+                    delegate(Area a)
+                    {
+                        selectedArea = a;
+                        // base.ProcessInput(ev);
 
-                }, addNullAreaOption: true, addManageOption: false, base.Map);
+                        /*
+                        selectedArea == null --> Unrestricted
+                        selectedArea != null --> User Area
+                         */
+                        selectAction(selectedArea);
+                    },
+                    addNullAreaOption: true,
+                    addManageOption: false,
+                    Map
+                );
             }
         }
         //public static void ClearSelectedArea()
@@ -141,8 +140,6 @@ namespace ProjectRimFactory.Drones
         //}
     }
 
-
-
     [StaticConstructorOnStartup]
     public abstract class Building_DroneStation : Building, IPowerSupplyMachineHolder, IDroneSeetingsITab, IPRF_SettingsContentLink
     {
@@ -151,13 +148,7 @@ namespace ProjectRimFactory.Drones
 
         private const int defaultSkillLevel = 20;
 
-        public int GetdefaultSkillLevel
-        {
-            get
-            {
-                return defaultSkillLevel;
-            }
-        }
+        public int GetdefaultSkillLevel => defaultSkillLevel;
 
         protected CompRefuelable refuelableComp;
 
@@ -165,14 +156,8 @@ namespace ProjectRimFactory.Drones
 
         public List<SkillRecord> GetDroneSkillsRecord
         {
-            get
-            {
-                return droneSkillsRecord;
-            }
-            set
-            {
-                droneSkillsRecord = value;
-            }
+            get => droneSkillsRecord;
+            set => droneSkillsRecord = value;
         }
 
         //Return the Range depending on the Active Defenition
@@ -184,15 +169,10 @@ namespace ProjectRimFactory.Drones
                 {
                     return (int)Math.Ceiling(compPowerWorkSetting.GetRange());
                 }
-                else
-                {
-                    return def.GetModExtension<DefModExtension_DroneStation>().SquareJobRadius;
-                }
+
+                return def.GetModExtension<DefModExtension_DroneStation>().SquareJobRadius;
             }
-
         }
-
-
 
         private CompPowerWorkSetting compPowerWorkSetting;
 
@@ -204,12 +184,11 @@ namespace ProjectRimFactory.Drones
                 {
                     return compPowerWorkSetting.GetRangeCells();
                 }
-                else
-                {
-                    return GenAdj.OccupiedRect(this).ExpandedBy(DroneRange).Cells;
-                }
+
+                return GenAdj.OccupiedRect(this).ExpandedBy(DroneRange).Cells;
             }
         }
+
         private IEnumerable<IntVec3> StationRangecells_old;
 
         public List<IntVec3> cashed_GetCoverageCells = null;
@@ -227,22 +206,20 @@ namespace ProjectRimFactory.Drones
                 DroneArea droneArea = null;
                 if (DroneRange > 0)
                 {
-                    droneArea = new DroneArea(this.Map.areaManager);
+                    droneArea = new DroneArea(Map.areaManager);
                     //Need to set the Area to a size
 
-                    foreach (IntVec3 cell in StationRangecells)
+                    foreach (var cell in StationRangecells)
                     {
-                        if (cell.InBounds(this.Map)) droneArea[cell] = true;
+                        if (cell.InBounds(Map)) droneArea[cell] = true;
                     }
 
                     //Not shure if i need that but just to be shure
                     droneArea[Position] = true;
-                    this.Map.areaManager.AllAreas.Add(droneArea);
+                    Map.areaManager.AllAreas.Add(droneArea);
                 }
 
-
                 return droneArea;
-
             }
         }
 
@@ -262,7 +239,7 @@ namespace ProjectRimFactory.Drones
                 StationRangecells_old = StationRangecells;
             }
 
-            for (int i = 0; i < spawnedDrones.Count; i++)
+            for (var i = 0; i < spawnedDrones.Count; i++)
             {
                 spawnedDrones[i].playerSettings.AreaRestriction = droneAllowedArea;
             }
@@ -276,20 +253,14 @@ namespace ProjectRimFactory.Drones
 
         public abstract int DronesLeft { get; }
 
-        public IPowerSupplyMachine RangePowerSupplyMachine => this.GetComp<CompPowerWorkSetting>();
+        public IPowerSupplyMachine RangePowerSupplyMachine => GetComp<CompPowerWorkSetting>();
 
         public Dictionary<WorkTypeDef, bool> WorkSettings = new Dictionary<WorkTypeDef, bool>();
 
         public Dictionary<WorkTypeDef, bool> GetWorkSettings
         {
-            get
-            {
-                return WorkSettings;
-            }
-            set
-            {
-                WorkSettings = value;
-            }
+            get => WorkSettings;
+            set => WorkSettings = value;
         }
 
         public List<SkillRecord> DroneSeetings_skillDefs => droneSkillsRecord;
@@ -300,12 +271,11 @@ namespace ProjectRimFactory.Drones
 
         public void UpdateDronePrioritys()
         {
-
             if (spawnedDrones.Count > 0)
             {
                 foreach (Pawn pawn in spawnedDrones)
                 {
-                    foreach (WorkTypeDef def in WorkSettings.Keys)
+                    foreach (var def in WorkSettings.Keys)
                     {
                         if (WorkSettings[def])
                         {
@@ -317,12 +287,12 @@ namespace ProjectRimFactory.Drones
                         }
                     }
                 }
-
             }
         }
 
         // Used for destroyed pawns
         public abstract void Notify_DroneLost();
+
         // Used to negate imaginary pawns despawned in WorkGiverDroneStations and JobDriver_ReturnToStation
         public abstract void Notify_DroneGained();
 
@@ -336,14 +306,14 @@ namespace ProjectRimFactory.Drones
         }
 
         private MapTickManager mapManager;
-        protected MapTickManager MapManager => this.mapManager;
+        protected MapTickManager MapManager => mapManager;
 
         IPRF_SettingsContent IPRF_SettingsContentLink.PRF_SettingsContentOb => new ITab_DroneStation_Def(this);
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
-            this.mapManager = map.GetComponent<MapTickManager>();
+            mapManager = map.GetComponent<MapTickManager>();
             refuelableComp = GetComp<CompRefuelable>();
             compPowerTrader = GetComp<CompPowerTrader>();
             extension = def.GetModExtension<DefModExtension_DroneStation>();
@@ -356,41 +326,44 @@ namespace ProjectRimFactory.Drones
                 //Log.Message("droneAllowedArea was null");
                 Update_droneAllowedArea_forDrones(droneAllowedArea);
             }
+
             //Load the SleepTimes from XML
             cachedSleepTimeList = extension.Sleeptimes.Split(',');
 
             cashed_GetCoverageCells = StationRangecells.ToList();
 
             //Check for missing WorkTypeDef
-            foreach (WorkTypeDef def in extension.workTypes.Except(WorkSettings.Keys).ToList())
+            foreach (var def in extension.workTypes.Except(WorkSettings.Keys).ToList())
             {
                 WorkSettings.Add(def, true);
             }
+
             //Remove stuff thats nolonger valid (can only happen after updates)
-            foreach (WorkTypeDef def in WorkSettings.Keys.Except(extension.workTypes).ToList())
+            foreach (var def in WorkSettings.Keys.Except(extension.workTypes).ToList())
             {
                 WorkSettings.Remove(def);
             }
+
             //need to take action to init droneSkillsRecord
             if (droneSkillsRecord.Count == 0)
             {
-                Pawn_Drone drone = MakeDrone();
+                var drone = MakeDrone();
                 GenSpawn.Spawn(drone, Position, Map);
                 drone.Destroy();
 
                 GetComp<CompRefuelable>()?.Refuel(1);
-
             }
+
             //Init the Designator default Label
             update_droneAreaSelectorLable(droneAllowedArea);
 
             //Need this type of call to set the Powerconsumption on load
             //A normal call will not work
-            var rangePowerSupplyMachine = this.RangePowerSupplyMachine;
+            var rangePowerSupplyMachine = RangePowerSupplyMachine;
             if (rangePowerSupplyMachine != null)
             {
-                this.MapManager.NextAction(rangePowerSupplyMachine.RefreshPowerStatus);
-                this.MapManager.AfterAction(5, rangePowerSupplyMachine.RefreshPowerStatus);
+                MapManager.NextAction(rangePowerSupplyMachine.RefreshPowerStatus);
+                MapManager.AfterAction(5, rangePowerSupplyMachine.RefreshPowerStatus);
             }
         }
 
@@ -418,11 +391,12 @@ namespace ProjectRimFactory.Drones
         public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
         {
             base.DeSpawn();
-            List<Pawn_Drone> drones = spawnedDrones.ToList();
-            for (int i = 0; i < drones.Count; i++)
+            var drones = spawnedDrones.ToList();
+            for (var i = 0; i < drones.Count; i++)
             {
                 drones[i].Destroy();
             }
+
             if (droneAllowedArea is DroneArea)
             {
                 //Deleate the old Zone
@@ -431,13 +405,11 @@ namespace ProjectRimFactory.Drones
             }
 
             droneAllowedArea = null;
-
-
         }
 
         public virtual void DrawDormantDrones()
         {
-            foreach (IntVec3 cell in GenAdj.CellsOccupiedBy(this).Take(DronesLeft))
+            foreach (var cell in GenAdj.CellsOccupiedBy(this).Take(DronesLeft))
             {
                 PRFDefOf.PRFDrone.graphic.DrawFromDef(cell.ToVector3ShiftedWithAltitude(AltitudeLayer.LayingPawn), default(Rot4), PRFDefOf.PRFDrone);
             }
@@ -454,32 +426,29 @@ namespace ProjectRimFactory.Drones
 
         public abstract Job TryGiveJob(Pawn pawn);
 
-
         protected CompPowerTrader compPowerTrader;
 
         protected int additionJobSearchTickDelay = 0;
-
 
         public override void Tick()
         {
             //Base Tick
             base.Tick();
             //Return if not Spawnd
-            if (!this.Spawned) return;
-
+            if (!Spawned) return;
 
             //Should not draw much performence...
             //To enhance performence we could add "this.IsHashIntervalTick(60)"
             if (spawnedDrones.Count > 0 && compPowerTrader?.PowerOn == false)
             {
-                for (int i = spawnedDrones.Count - 1; i >= 0; i--)
+                for (var i = spawnedDrones.Count - 1; i >= 0; i--)
                 {
                     spawnedDrones[i].jobs.StartJob(new Job(PRFDefOf.PRFDrone_ReturnToStation, this), JobCondition.InterruptForced);
                 }
+
                 //return as there is nothing to do if its off....
                 return;
             }
-
 
             //Update the Allowed Area Range on Power Change
             if (this.IsHashIntervalTick(60))
@@ -495,10 +464,10 @@ namespace ProjectRimFactory.Drones
             if (this.IsHashIntervalTick(60 + additionJobSearchTickDelay) && DronesLeft > 0 && !lockdown && compPowerTrader?.PowerOn != false)
             {
                 //The issue appears to be 100% with TryGiveJob
-                Pawn_Drone drone = MakeDrone();
+                var drone = MakeDrone();
                 GenSpawn.Spawn(drone, Position, Map);
 
-                Job job = TryGiveJob(drone);
+                var job = TryGiveJob(drone);
 
                 if (job != null)
                 {
@@ -506,7 +475,7 @@ namespace ProjectRimFactory.Drones
                     job.playerForced = true;
                     job.expiryInterval = -1;
                     //MakeDrone takes about 1ms
-                    
+
                     drone.jobs.StartJob(job);
                 }
                 else
@@ -522,10 +491,6 @@ namespace ProjectRimFactory.Drones
                     }
                 }
             }
-
-
-
-
         }
         //It appers as if TickLong & TickRare are not getting called here
 
@@ -547,27 +512,26 @@ namespace ProjectRimFactory.Drones
             {
                 GenDraw.DrawFieldEdges(cashed_GetCoverageCells);
             }
-
         }
 
         public override string GetInspectString()
         {
-            StringBuilder builder = new StringBuilder();
-            string str = base.GetInspectString();
+            var builder = new StringBuilder();
+            var str = base.GetInspectString();
             if (!string.IsNullOrEmpty(str))
             {
                 builder.AppendLine(str);
             }
+
             builder.Append("PRFDroneStation_NumberOfDrones".Translate(DronesLeft));
             return builder.ToString();
         }
-
 
         private static HediffSet droneDiffs = null;
 
         public Pawn_Drone MakeDrone()
         {
-            Pawn_Drone drone = (Pawn_Drone)ThingMaker.MakeThing(PRFDefOf.PRFDroneKind.race);
+            var drone = (Pawn_Drone)ThingMaker.MakeThing(PRFDefOf.PRFDroneKind.race);
             drone.kindDef = PRFDefOf.PRFDroneKind;
             drone.SetFactionDirect(Faction);
             PawnComponentsUtility.CreateInitialComponents(drone);
@@ -585,7 +549,6 @@ namespace ProjectRimFactory.Drones
                 drone.health.hediffSet = droneDiffs;
                 drone.health.hediffSet.pawn = drone;
             }
-
 
             drone.Faction.Notify_PawnJoined(drone);
             drone.relations = new Pawn_RelationsTracker(drone);
@@ -611,23 +574,22 @@ namespace ProjectRimFactory.Drones
             {
                 WorkSettings = new Dictionary<WorkTypeDef, bool>();
             }
+
             //init refuelableComp after a Load
             if (refuelableComp == null)
             {
-                refuelableComp = this.GetComp<CompRefuelable>();
+                refuelableComp = GetComp<CompRefuelable>();
             }
+
             if (StationRangecells_old == null)
             {
                 StationRangecells_old = StationRangecells;
             }
-
-
         }
-
 
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            foreach (Gizmo g in base.GetGizmos())
+            foreach (var g in base.GetGizmos())
                 yield return g;
             yield return new Command_Toggle()
             {
@@ -638,7 +600,7 @@ namespace ProjectRimFactory.Drones
                     lockdown = !lockdown;
                     if (lockdown)
                     {
-                        foreach (Pawn_Drone drone in spawnedDrones.ToList())
+                        foreach (var drone in spawnedDrones.ToList())
                         {
                             drone.jobs.StartJob(new Job(PRFDefOf.PRFDrone_ReturnToStation, this), JobCondition.InterruptForced);
                         }
@@ -653,16 +615,15 @@ namespace ProjectRimFactory.Drones
                 defaultDesc = "PRFDroneStationLockdownAllDesc".Translate(),
                 action = () =>
                 {
-                    List<Building_DroneStation> buildings = Map.listerThings.AllThings.OfType<Building_DroneStation>().ToList();
-                    for (int i = 0; i < buildings.Count; i++)
+                    var buildings = Map.listerThings.AllThings.OfType<Building_DroneStation>().ToList();
+                    for (var i = 0; i < buildings.Count; i++)
                     {
                         buildings[i].lockdown = true;
-                        foreach (Pawn_Drone drone in buildings[i].spawnedDrones.ToList())
+                        foreach (var drone in buildings[i].spawnedDrones.ToList())
                         {
                             drone.jobs.StartJob(new Job(PRFDefOf.PRFDrone_ReturnToStation, buildings[i]), JobCondition.InterruptForced);
                         }
                     }
-
                 },
                 icon = ContentFinder<Texture2D>.Get("PRFUi/deactivate", true)
             };
@@ -672,12 +633,11 @@ namespace ProjectRimFactory.Drones
                 defaultDesc = "PRFDroneStationLiftLockdownAllDesc".Translate(),
                 action = () =>
                 {
-                    List<Building_DroneStation> buildings = Map.listerThings.AllThings.OfType<Building_DroneStation>().ToList();
-                    for (int i = 0; i < buildings.Count; i++)
+                    var buildings = Map.listerThings.AllThings.OfType<Building_DroneStation>().ToList();
+                    for (var i = 0; i < buildings.Count; i++)
                     {
                         buildings[i].lockdown = false;
                     }
-
                 },
                 icon = ContentFinder<Texture2D>.Get("PRFUi/activate", true)
             };
@@ -695,12 +655,10 @@ namespace ProjectRimFactory.Drones
                     {
                         Update_droneAllowedArea_forDrones(a);
                         update_droneAreaSelectorLable(a);
-
                     }
                 };
-
-
             }
+
             if (Prefs.DevMode)
             {
                 yield return new Command_Action()
@@ -709,24 +667,14 @@ namespace ProjectRimFactory.Drones
                     defaultDesc = "Respawns all Drones",
                     action = () =>
                     {
-                        for (int i = spawnedDrones.Count - 1; i >= 0; i--)
+                        for (var i = spawnedDrones.Count - 1; i >= 0; i--)
                         {
                             spawnedDrones[i].Destroy();
                             Notify_DroneGained();
                         }
-
                     },
                 };
             }
-
-
         }
-
-
-
-
-
-
-
     }
 }

@@ -14,9 +14,9 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             {
                 var setting = LoadedModManager.GetMod<ProjectRimFactory_ModComponent>().Settings;
                 var patches = setting.Patches;
-                int count = 0;
+                var count = 0;
 
-                foreach (PatchOperation patch in patches)
+                foreach (var patch in patches)
                 {
                     count++;
                     patch.sourceFile = "PRF_SettingsPatch_" + count + "_";

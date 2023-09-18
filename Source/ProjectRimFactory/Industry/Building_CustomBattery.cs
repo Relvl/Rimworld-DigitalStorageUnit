@@ -17,8 +17,8 @@ namespace ProjectRimFactory.Industry
         public override void Draw()
         {
             base.Draw();
-            CompPowerBattery comp = GetComp<CompPowerBattery>();
-            GenDraw.FillableBarRequest r = default(GenDraw.FillableBarRequest);
+            var comp = GetComp<CompPowerBattery>();
+            var r = default(GenDraw.FillableBarRequest);
             r.center = DrawPos + Vector3.up * 0.1f + Vector3.forward * 0.25f;
             r.size = BarSize;
             r.fillPercent = comp.StoredEnergy / comp.Props.storedEnergyMax;
@@ -46,11 +46,12 @@ namespace ProjectRimFactory.Industry
                 {
                     wickSustainer.Maintain();
                 }
+
                 ticksToExplode--;
                 if (ticksToExplode == 0)
                 {
-                    IntVec3 randomCell = this.OccupiedRect().RandomCell;
-                    float radius = Rand.Range(0.5f, 1f) * 3f;
+                    var randomCell = this.OccupiedRect().RandomCell;
+                    var radius = Rand.Range(0.5f, 1f) * 3f;
                     GenExplosion.DoExplosion(randomCell, Map, radius, DamageDefOf.Flame, null);
                     GetComp<CompPowerBattery>().DrawPower(400f);
                 }
@@ -69,7 +70,7 @@ namespace ProjectRimFactory.Industry
 
         private void StartWickSustainer()
         {
-            SoundInfo info = SoundInfo.InMap(this, MaintenanceType.PerTick);
+            var info = SoundInfo.InMap(this, MaintenanceType.PerTick);
             wickSustainer = SoundDefOf.HissSmall.TrySpawnSustainer(info);
         }
 

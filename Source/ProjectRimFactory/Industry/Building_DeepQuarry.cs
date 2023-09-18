@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Verse;
+
 namespace ProjectRimFactory.Industry
 {
     /// <summary>
@@ -21,7 +22,7 @@ namespace ProjectRimFactory.Industry
     /// </summary>
     public class Building_DeepQuarry : Building, IXMLThingDescription
     {
-        public float GetProduceMtbHours { get { return def.GetModExtension<DeepQuarryDefModExtension>().TickCount; } }
+        public float GetProduceMtbHours => def.GetModExtension<DeepQuarryDefModExtension>().TickCount;
         static IEnumerable<ThingDef> cachedPossibleRockDefCandidates;
         protected int productionTime = 0; // number of ticks this has been running since last production check
         public CompFlickable flick;
@@ -45,15 +46,16 @@ namespace ProjectRimFactory.Industry
                 {
                     return cachedPossibleRockDefCandidates;
                 }
+
                 return cachedPossibleRockDefCandidates = from def in DefDatabase<ThingDef>.AllDefs
-                                                         where def.building != null && def.building.isNaturalRock && def.building.mineableThing != null
-                                                         select def;
+                    where def.building != null && def.building.isNaturalRock && def.building.mineableThing != null
+                    select def;
             }
         }
+
         public IEnumerable<ThingDef> GetPossibleRockDefCandidatesFilterd(ThingDef thingDef)
         {
-            return PossibleRockDefCandidates
-                  .Where(d => !thingDef.GetModExtension<ModExtension_Miner>()?.IsExcluded(d.building.mineableThing) ?? true);
+            return PossibleRockDefCandidates.Where(d => !thingDef.GetModExtension<ModExtension_Miner>()?.IsExcluded(d.building.mineableThing) ?? true);
         }
 
         /// <summary>
@@ -90,8 +92,7 @@ namespace ProjectRimFactory.Industry
                         //   (per CompRefuelable - note that we will miss any Harmony patches
                         //    that target fuelConsumptionRate. Grabbing the private result is
                         //    a TODO for later)
-                        if (consumeFuelWhileRunning &&
-                            !fuel.Props.consumeFuelOnlyWhenUsed)
+                        if (consumeFuelWhileRunning && !fuel.Props.consumeFuelOnlyWhenUsed)
                         {
                             fuel.ConsumeFuel(fuel.Props.fuelConsumptionRate / 6000 * numTicks);
                         }
@@ -110,7 +111,7 @@ namespace ProjectRimFactory.Industry
                             TryGenerateResource(numTicks);
                         }
                     }
-                    else  //fuel==null, does not use fuel
+                    else //fuel==null, does not use fuel
                     {
                         // already know it's turned on and powered
                         TryGenerateResource(numTicks);
@@ -142,11 +143,13 @@ namespace ProjectRimFactory.Industry
             base.Tick();
             HandelTick(1, false); // CompRefuelable burns fuel on Tick() without extra work
         }
+
         public override void TickRare()
         {
             base.TickRare();
             HandelTick(250, true);
         }
+
         public override void TickLong()
         {
             base.TickLong();
@@ -180,44 +183,48 @@ namespace ProjectRimFactory.Industry
             ProducedChunksTotal++;
         }
 
-        private ThingDef getRock => GetPossibleRockDefCandidatesFilterd(this.def)
-                .RandomElementByWeight(d => d.building.isResourceRock ? d.building.mineableScatterCommonality * d.building.mineableScatterLumpSizeRange.Average * d.building.mineableDropChance : 3f);
+        private ThingDef getRock =>
+            GetPossibleRockDefCandidatesFilterd(def)
+                .RandomElementByWeight(
+                    d => d.building.isResourceRock ? d.building.mineableScatterCommonality * d.building.mineableScatterLumpSizeRange.Average * d.building.mineableDropChance : 3f
+                );
 
         protected virtual Thing GetChunkThingToPlace()
         {
-            ThingDef rock = getRock;
+            var rock = getRock;
             // Because we make our rocks ourselves, we have to handle bonus items and product modifications (bonuses) directly:
             var tmpList = new List<Thing>();
-            this.def.GetModExtension<ModExtension_ModifyProduct>()?.ProcessProducts(tmpList,
-                                                        this as IBillGiver, this);
+            def.GetModExtension<ModExtension_ModifyProduct>()?.ProcessProducts(tmpList, this as IBillGiver, this);
             if (tmpList.Count > 0) return tmpList[0]; // code framework enforces placing only a single thing
-            Thing t = ThingMaker.MakeThing(rock.building.mineableThing);
+            var t = ThingMaker.MakeThing(rock.building.mineableThing);
             t.stackCount = rock.building.mineableYield;
             return t;
         }
 
         public override string GetInspectString()
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            string s = base.GetInspectString();
+            var stringBuilder = new StringBuilder();
+            var s = base.GetInspectString();
             if (!string.IsNullOrEmpty(s))
             {
                 stringBuilder.AppendLine(s);
             }
+
             stringBuilder.Append("DeepQuarry_TotalSoFar".Translate(ProducedChunksTotal));
             return stringBuilder.ToString().TrimEndNewlines();
         }
 
         public string GetDescription(ThingDef def)
         {
-            string HelpText = "";
+            var HelpText = "";
             //Get Items that Building_DeepQuarry can Produce
-            List<ThingDef> rocks = GetPossibleRockDefCandidatesFilterd(def).ToList();
+            var rocks = GetPossibleRockDefCandidatesFilterd(def).ToList();
             HelpText += "PRF_DescriptionUpdate_CanMine".Translate();
-            foreach (ThingDef rock in rocks)
+            foreach (var rock in rocks)
             {
                 HelpText += String.Format("    - {0} x{1}\r\n", rock.LabelCap, rock.building.mineableYield);
             }
+
             HelpText += "\r\n";
 
             return HelpText;
@@ -226,7 +233,7 @@ namespace ProjectRimFactory.Industry
 #if DEBUG
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            foreach(var gizmo in base.GetGizmos())
+            foreach (var gizmo in base.GetGizmos())
             {
                 yield return gizmo;
             }
@@ -237,15 +244,30 @@ namespace ProjectRimFactory.Industry
             {
                 defaultLabel = $"Output simulation result log of mining {trials} times",
                 defaultDesc = $"Output simulation result log of mining {trials} times",
-                action = () =>
-                    Log.Message("number of trials : " + trials + System.Environment.NewLine +
-                        Enumerable.Range(0, trials)
-                            .Select(i => GetChunkThingToPlace())
-                            .GroupBy(t => Tuple.Create(t.def, t.stackCount))
-                            .ToList()
-                            .Select(g => new { Def = g.Key.Item1, StackCount = g.Key.Item2, Count = g.Count() })
-                            .OrderByDescending(p => p.Count)
-                            .Aggregate("", (t, i) => t + "def : " + i.Def.defName + " / stackCount : " + i.StackCount + " / minedCount : " + i.Count + " / mine rate(%) : " + (((float)i.Count * 100f) / (float)trials) + System.Environment.NewLine))
+                action = () => Log.Message(
+                    "number of trials : " +
+                    trials +
+                    Environment.NewLine +
+                    Enumerable.Range(0, trials)
+                        .Select(i => GetChunkThingToPlace())
+                        .GroupBy(t => Tuple.Create(t.def, t.stackCount))
+                        .ToList()
+                        .Select(g => new { Def = g.Key.Item1, StackCount = g.Key.Item2, Count = g.Count() })
+                        .OrderByDescending(p => p.Count)
+                        .Aggregate(
+                            "",
+                            (t, i) => t +
+                                      "def : " +
+                                      i.Def.defName +
+                                      " / stackCount : " +
+                                      i.StackCount +
+                                      " / minedCount : " +
+                                      i.Count +
+                                      " / mine rate(%) : " +
+                                      (((float)i.Count * 100f) / (float)trials) +
+                                      Environment.NewLine
+                        )
+                )
             };
         }
 #endif

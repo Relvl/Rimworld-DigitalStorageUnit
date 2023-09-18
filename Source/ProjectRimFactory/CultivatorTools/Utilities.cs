@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using Verse;
+
 namespace ProjectRimFactory.CultivatorTools
 {
     public static class Utilities
@@ -30,7 +31,11 @@ namespace ProjectRimFactory.CultivatorTools
         public static IPlantToGrowSettable GetIPlantToGrowSettable(IntVec3 c, Map map)
         {
             var zone = c.GetZone(map);
-            var building = c.GetThingList(map).Where(t => t.def.category == ThingCategory.Building).Where(t => t is IPlantToGrowSettable).Select(t => (IPlantToGrowSettable)t).FirstOrDefault();
+            var building = c.GetThingList(map)
+                .Where(t => t.def.category == ThingCategory.Building)
+                .Where(t => t is IPlantToGrowSettable)
+                .Select(t => (IPlantToGrowSettable)t)
+                .FirstOrDefault();
             if (building is IPlantToGrowSettable b) return b;
             if (zone is IPlantToGrowSettable z) return z;
             return null;
@@ -38,10 +43,7 @@ namespace ProjectRimFactory.CultivatorTools
 
         public static bool CanPlantRightNow(this IPlantToGrowSettable planter)
         {
-            return (!planter.CanAcceptSowNow()) ? false :
-                (planter is Zone_Growing z) ? z.allowSow :
-                (planter is Thing t) ? !t.IsForbidden(Faction.OfPlayer) :
-                true;
+            return (!planter.CanAcceptSowNow()) ? false : (planter is Zone_Growing z) ? z.allowSow : (planter is Thing t) ? !t.IsForbidden(Faction.OfPlayer) : true;
         }
     }
 }

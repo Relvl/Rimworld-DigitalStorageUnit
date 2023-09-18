@@ -10,8 +10,9 @@ namespace ProjectRimFactory.AutoMachineTool
         {
             if (progressGetter != null)
             {
-                this.progress = Mathf.Clamp01(this.progressGetter());
+                progress = Mathf.Clamp01(progressGetter());
             }
+
             base.Draw();
         }
 

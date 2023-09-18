@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
+
 namespace ProjectRimFactory.AutoMachineTool
 {
     /// <summary>
@@ -17,11 +18,13 @@ namespace ProjectRimFactory.AutoMachineTool
         public Graphic_LinkedConveyorWall() : base()
         {
         }
+
         bool showW;
         bool showS;
         bool showE;
         GraphicData transitionGData; // Graphic_Multi, one assumes.
         List<ThingDef> sameLinkDefs;
+
         public override void ExtraInit(GraphicRequest req, GraphicExtraData extraData)
         {
             Debug.Warning(Debug.Flag.ConveyorGraphics, "Graphics ExtraInit for Graphic_LinkedConveyorWall: (" + req.graphicData.texPath + ")");
@@ -35,16 +38,17 @@ namespace ProjectRimFactory.AutoMachineTool
                 // If this throws errors, that's okay - it's a config error that needs to be fixed:
                 // NOTE: this can be changed later if the graphics needs to allow multilpe defs,
                 //   not all of which may be actually listed...
-                sameLinkDefs = new List<ThingDef>(extraData.specialLinkDefs.Select(
-                    s => DefDatabase<ThingDef>.GetNamed(s)));
-                Debug.Message(Debug.Flag.ConveyorGraphics, "  added sameLinkDefs: " +
-                    (sameLinkDefs == null ? "null" : String.Join(", ", sameLinkDefs)));
+                sameLinkDefs = new List<ThingDef>(extraData.specialLinkDefs.Select(s => DefDatabase<ThingDef>.GetNamed(s)));
+                Debug.Message(Debug.Flag.ConveyorGraphics, "  added sameLinkDefs: " + (sameLinkDefs == null ? "null" : String.Join(", ", sameLinkDefs)));
             }
         }
+
         //TODO Changed in 1.3 --> extraRotation was added. any changes needed?
         public override void Print(SectionLayer layer, Thing thing, float extraRotation)
         {
-            showW = false; showS = false; showE = false;
+            showW = false;
+            showS = false;
+            showE = false;
             // This may set some of those flags:
             base.Print(layer, thing, extraRotation);
             Debug.Message(Debug.Flag.ConveyorGraphics, "Printing transitions for " + thing + " S:" + showS + " W:" + showW + "E:" + showE);
@@ -53,24 +57,24 @@ namespace ProjectRimFactory.AutoMachineTool
             {
                 mat = transitionGData.Graphic.MatWest;
                 //                mat = transitionWest.Graphic.MatSingleFor(thing);
-                Printer_Plane.PrintPlane(layer, thing.TrueCenter() + new Vector3(0, 0.1f, 0),
-                    Vector2.one, mat);
+                Printer_Plane.PrintPlane(layer, thing.TrueCenter() + new Vector3(0, 0.1f, 0), Vector2.one, mat);
             }
+
             if (showS)
             {
                 mat = transitionGData.Graphic.MatSouth;
                 //                mat = transitionSouth.Graphic.MatSingleFor(thing);
-                Printer_Plane.PrintPlane(layer, thing.TrueCenter() + new Vector3(0, 0.1f, 0),
-                    Vector2.one, mat);
+                Printer_Plane.PrintPlane(layer, thing.TrueCenter() + new Vector3(0, 0.1f, 0), Vector2.one, mat);
             }
+
             if (showE)
             {
                 mat = transitionGData.Graphic.MatEast;
                 //                mat = transitionEast.Graphic.MatSingleFor(thing);
-                Printer_Plane.PrintPlane(layer, thing.TrueCenter() + new Vector3(0, 0.1f, 0),
-                    Vector2.one, mat);
+                Printer_Plane.PrintPlane(layer, thing.TrueCenter() + new Vector3(0, 0.1f, 0), Vector2.one, mat);
             }
         }
+
         public override bool ShouldLinkWith(IntVec3 c, Thing parent)
         {
             // Tag which directions link walls to non-walls, so can draw transition buildings
@@ -79,11 +83,12 @@ namespace ProjectRimFactory.AutoMachineTool
             if (x == IntVec3.North) return base.ShouldLinkWith(c, parent);
             if (!c.InBounds(parent.Map)) return false;
             var belt = parent as IBeltConveyorLinkable; // don't use this with non-belts
-            var otherBelt = c.GetThingList(parent.Map)
-                    .OfType<IBeltConveyorLinkable>()
-                    .FirstOrDefault(belt.HasLinkWith);
+            var otherBelt = c.GetThingList(parent.Map).OfType<IBeltConveyorLinkable>().FirstOrDefault(belt.HasLinkWith);
             if (otherBelt == null) return false;
-            Debug.Message(Debug.Flag.ConveyorGraphics, "WallBelt graphic testing links vs sameLinkDefs for " + parent + ": " + (sameLinkDefs == null ? "null" : String.Join(", ", sameLinkDefs)));
+            Debug.Message(
+                Debug.Flag.ConveyorGraphics,
+                "WallBelt graphic testing links vs sameLinkDefs for " + parent + ": " + (sameLinkDefs == null ? "null" : String.Join(", ", sameLinkDefs))
+            );
             if (!sameLinkDefs.Contains((otherBelt as Thing).def))
             {
                 Debug.Message(Debug.Flag.ConveyorGraphics, " found link with " + otherBelt + " (" + (otherBelt as Thing).def.defName + ")");
@@ -92,6 +97,7 @@ namespace ProjectRimFactory.AutoMachineTool
                 else // has to be W, or something is v v weird
                     showW = true;
             }
+
             return true;
         }
     }

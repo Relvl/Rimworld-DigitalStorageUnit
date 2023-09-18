@@ -22,87 +22,85 @@ namespace ProjectRimFactory.AutoMachineTool
         // public override int MinPowerForRange => this.RangeExtension.minPower;
         // public override int MaxPowerForRange => this.RangeExtension.maxPower;
 
-        public override bool Glowable { get => false; }
+        public override bool Glowable => false;
 
         private bool glow = false;
+
         public override bool Glow
         {
-            get => this.glow;
+            get => glow;
             set
             {
-                if (this.glow != value)
+                if (glow != value)
                 {
-                    this.glow = value;
-                    this.ChangeGlow();
+                    glow = value;
+                    ChangeGlow();
                 }
             }
         }
 
-        public IntVec2 Size => this.def.Size;
+        public IntVec2 Size => def.Size;
 
         private float supplyPowerForRange;
 
-        [Unsaved]
-        protected int targetEnumrationCount = 100;
+        [Unsaved] protected int targetEnumrationCount = 100;
 
-        [Unsaved]
-        private bool nextTargetCells = false;
+        [Unsaved] private bool nextTargetCells = false;
 
-        [Unsaved]
-        private HashSet<IntVec3> allTargetCellsCache;
+        [Unsaved] private HashSet<IntVec3> allTargetCellsCache;
 
-        [Unsaved]
-        private List<List<IntVec3>> splittedTargetCells;
+        [Unsaved] private List<List<IntVec3>> splittedTargetCells;
 
-        [Unsaved]
-        private int splittedTargetCellsIndex = 0;
+        [Unsaved] private int splittedTargetCellsIndex = 0;
 
         private const int CACHE_CLEAR_INTERVAL_TICKS = 180;
 
         public IEnumerable<IntVec3> GetAllTargetCells()
         {
-            this.CacheTargetCells();
-            return powerWorkSetting.GetRangeCells()?.ToHashSet() ?? new HashSet<IntVec3>(); ;
+            CacheTargetCells();
+            return powerWorkSetting.GetRangeCells()?.ToHashSet() ?? new HashSet<IntVec3>();
         }
 
         private void CacheTargetCells()
         {
-            if (this.allTargetCellsCache == null)
+            if (allTargetCellsCache == null)
             {
-                this.allTargetCellsCache = powerWorkSetting.GetRangeCells()?.ToHashSet() ?? new HashSet<IntVec3>();
-                if (this.targetEnumrationCount > 0)
+                allTargetCellsCache = powerWorkSetting.GetRangeCells()?.ToHashSet() ?? new HashSet<IntVec3>();
+                if (targetEnumrationCount > 0)
                 {
-                    this.splittedTargetCells = this.allTargetCellsCache.ToList().Grouped(this.targetEnumrationCount);
+                    splittedTargetCells = allTargetCellsCache.ToList().Grouped(targetEnumrationCount);
                 }
             }
         }
 
         private List<IntVec3> GetCurrentSplittedTargetCells()
         {
-            this.CacheTargetCells();
-            if (this.splittedTargetCellsIndex >= this.splittedTargetCells.Count)
+            CacheTargetCells();
+            if (splittedTargetCellsIndex >= splittedTargetCells.Count)
             {
-                this.splittedTargetCellsIndex = 0;
+                splittedTargetCellsIndex = 0;
             }
-            return this.splittedTargetCells[this.splittedTargetCellsIndex];
+
+            return splittedTargetCells[splittedTargetCellsIndex];
         }
 
         private void NextSplittedTargetCells()
         {
-            this.splittedTargetCellsIndex++;
-            if (this.splittedTargetCellsIndex >= this.splittedTargetCells.Count)
+            splittedTargetCellsIndex++;
+            if (splittedTargetCellsIndex >= splittedTargetCells.Count)
             {
-                this.splittedTargetCellsIndex = 0;
+                splittedTargetCellsIndex = 0;
             }
         }
 
         private void ClearAllTargetCellCache()
         {
-            if (this.IsActive())
+            if (IsActive())
             {
-                this.allTargetCellsCache = null;
+                allTargetCellsCache = null;
             }
-            if (this.Spawned)
+
+            if (Spawned)
             {
             }
         }
@@ -110,28 +108,31 @@ namespace ProjectRimFactory.AutoMachineTool
         protected override void ClearActions()
         {
             base.ClearActions();
-            this.MapManager.RemoveAfterAction(this.ClearAllTargetCellCache);
+            MapManager.RemoveAfterAction(ClearAllTargetCellCache);
         }
 
         public override void ExposeData()
         {
             base.ExposeData();
-            Scribe_Values.Look<float>(ref this.supplyPowerForRange, "supplyPowerForRange", 0);
-            Scribe_Values.Look<bool>(ref this.glow, "glow", false);
+            Scribe_Values.Look<float>(ref supplyPowerForRange, "supplyPowerForRange", 0);
+            Scribe_Values.Look<bool>(ref glow, "glow", false);
         }
 
         private void ChangeGlow()
         {
-            Option(this.TryGetComp<CompGlower>()).ForEach(glower =>
-            {
-                var tmp = this.TryGetComp<CompFlickable>().SwitchIsOn;
-                glower.Props.glowRadius = this.Glow ? (this.GetRange() + 2f) * 2f : 0;
-                glower.Props.overlightRadius = this.Glow ? (this.GetRange() + 2.1f) : 0;
-                this.TryGetComp<CompFlickable>().SwitchIsOn = !tmp;
-                glower.UpdateLit(this.Map);
-                this.TryGetComp<CompFlickable>().SwitchIsOn = tmp;
-                glower.UpdateLit(this.Map);
-            });
+            Option(this.TryGetComp<CompGlower>())
+                .ForEach(
+                    glower =>
+                    {
+                        var tmp = this.TryGetComp<CompFlickable>().SwitchIsOn;
+                        glower.Props.glowRadius = Glow ? (GetRange() + 2f) * 2f : 0;
+                        glower.Props.overlightRadius = Glow ? (GetRange() + 2.1f) : 0;
+                        this.TryGetComp<CompFlickable>().SwitchIsOn = !tmp;
+                        glower.UpdateLit(Map);
+                        this.TryGetComp<CompFlickable>().SwitchIsOn = tmp;
+                        glower.UpdateLit(Map);
+                    }
+                );
         }
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
@@ -141,17 +142,21 @@ namespace ProjectRimFactory.AutoMachineTool
             {
                 powerWorkSetting.SupplyPowerForRange = 0;
             }
-            Option(this.TryGetComp<CompGlower>()).ForEach(g =>
-            {
-                CompProperties_Glower newProp = new CompProperties_Glower();
-                newProp.compClass = g.Props.compClass;
-                newProp.glowColor = g.Props.glowColor;
-                newProp.glowRadius = g.Props.glowRadius;
-                newProp.overlightRadius = g.Props.overlightRadius;
-                g.props = newProp;
-            });
-            this.allTargetCellsCache = null;
-            this.ChangeGlow();
+
+            Option(this.TryGetComp<CompGlower>())
+                .ForEach(
+                    g =>
+                    {
+                        var newProp = new CompProperties_Glower();
+                        newProp.compClass = g.Props.compClass;
+                        newProp.glowColor = g.Props.glowColor;
+                        newProp.glowRadius = g.Props.glowRadius;
+                        newProp.overlightRadius = g.Props.overlightRadius;
+                        g.props = newProp;
+                    }
+                );
+            allTargetCellsCache = null;
+            ChangeGlow();
         }
 
         public int GetRange()
@@ -164,13 +169,11 @@ namespace ProjectRimFactory.AutoMachineTool
         {
             if (SplitTargetCells)
             {
-                this.nextTargetCells = true;
-                return this.GetCurrentSplittedTargetCells();
+                nextTargetCells = true;
+                return GetCurrentSplittedTargetCells();
             }
-            else
-            {
-                return this.GetAllTargetCells();
-            }
+
+            return GetAllTargetCells();
         }
 
 #if DEBUG
@@ -178,9 +181,9 @@ namespace ProjectRimFactory.AutoMachineTool
         {
             base.Draw();
 
-            if (Find.Selector.FirstSelectedObject == this && this.SplitTargetCells)
+            if (Find.Selector.FirstSelectedObject == this && SplitTargetCells)
             {
-                GenDraw.DrawFieldEdges(this.GetCurrentSplittedTargetCells(), Color.red);
+                GenDraw.DrawFieldEdges(GetCurrentSplittedTargetCells(), Color.red);
             }
         }
 #endif
@@ -188,13 +191,13 @@ namespace ProjectRimFactory.AutoMachineTool
         protected override void Ready()
         {
             base.Ready();
-            if (this.State == WorkingState.Ready && SplitTargetCells && this.nextTargetCells)
+            if (State == WorkingState.Ready && SplitTargetCells && nextTargetCells)
             {
-                this.NextSplittedTargetCells();
-                this.nextTargetCells = false;
+                NextSplittedTargetCells();
+                nextTargetCells = false;
             }
         }
 
-        private bool SplitTargetCells => this.targetEnumrationCount > 0 && this.GetAllTargetCells().Count() > this.targetEnumrationCount;
+        private bool SplitTargetCells => targetEnumrationCount > 0 && GetAllTargetCells().Count() > targetEnumrationCount;
     }
 }

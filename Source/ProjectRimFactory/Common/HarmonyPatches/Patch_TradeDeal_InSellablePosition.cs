@@ -4,7 +4,6 @@ using Verse;
 
 namespace ProjectRimFactory.Common.HarmonyPatches
 {
-
     [HarmonyPatch(typeof(TradeDeal), "InSellablePosition")]
     class Patch_TradeDeal_InSellablePosition
     {
@@ -28,11 +27,8 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 Log.Warning($"Report to Rimfactory with HugsLog(CTRL & F12) - TradeDeal InSellablePosition {t}.MapHeld is Null");
             }
 
-
             reason = null;
             return true;
         }
-
-
     }
 }

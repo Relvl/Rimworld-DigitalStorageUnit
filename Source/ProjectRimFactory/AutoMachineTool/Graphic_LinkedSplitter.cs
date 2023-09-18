@@ -20,6 +20,7 @@ namespace ProjectRimFactory.AutoMachineTool
     {
         // default arrow to show the input direction for the splitter:
         public static Material arrow00b;
+
         // default arrow to show all output directions for the splitter:
         public static Material arrow01;
 
@@ -39,7 +40,7 @@ namespace ProjectRimFactory.AutoMachineTool
         public override void Init(GraphicRequest req)
         {
             // Move all Init to ExtraInit
-            var extraData = GraphicExtraData.Extract(req, out GraphicRequest newReq);
+            var extraData = GraphicExtraData.Extract(req, out var newReq);
             ExtraInit(newReq, extraData);
         }
 
@@ -50,52 +51,42 @@ namespace ProjectRimFactory.AutoMachineTool
             base.ExtraInit(req, extraData);
             if (extraData == null)
             {
-                Log.Error("PRF: invalid XML for conveyor Splitter's graphic:\n" +
-                  "   it must have <texPath>[extraData]...[texPath2]path/to/building[/texPath2]</texPath>\n" +
-                  "   but has string: " + req.path);
+                Log.Error(
+                    "PRF: invalid XML for conveyor Splitter's graphic:\n" +
+                    "   it must have <texPath>[extraData]...[texPath2]path/to/building[/texPath2]</texPath>\n" +
+                    "   but has string: " +
+                    req.path
+                );
                 return;
             }
-            string doorBasePath = extraData.texPath2;
-            splitterBuildingDoorOpen = new GraphicData
-            {
-                graphicClass = typeof(Graphic_Single),
-                texPath = doorBasePath + "_Open",
-                drawSize = Vector2.one
-            };
-            splitterBuildingDoorClosed = new GraphicData
-            {
-                graphicClass = typeof(Graphic_Single),
-                texPath = doorBasePath + "_Closed",
-                drawSize = Vector2.one
-            };
-            splitterBuildingBlueprint = new GraphicData
-            {
-                graphicClass = typeof(Graphic_Single),
-                texPath = doorBasePath + "_Blueprint",
-                drawSize = Vector2.one
-            };
+
+            var doorBasePath = extraData.texPath2;
+            splitterBuildingDoorOpen = new GraphicData { graphicClass = typeof(Graphic_Single), texPath = doorBasePath + "_Open", drawSize = Vector2.one };
+            splitterBuildingDoorClosed = new GraphicData { graphicClass = typeof(Graphic_Single), texPath = doorBasePath + "_Closed", drawSize = Vector2.one };
+            splitterBuildingBlueprint = new GraphicData { graphicClass = typeof(Graphic_Single), texPath = doorBasePath + "_Blueprint", drawSize = Vector2.one };
             if (extraData.arrowTexPath1 != null)
             {
-                this.arrowOutput = MaterialPool.MatFrom(extraData.arrowTexPath1);
+                arrowOutput = MaterialPool.MatFrom(extraData.arrowTexPath1);
             }
+
             if (extraData.arrowTexPath2 != null)
             {
-                this.arrowInput = MaterialPool.MatFrom(extraData.arrowTexPath2);
+                arrowInput = MaterialPool.MatFrom(extraData.arrowTexPath2);
             }
         }
 
         //Note: if someone wanted to make this accessible via XML, go for it!
         public Vector3 BuildingOffset => new Vector3(0, 0.3f, 0); // mostly picked by trial and error
+
         // Make sure arrows show over building:
         public Vector3 ArrowOffset(Rot4 rot)
         {
-            var preOffset = this.arrowOffsetsByRot4[rot.AsInt];
-            var building = this.BuildingOffset;
-            var offset = new Vector3(preOffset.x,
-                     Mathf.Max(preOffset.y, building.y + 0.01f),
-                     preOffset.z);
+            var preOffset = arrowOffsetsByRot4[rot.AsInt];
+            var building = BuildingOffset;
+            var offset = new Vector3(preOffset.x, Mathf.Max(preOffset.y, building.y + 0.01f), preOffset.z);
             return offset;
         }
+
         //TODO Changed in 1.3 --> extraRotation was added. any changes needed?
         public override void Print(SectionLayer layer, Thing thing, float extraRotation)
         {
@@ -108,50 +99,45 @@ namespace ProjectRimFactory.AutoMachineTool
                     return;
                 // We want to draw the open door only if something is using the S
                 //   facing wall, so either an output link to the S or an incoming link:
-                if ((splitter.OutputLinks.TryGetValue(Rot4.South, out var link) &&
-                     link.Active)
-                    || splitter.IncomingLinks.Any(o => splitter.Position + Rot4.South.FacingCell == o.Position))
+                if ((splitter.OutputLinks.TryGetValue(Rot4.South, out var link) && link.Active) ||
+                    splitter.IncomingLinks.Any(o => splitter.Position + Rot4.South.FacingCell == o.Position))
                 {
                     // Draw open door
                     var mat = splitterBuildingDoorOpen.Graphic.MatSingleFor(thing);
-                    Printer_Plane.PrintPlane(layer, thing.TrueCenter() + BuildingOffset,
-                        Vector2.one, mat);
+                    Printer_Plane.PrintPlane(layer, thing.TrueCenter() + BuildingOffset, Vector2.one, mat);
                 }
                 else
                 {
                     // Draw closed door
                     var mat = splitterBuildingDoorClosed.Graphic.MatSingleFor(thing);
-                    Printer_Plane.PrintPlane(layer, thing.TrueCenter() + BuildingOffset,
-                        Vector2.one, mat);
+                    Printer_Plane.PrintPlane(layer, thing.TrueCenter() + BuildingOffset, Vector2.one, mat);
                 }
+
                 // Print the splitter version of the tiny yellow arrow showing input direction:
                 foreach (var i in splitter.IncomingLinks)
                 {
                     if (i.Position.IsNextTo(splitter.Position))
-                    { // otherwise need new logic
+                    {
+                        // otherwise need new logic
                         // splitter.Position + offset = i.Position, so
                         // offset = i.Position - splitter.Position
                         var r = Rot4.FromIntVec3(i.Position - splitter.Position);
-                        Printer_Plane.PrintPlane(layer, thing.TrueCenter()
-                                     + ArrowOffset(r), this.drawSize, arrowInput,
-                                     r.Opposite.AsAngle);
+                        Printer_Plane.PrintPlane(layer, thing.TrueCenter() + ArrowOffset(r), drawSize, arrowInput, r.Opposite.AsAngle);
                     }
                 }
+
                 // print tiny brown arrows pointing in output directions:
                 foreach (var d in splitter.ActiveOutputDirections)
                 {
-                    Printer_Plane.PrintPlane(layer, thing.TrueCenter() +
-                             ArrowOffset(d),
-                             this.drawSize, arrowOutput, d.AsAngle);
+                    Printer_Plane.PrintPlane(layer, thing.TrueCenter() + ArrowOffset(d), drawSize, arrowOutput, d.AsAngle);
                 }
             }
             else
-            { // blueprint?
+            {
+                // blueprint?
                 //var mat = FadedMaterialPool.FadedVersionOf(splitterBuildingDoorClosed.Graphic.MatSingleFor(thing), 0.5f);
-                Printer_Plane.PrintPlane(layer, thing.TrueCenter() + new Vector3(0, 0.3f, 0),
-                    Vector2.one, splitterBuildingBlueprint.Graphic.MatSingleFor(thing));
+                Printer_Plane.PrintPlane(layer, thing.TrueCenter() + new Vector3(0, 0.3f, 0), Vector2.one, splitterBuildingBlueprint.Graphic.MatSingleFor(thing));
             }
         }
-
     }
 }

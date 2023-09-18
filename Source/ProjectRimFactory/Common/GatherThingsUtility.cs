@@ -30,13 +30,12 @@ namespace ProjectRimFactory
         /// <param name="map">Map</param>
         public static IEnumerable<Thing> AllThingsInCellForUse(this IntVec3 c, Map map, bool allowStorageZones = true)
         {
-
             if (!c.InBounds(map)) yield break;
-            List<Thing> thingList = map.thingGrid.ThingsListAt(c);
+            var thingList = map.thingGrid.ThingsListAt(c);
             //Risk for duplicate entrys if a cell contins both a Item & a IThingHolder that holds said item
-            for (int i = thingList.Count - 1; i >= 0; i--)
+            for (var i = thingList.Count - 1; i >= 0; i--)
             {
-                Thing t = thingList[i];
+                var t = thingList[i];
                 if (t is Building && t is IThingHolder holder && !(t is Frame))
                 {
                     if (holder.GetDirectlyHeldThings() is ThingOwner<Thing> owner)
@@ -49,7 +48,7 @@ namespace ProjectRimFactory
                                 continue;
                         }
 
-                        for (int j = owner.InnerListForReading.Count - 1; j >= 0; j--)
+                        for (var j = owner.InnerListForReading.Count - 1; j >= 0; j--)
                         {
                             yield return owner.InnerListForReading[j];
                         }
@@ -62,16 +61,17 @@ namespace ProjectRimFactory
                 //This should support all other storage Buildings
                 else if (t is Building_Storage storage)
                 {
-                    foreach (Thing thing in storage.GetSlotGroup().HeldThings)
+                    foreach (var thing in storage.GetSlotGroup().HeldThings)
                     {
                         yield return thing;
                     }
                 }
             }
+
             //Pull from Storage Zones
             if (allowStorageZones && c.GetZone(map) is Zone_Stockpile sz)
             {
-                foreach (Thing thing in sz.AllContainedThings.Where(t => t.def.category == ThingCategory.Item))
+                foreach (var thing in sz.AllContainedThings.Where(t => t.def.category == ThingCategory.Item))
                 {
                     yield return thing;
                 }

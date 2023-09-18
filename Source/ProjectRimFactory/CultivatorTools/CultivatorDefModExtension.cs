@@ -1,8 +1,9 @@
 ﻿using RimWorld;
 using Verse;
+
 namespace ProjectRimFactory.CultivatorTools
 {
-    public class CultivatorDefModExtension : DefModExtension, ProjectRimFactory.Common.IXMLThingDescription
+    public class CultivatorDefModExtension : DefModExtension, Common.IXMLThingDescription
     {
         public int TickFrequencyDivisor = 200;
         public int squareAreaRadius;
@@ -10,8 +11,8 @@ namespace ProjectRimFactory.CultivatorTools
 
         public string GetDescription(ThingDef def)
         {
-            string text = "";
-            int range = 0;
+            var text = "";
+            var range = 0;
             if (squareAreaRadius > 0)
             {
                 range = squareAreaRadius;
@@ -20,6 +21,7 @@ namespace ProjectRimFactory.CultivatorTools
             {
                 range = (int)def.specialDisplayRadius;
             }
+
             text += "PRF_UTD_CultivatorDefModExtension_Range".Translate(range) + "\r\n";
 
             text += "PRF_UTD_CultivatorDefModExtension_Tickdev".Translate(TickFrequencyDivisor) + "\r\n";

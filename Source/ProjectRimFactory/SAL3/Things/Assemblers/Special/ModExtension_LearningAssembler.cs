@@ -1,10 +1,9 @@
 ﻿using RimWorld;
 using Verse;
 
-
 namespace ProjectRimFactory.SAL3.Things.Assemblers.Special
 {
-    class ModExtension_LearningAssembler : DefModExtension, ProjectRimFactory.Common.IXMLThingDescription
+    class ModExtension_LearningAssembler : DefModExtension, Common.IXMLThingDescription
     {
         public float MinSpeed = 0.5f;
         public float MaxSpeed = float.PositiveInfinity;
@@ -15,7 +14,7 @@ namespace ProjectRimFactory.SAL3.Things.Assemblers.Special
 
         public string GetDescription(ThingDef def)
         {
-            string text = "";
+            var text = "";
 
             if (MinSpeed == MaxSpeed)
             {
@@ -28,6 +27,7 @@ namespace ProjectRimFactory.SAL3.Things.Assemblers.Special
 
                 text += "PRF_UTD_ModExtension_LearningAssembler_Speed".Translate($"{MinSpeed * 100}% - {maxSpeedString}");
             }
+
             text += "\r\n";
             if (MinQuality == MaxQuality)
             {
@@ -37,8 +37,8 @@ namespace ProjectRimFactory.SAL3.Things.Assemblers.Special
             {
                 text += "PRF_UTD_ModExtension_LearningAssembler_Quality".Translate($"{MinQuality} - {MaxQuality}");
             }
-            text += "\r\n";
 
+            text += "\r\n";
 
             return text;
         }

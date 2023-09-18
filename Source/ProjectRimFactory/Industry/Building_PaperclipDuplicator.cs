@@ -17,6 +17,7 @@ namespace ProjectRimFactory.Industry
 
         CompOutputAdjustable outputComp;
         CompPowerTrader powerComp;
+
         public long PaperclipsActual
         {
             get
@@ -38,6 +39,7 @@ namespace ProjectRimFactory.Industry
                         result = long.MaxValue;
                     }
                 }
+
                 return result;
             }
             set
@@ -46,38 +48,45 @@ namespace ProjectRimFactory.Industry
                 lastTick = Find.TickManager.TicksGame;
             }
         }
+
         public virtual void DepositPaperclips(int count)
         {
             PaperclipsActual = PaperclipsActual + count;
         }
+
         public virtual void WithdrawPaperclips(int count)
         {
             PaperclipsActual = PaperclipsActual - count;
         }
+
         public override void PostMake()
         {
             base.PostMake();
             outputComp = GetComp<CompOutputAdjustable>();
             powerComp = GetComp<CompPowerTrader>();
         }
+
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
             outputComp = GetComp<CompOutputAdjustable>();
             powerComp = GetComp<CompPowerTrader>();
         }
+
         protected override void ReceiveCompSignal(string signal)
         {
             base.ReceiveCompSignal(signal);
         }
+
         public override string GetInspectString()
         {
-            StringBuilder builder = new StringBuilder();
-            string str = base.GetInspectString();
+            var builder = new StringBuilder();
+            var str = base.GetInspectString();
             if (!string.IsNullOrEmpty(str))
             {
                 builder.AppendLine(str);
             }
+
             builder.AppendLine("PaperclipsInDuplicator".Translate(PaperclipsActual.ToString()));
             if (boundStorageUnit != null)
             {
@@ -87,14 +96,17 @@ namespace ProjectRimFactory.Industry
             {
                 builder.AppendLine("PRFNoBoundStorageUnit".Translate());
             }
+
             return builder.ToString().TrimEndNewlines();
         }
+
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            foreach (Gizmo g in base.GetGizmos())
+            foreach (var g in base.GetGizmos())
             {
                 yield return g;
             }
+
             if (Prefs.DevMode)
             {
                 yield return new Command_Action()
@@ -121,6 +133,7 @@ namespace ProjectRimFactory.Industry
                 };
             }
         }
+
         public override void ExposeData()
         {
             base.ExposeData();

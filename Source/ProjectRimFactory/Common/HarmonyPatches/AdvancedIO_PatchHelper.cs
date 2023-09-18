@@ -7,7 +7,6 @@ namespace ProjectRimFactory.Common.HarmonyPatches
 {
     public static class AdvancedIO_PatchHelper
     {
-
         /// <summary>
         /// Gets all Ports that could be used
         /// They are Powerd, connected and the connected DSU is also powerd
@@ -29,21 +28,21 @@ namespace ProjectRimFactory.Common.HarmonyPatches
         public static List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>> GetOrderdAdvancedIOPorts(Map map, IntVec3 referencePos)
         {
             var dict_IOports = GetAdvancedIOPorts(map);
-            List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>> Ports = new List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>>();
+            var Ports = new List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>>();
             foreach (var pair in dict_IOports)
             {
                 var distance = pair.Key.DistanceTo(referencePos);
                 Ports.Add(new KeyValuePair<float, Building_AdvancedStorageUnitIOPort>(distance, pair.Value));
             }
+
             return Ports.OrderBy(i => i.Key).ToList();
         }
-
 
         public static List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>> GetOrderdAdvancedIOPorts(Map map, IntVec3 pawnPos, IntVec3 targetPos)
         {
             var dict_IOports = GetAdvancedIOPorts(map);
 
-            List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>> Ports = new List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>>();
+            var Ports = new List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>>();
             foreach (var pair in dict_IOports)
             {
                 var distance = CalculatePath(pawnPos, pair.Key, targetPos);
@@ -52,7 +51,6 @@ namespace ProjectRimFactory.Common.HarmonyPatches
 
             return Ports.OrderBy(i => i.Key).ToList();
         }
-
 
         /// <summary>
         /// Returns a List of Ports where the in addition to the lower requirements they are additionally closer then a maxDistance 
@@ -92,7 +90,6 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             return GetOrderdAdvancedIOPorts(map, pawnPos, targetPos).Where(p => p.Key < maxDistance && CanMoveItem(p.Value, thing)).FirstOrDefault();
         }
 
-
         /// <summary>
         /// Checks if a Port can Move a specific Item
         /// </summary>
@@ -114,7 +111,6 @@ namespace ProjectRimFactory.Common.HarmonyPatches
         {
             return port.boundStorageUnit?.HoldsPos(thingPos) ?? false;
         }
-
 
         /// <summary>
         /// Calculates the Full Path Cost
@@ -148,7 +144,5 @@ namespace ProjectRimFactory.Common.HarmonyPatches
         {
             return map.pathFinder.FindPath(pawn.Position, thingPos, pawn).TotalCost + map.pathFinder.FindPath(thingPos, targetPos, pawn).TotalCost;
         }
-
-
     }
 }

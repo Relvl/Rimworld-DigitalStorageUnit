@@ -17,9 +17,9 @@ namespace ProjectRimFactory.Common.HarmonyPatches
         public static void UpdatePowerDraw(Building_MassStorageUnitPowered dsu, CompPowerTrader powertrader)
         {
             float powerDraw = 0;
-            if (!FridgePowerDrawPerUnit.TryGetValue(dsu, out powerDraw)) powerDraw = -1 * (float)ReflectionUtility.CompProperties_Power_basePowerConsumption.GetValue(powertrader.Props);
+            if (!FridgePowerDrawPerUnit.TryGetValue(dsu, out powerDraw))
+                powerDraw = -1 * (float)ReflectionUtility.CompProperties_Power_basePowerConsumption.GetValue(powertrader.Props);
             powertrader.powerOutputInt = powerDraw - dsu.ExtraPowerDraw;
         }
-
     }
 }

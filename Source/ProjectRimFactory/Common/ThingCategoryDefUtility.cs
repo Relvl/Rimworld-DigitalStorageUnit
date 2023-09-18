@@ -8,7 +8,7 @@ namespace ProjectRimFactory.Common
         public static IEnumerable<ThingCategoryDef> ThisAndParents(this ThingCategoryDef cat)
         {
             yield return cat;
-            foreach (ThingCategoryDef def in cat.Parents)
+            foreach (var def in cat.Parents)
             {
                 yield return def;
             }

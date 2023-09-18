@@ -11,25 +11,28 @@ namespace ProjectRimFactory.AutoMachineTool
     {
         public Building_ItemPuller()
         {
-            this.outputToEntireStockpile = true;
+            outputToEntireStockpile = true;
         }
+
         protected bool active = false;
         protected bool takeForbiddenItems = true;
         protected bool takeSingleItems = false;
-        public override Graphic Graphic => this.def.GetModExtension<ModExtension_Graphic>()?.GetByName(GetGraphicName()) ?? base.Graphic;
+        public override Graphic Graphic => def.GetModExtension<ModExtension_Graphic>()?.GetByName(GetGraphicName()) ?? base.Graphic;
         protected const float defaultWorkAmount = 120f;
 
         private string GetGraphicName()
         {
             string name = null;
-            if (this.OutputSides)
+            if (OutputSides)
             {
-                name += this.right ? "Right" : "Left";
+                name += right ? "Right" : "Left";
             }
-            if (this.active)
+
+            if (active)
             {
                 name += "Working";
             }
+
             return name;
         }
 
@@ -48,56 +51,63 @@ namespace ProjectRimFactory.AutoMachineTool
                     settings.CopyFrom(GetParentStoreSettings());
                 }
             }
+
             return settings;
         }
+
         public StorageSettings GetParentStoreSettings() => def.building?.fixedStorageSettings;
 
         protected StorageSettings storageSettings;
-        public StorageSettings StorageSettings => this.storageSettings;
+        public StorageSettings StorageSettings => storageSettings;
 
         private bool right = false;
 
         public bool Getright => right;
 
-        private bool OutputSides => this.def.GetModExtension<ModExtension_Puller>()?.outputSides ?? false;
+        private bool OutputSides => def.GetModExtension<ModExtension_Puller>()?.outputSides ?? false;
 
-        protected override LookMode WorkingLookMode { get => LookMode.Deep; } // despawned
+        protected override LookMode WorkingLookMode => LookMode.Deep; // despawned
+
         /// <summary>
         /// Whether the puller grabs a single item or the entire stack
         /// </summary>
-        public bool TakeSingleItems { get => takeSingleItems; set => takeSingleItems = value; }
+        public bool TakeSingleItems
+        {
+            get => takeSingleItems;
+            set => takeSingleItems = value;
+        }
 
         public override void ExposeData()
         {
             base.ExposeData();
 
-            Scribe_Values.Look<bool>(ref this.active, "active", false);
-            Scribe_Values.Look<bool>(ref this.right, "right", false);
+            Scribe_Values.Look<bool>(ref active, "active", false);
+            Scribe_Values.Look<bool>(ref right, "right", false);
             Scribe_Deep.Look(ref settings, "settings", new object[] { this });
-            Scribe_Values.Look<bool>(ref this.takeForbiddenItems, "takeForbidden", true);
-            Scribe_Values.Look<bool>(ref this.takeSingleItems, "takeSingleItems", false);
+            Scribe_Values.Look<bool>(ref takeForbiddenItems, "takeForbidden", true);
+            Scribe_Values.Look<bool>(ref takeSingleItems, "takeSingleItems", false);
         }
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
 
-            this.settings = GetStoreSettings(); // force init
-            this.forcePlace = false;
+            settings = GetStoreSettings(); // force init
+            forcePlace = false;
 
-            if (!respawningAfterLoad) Messages.Message("PRF.NeedToTurnOnPuller".Translate(),
-                     this, MessageTypeDefOf.CautionInput);
+            if (!respawningAfterLoad) Messages.Message("PRF.NeedToTurnOnPuller".Translate(), this, MessageTypeDefOf.CautionInput);
         }
 
         protected override void Reset()
         {
-            if (this.working != null)
+            if (working != null)
             {
                 if (!working.Spawned)
                 {
                     GenPlace.TryPlaceThing(working, Position, Map, ThingPlaceMode.Near, null, p => p != Position);
                 }
             }
+
             base.Reset();
         }
 
@@ -106,23 +116,21 @@ namespace ProjectRimFactory.AutoMachineTool
             return this;
         }
 
-
         protected virtual Thing TargetThing()
         {
             Thing target = null;
-            var allThings = (this.Position + this.Rotation.Opposite.FacingCell).AllThingsInCellForUse(this.Map).ToArray();
+            var allThings = (Position + Rotation.Opposite.FacingCell).AllThingsInCellForUse(Map).ToArray();
 
-            var AllReserved = this.Map.reservationManager.AllReservedThings().ToHashSet();
+            var AllReserved = Map.reservationManager.AllReservedThings().ToHashSet();
 
- 
-            for (int i = 0; i < allThings.Length; i++)
+            for (var i = 0; i < allThings.Length; i++)
             {
                 var thing = allThings[i];
-                if (!this.takeForbiddenItems && thing.IsForbidden(Faction.OfPlayer)) continue;
-                if (!this.settings.AllowedToAccept(thing)) continue;
+                if (!takeForbiddenItems && thing.IsForbidden(Faction.OfPlayer)) continue;
+                if (!settings.AllowedToAccept(thing)) continue;
                 if (AllReserved.Contains(thing)) continue;
 
-                if (!this.IsLimit(thing))
+                if (!IsLimit(thing))
                 {
                     target = thing;
                     break;
@@ -130,14 +138,14 @@ namespace ProjectRimFactory.AutoMachineTool
             }
 
             if (target == null) return target;
-            if (this.takeSingleItems) return (target.SplitOff(1));
+            if (takeSingleItems) return (target.SplitOff(1));
             // SplitOff ensures any item-removal effects happen:
             return (target.SplitOff(target.stackCount));
         }
 
         public override IntVec3 OutputCell()
         {
-            return this.def.GetModExtension<ModExtension_Puller>().GetOutputCell(this.Position, this.Rotation, this.right);
+            return def.GetModExtension<ModExtension_Puller>().GetOutputCell(Position, Rotation, right);
         }
 
         public override IEnumerable<Gizmo> GetGizmos()
@@ -146,29 +154,30 @@ namespace ProjectRimFactory.AutoMachineTool
             {
                 yield return g;
             }
-            foreach (Gizmo g2 in StorageSettingsClipboard.CopyPasteGizmosFor(settings))
+
+            foreach (var g2 in StorageSettingsClipboard.CopyPasteGizmosFor(settings))
                 yield return g2;
             yield return new Command_Toggle()
             {
-                isActive = () => this.active,
-                toggleAction = () => this.active = !this.active,
+                isActive = () => active,
+                toggleAction = () => active = !active,
                 defaultLabel = "PRF.AutoMachineTool.Puller.SwitchActiveLabel".Translate(),
                 defaultDesc = "PRF.AutoMachineTool.Puller.SwitchActiveDesc".Translate(),
                 icon = RS.PlayIcon
             };
             yield return new Command_Toggle()
             {
-                isActive = () => this.takeForbiddenItems,
-                toggleAction = () => this.takeForbiddenItems = !this.takeForbiddenItems,
+                isActive = () => takeForbiddenItems,
+                toggleAction = () => takeForbiddenItems = !takeForbiddenItems,
                 defaultLabel = "PRF.Puller.TakeForbiddenItems".Translate(),
                 defaultDesc = "PRF.Puller.TakeForbiddenItemsDesc".Translate(),
                 icon = TexCommand.ForbidOff
             };
-            if (this.OutputSides)
+            if (OutputSides)
             {
                 yield return new Command_Action()
                 {
-                    action = () => this.right = !this.right,
+                    action = () => right = !right,
                     defaultLabel = "PRF.AutoMachineTool.Puller.SwitchOutputSideLabel".Translate(),
                     defaultDesc = "PRF.AutoMachineTool.Puller.SwitchOutputSideDesc".Translate(),
                     icon = RS.OutputDirectionIcon
@@ -178,7 +187,7 @@ namespace ProjectRimFactory.AutoMachineTool
 
         protected override bool IsActive()
         {
-            return base.IsActive() && this.active;
+            return base.IsActive() && active;
         }
 
         protected override bool WorkInterruption(Thing working)
@@ -188,7 +197,7 @@ namespace ProjectRimFactory.AutoMachineTool
 
         protected override bool TryStartWorking(out Thing target, out float workAmount)
         {
-            workAmount = Building_ItemPuller.defaultWorkAmount; // 120
+            workAmount = defaultWorkAmount; // 120
             target = TargetThing();
             if (target?.Spawned == true) target.DeSpawn();
             return target != null;
@@ -205,47 +214,53 @@ namespace ProjectRimFactory.AutoMachineTool
             products = this.products;
             return true;
         }
+
         protected override void Placing()
         {
             // unforbid any items picked up before they are put down:
             if (!products.NullOrEmpty())
             {
-                foreach (Thing t in products)
+                foreach (var t in products)
                     if (t.IsForbidden(Faction.OfPlayer))
                         t.SetForbidden(false);
             }
+
             base.Placing();
         }
+
         public override bool AcceptsThing(Thing newThing, IPRF_Building giver)
         {
-            if (this.State == WorkingState.Ready)
+            if (State == WorkingState.Ready)
             {
-                this.ClearActions();
+                ClearActions();
                 if (newThing.Spawned) newThing.DeSpawn();
-                this.ForceStartWork(newThing, defaultWorkAmount);
+                ForceStartWork(newThing, defaultWorkAmount);
                 return true;
             }
+
             return false;
         }
 
         static Building_ItemPuller()
         {
-            Common.ITab_ProductionSettings.RegisterSetting(ShouldShowSingleVsStackSetting,
-                                           ExtraHeightNeeded, DoSettingsWindowContents);
+            ITab_ProductionSettings.RegisterSetting(ShouldShowSingleVsStackSetting, ExtraHeightNeeded, DoSettingsWindowContents);
         }
+
         public static bool ShouldShowSingleVsStackSetting(Thing thing)
         {
             return thing is Building_ItemPuller;
         }
+
         public static float ExtraHeightNeeded(Thing t)
         {
             return 21f;
         }
+
         public static void DoSettingsWindowContents(Thing t, Listing_Standard ls)
         {
             if (t is Building_ItemPuller puller)
             {
-                bool tmp = puller.takeSingleItems;
+                var tmp = puller.takeSingleItems;
                 ls.CheckboxLabeled("PRF.Puller.takeSingleItemsHmm".Translate(), ref tmp, "PRF.Puller.takeSingleItemsDesc".Translate());
                 if (tmp != puller.takeSingleItems) puller.TakeSingleItems = tmp;
             }

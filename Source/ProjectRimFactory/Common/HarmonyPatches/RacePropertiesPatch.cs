@@ -39,6 +39,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 __result = true;
             }
         }
+
         public static bool overrideIsColonist = false;
     }
 }

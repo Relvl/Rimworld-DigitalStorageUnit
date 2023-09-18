@@ -35,6 +35,7 @@ namespace ProjectRimFactory
         public SpecialSculpture()
         {
         }
+
         public string id;
         public int maxNumberCopies = 1;
         public List<ThingDef> limitToDefs;
@@ -50,7 +51,7 @@ namespace ProjectRimFactory
             if (Scribe.mode == LoadSaveMode.Saving)
             {
                 // make sure we should bother saving:
-                bool shouldSave = false;
+                var shouldSave = false;
                 foreach (var t in currentInstances)
                 {
                     if (!t.Destroyed)
@@ -59,8 +60,10 @@ namespace ProjectRimFactory
                         break;
                     }
                 }
+
                 if (!shouldSave) return;
             }
+
             Scribe_Values.Look(ref id, "id", null, true);
             Scribe_Values.Look(ref titleKey, "title");
             Scribe_Values.Look(ref descKey, "desc");
@@ -73,38 +76,47 @@ namespace ProjectRimFactory
                 var all = Common.ProjectRimFactory_ModComponent.availableSpecialSculptures;
                 if (all != null)
                 {
-                    var s = all.FirstOrDefault(x => x.id == this.id);
+                    var s = all.FirstOrDefault(x => x.id == id);
                     if (s != null)
                     {
                         // Update graphic from master XML
-                        this.graphicData = s.graphicData;
-                        this.graphic = s.graphic;
-                        this.maxNumberCopies = s.maxNumberCopies;
+                        graphicData = s.graphicData;
+                        graphic = s.graphic;
+                        maxNumberCopies = s.maxNumberCopies;
                     }
                 }
-                foreach (Thing t in this.currentInstances)
+
+                foreach (var t in currentInstances)
                     MakeItemSpecial(t);
             }
         }
+
         // called on system load; prepares graphics (main thread only)
         public void Init()
         {
             if (graphicData != null)
-                this.graphic = graphicData.Graphic;
+                graphic = graphicData.Graphic;
         }
+
         // Handle magic of making art item into this special sculpture
         // Note: Description is handled by harmony patch checking against
         //       GameComponent list
         public void MakeItemSpecial(Thing art)
         {
             var artComp = art.TryGetComp<CompArt>();
-            if (artComp == null) { Log.Error("PRF could not make special sculpture from " + art); return; }
+            if (artComp == null)
+            {
+                Log.Error("PRF could not make special sculpture from " + art);
+                return;
+            }
+
             // Use HarmonyLib to set internal string values for title and author:
             AccessTools.Field(typeof(CompArt), "titleInt").SetValue(artComp, titleKey.Translate());
             AccessTools.Field(typeof(CompArt), "authorNameInt").SetValue(artComp, authorKey.Translate());
-            if (this.graphicData != null)
+            if (graphicData != null)
                 AccessTools.Field(typeof(Thing), "graphicInt").SetValue(artComp.parent, graphicData.Graphic);
         }
+
         // Pre-load game init:
         static public void PreStartGame()
         {
@@ -117,38 +129,38 @@ namespace ProjectRimFactory
                 }
             }
         }
+
         // Load from XML file Settings/SpecialSculpture.xml; called from ModComponent
         static public List<SpecialSculpture> LoadAvailableSpecialSculptures(ModContentPack content)
         {
             try
             {
-                var xml = DirectXmlLoader.XmlAssetsInModFolder(content, "Settings")?.
-                                  Where(x => x.name == "SpecialSculpture.xml")?.FirstOrDefault();
+                var xml = DirectXmlLoader.XmlAssetsInModFolder(content, "Settings")?.Where(x => x.name == "SpecialSculpture.xml")?.FirstOrDefault();
                 if (xml == null || xml.xmlDoc == null)
                 {
                     Log.Warning("PRF could not load special sculpture data");
                     return null;
                 }
-                List<SpecialSculpture> list = DirectXmlToObject
-                     .ObjectFromXml<List<SpecialSculpture>>(xml.xmlDoc.DocumentElement, false);
+
+                var list = DirectXmlToObject.ObjectFromXml<List<SpecialSculpture>>(xml.xmlDoc.DocumentElement, false);
 #if DEBUG
-                Log.Message("PRF: loaded " + ((list == null) ? "zero" : (list.Count.ToString())) +
-                                " special Sculptures");
+                Log.Message("PRF: loaded " + ((list == null) ? "zero" : (list.Count.ToString())) + " special Sculptures");
 #endif
                 return list;
             }
             catch (Exception e)
             {
-                Log.Error("PRF was unable to extract Special Sculpture data from XML; \n" +
-                    "  Exception: " + e);
+                Log.Error("PRF was unable to extract Special Sculpture data from XML; \n" + "  Exception: " + e);
                 return null;
             }
         }
     }
 #if DEBUG
-    [HarmonyPatch(typeof(Verse.ThingComp), "CompGetGizmosExtra")]
-    class Patch_CompGizmosExtraForArt {
-        static IEnumerable<Gizmo> Postfix(IEnumerable<Gizmo> __result, ThingComp __instance) {
+    [HarmonyPatch(typeof(ThingComp), "CompGetGizmosExtra")]
+    class Patch_CompGizmosExtraForArt
+    {
+        static IEnumerable<Gizmo> Postfix(IEnumerable<Gizmo> __result, ThingComp __instance)
+        {
             foreach (var g in __result) yield return g;
             if (!(__instance is CompArt compArt)) yield break;
             if (!(compArt.parent is Building_Art)) yield break;
@@ -156,21 +168,21 @@ namespace ProjectRimFactory
             {
                 defaultLabel = "Make Special Sculpture (SLOW)",
                 defaultDesc = "Make this Sculpture the first Special Sculpture available.  Reloads everything.\n\nTHIS IS VERY SLOW!\n(Project RimFactory)",
-                action = delegate () {
+                action = delegate()
+                {
                     // reload graphic assets: (not fast)
-                    LoadedModManager.GetMod<ProjectRimFactory.Common.ProjectRimFactory_ModComponent>().Content.ReloadContent();
+                    LoadedModManager.GetMod<Common.ProjectRimFactory_ModComponent>().Content.ReloadContent();
                     // reload language data: (....slow)
                     LanguageDatabase.Clear();
                     LanguageDatabase.InitAllMetadata(); // have to reload all? :p
                     //LoadedModManager.GetMod<ProjectRimFactory.Common.ProjectRimFactory_ModComponent>().Content.
-                    ProjectRimFactory.Common.ProjectRimFactory_ModComponent.availableSpecialSculptures
-                        = SpecialSculpture.LoadAvailableSpecialSculptures(LoadedModManager.GetMod<ProjectRimFactory.Common.ProjectRimFactory_ModComponent>().Content
-                        );
-                    foreach (var s in ProjectRimFactory.Common.ProjectRimFactory_ModComponent.availableSpecialSculptures)
+                    Common.ProjectRimFactory_ModComponent.availableSpecialSculptures =
+                        SpecialSculpture.LoadAvailableSpecialSculptures(LoadedModManager.GetMod<Common.ProjectRimFactory_ModComponent>().Content);
+                    foreach (var s in Common.ProjectRimFactory_ModComponent.availableSpecialSculptures)
                         s.Init();
-                    var target = ProjectRimFactory.Common.ProjectRimFactory_ModComponent.availableSpecialSculptures[0];
+                    var target = Common.ProjectRimFactory_ModComponent.availableSpecialSculptures[0];
 
-                    var comp = Current.Game.GetComponent<ProjectRimFactory.PRFGameComponent>();
+                    var comp = Current.Game.GetComponent<PRFGameComponent>();
                     if (comp.specialScupltures != null)
                         //                    if (comp.specialScupltures == null) comp.specialScupltures = new List<SpecialSculpture>();
 
@@ -179,7 +191,6 @@ namespace ProjectRimFactory
                     compArt.parent.DirtyMapMesh(compArt.parent.Map); // redraw graphic
                 }
             };
-
         }
     }
 #endif

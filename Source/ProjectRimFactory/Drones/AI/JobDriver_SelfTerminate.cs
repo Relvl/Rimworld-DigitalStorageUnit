@@ -12,14 +12,7 @@ namespace ProjectRimFactory.Drones.AI
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            yield return new Toil()
-            {
-                initAction = () =>
-                {
-                    pawn.Destroy();
-                },
-                defaultCompleteMode = ToilCompleteMode.Instant
-            };
+            yield return new Toil() { initAction = () => { pawn.Destroy(); }, defaultCompleteMode = ToilCompleteMode.Instant };
         }
     }
 }

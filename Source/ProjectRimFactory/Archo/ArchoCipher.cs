@@ -11,11 +11,13 @@ namespace ProjectRimFactory.Archo
             {
                 return "PRF_ArchoCipher_InternalServerError".Translate();
             }
-            string key = "PRF_ArchoCipherKey_" + str.Replace(' ', '_');
-            if (Translator.TryTranslate(key, out TaggedString result))
+
+            var key = "PRF_ArchoCipherKey_" + str.Replace(' ', '_');
+            if (Translator.TryTranslate(key, out var result))
             {
                 return result;
             }
+
             return null;
         }
     }

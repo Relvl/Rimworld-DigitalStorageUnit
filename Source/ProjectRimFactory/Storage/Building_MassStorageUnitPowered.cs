@@ -18,13 +18,12 @@ namespace ProjectRimFactory.Storage
 
         public override bool Powered => compPowerTrader?.PowerOn ?? false;
 
-        public override bool CanStoreMoreItems => (Powered) && this.Spawned &&
-            (ModExtension_Crate == null || StoredItemsCount < MaxNumberItemsInternal);
-        public override bool CanReceiveIO => base.CanReceiveIO && Powered && this.Spawned;
+        public override bool CanStoreMoreItems => (Powered) && Spawned && (ModExtension_Crate == null || StoredItemsCount < MaxNumberItemsInternal);
+        public override bool CanReceiveIO => base.CanReceiveIO && Powered && Spawned;
 
-        public override bool ForbidPawnInput => this.ForbidPawnAccess || !this.pawnAccess || !this.CanStoreMoreItems;
+        public override bool ForbidPawnInput => ForbidPawnAccess || !pawnAccess || !CanStoreMoreItems;
 
-        public override bool ForbidPawnOutput => this.ForbidPawnAccess || !this.pawnAccess;
+        public override bool ForbidPawnOutput => ForbidPawnAccess || !pawnAccess;
 
         public float ExtraPowerDraw => StoredItems.Count * 10f;
 
@@ -35,11 +34,13 @@ namespace ProjectRimFactory.Storage
             base.Notify_ReceivedThing(newItem);
             UpdatePowerConsumption();
         }
+
         public override void Notify_LostThing(Thing newItem)
         {
             base.Notify_LostThing(newItem);
             UpdatePowerConsumption();
         }
+
         public void UpdatePowerConsumption()
         {
             compPowerTrader ??= GetComp<CompPowerTrader>();
@@ -79,31 +80,27 @@ namespace ProjectRimFactory.Storage
         {
             base.PostMapInit();
             compPowerTrader ??= GetComp<CompPowerTrader>();
-            this.RefreshStorage();
+            RefreshStorage();
         }
 
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            foreach (Gizmo g in base.GetGizmos()) yield return g;
+            foreach (var g in base.GetGizmos()) yield return g;
             if (Prefs.DevMode)
             {
                 yield return new Command_Action()
                 {
-                    defaultLabel = "DEBUG: Debug actions",
-                    action = () =>
-                    {
-                        Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>(DebugActions())));
-                    }
+                    defaultLabel = "DEBUG: Debug actions", action = () => { Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>(DebugActions()))); }
                 };
             }
 
-            if (!this.ForbidPawnAccess)
+            if (!ForbidPawnAccess)
             {
                 yield return new Command_Toggle()
                 {
                     defaultLabel = "PRFPawnAccessLabel".Translate(),
-                    isActive = () => this.pawnAccess,
-                    toggleAction = () => this.pawnAccess = !this.pawnAccess,
+                    isActive = () => pawnAccess,
+                    toggleAction = () => pawnAccess = !pawnAccess,
                     defaultDesc = "PRFPawnAccessDesc".Translate(),
                     icon = StoragePawnAccessSwitchIcon
                 };
@@ -116,9 +113,10 @@ namespace ProjectRimFactory.Storage
             {
                 if (def.GetModExtension<DefModExtension_Crate>()?.destroyContainsItems ?? false)
                 {
-                    this.StoredItems.Where(t => !t.Destroyed).ToList().ForEach(x => x.Destroy());
+                    StoredItems.Where(t => !t.Destroyed).ToList().ForEach(x => x.Destroy());
                 }
             }
+
             base.DeSpawn(mode);
         }
 
@@ -134,10 +132,8 @@ namespace ProjectRimFactory.Storage
             {
                 return "PRFCrateUIThingLabel".Translate(StoredItemsCount, def.GetModExtension<DefModExtension_Crate>().limit);
             }
-            else
-            {
-                return base.GetUIThingLabel();
-            }
+
+            return base.GetUIThingLabel();
         }
 
         public override string GetITabString(int itemsSelected)
@@ -146,10 +142,8 @@ namespace ProjectRimFactory.Storage
             {
                 return "PRFItemsTabLabel_Crate".Translate(StoredItemsCount, def.GetModExtension<DefModExtension_Crate>().limit, itemsSelected);
             }
-            else
-            {
-                return base.GetITabString(itemsSelected);
-            }
+
+            return base.GetITabString(itemsSelected);
         }
     }
 }

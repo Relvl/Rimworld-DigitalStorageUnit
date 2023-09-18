@@ -7,7 +7,7 @@ namespace ProjectRimFactory.Common
     {
         public ITab_Filter() : base()
         {
-            this.labelKey = "Filter";
+            labelKey = "Filter";
         }
         // Everything else is vanilla, so any changes anyone makes to ITab_Storage
         //   (such as RSA's search function!) *should* work just fine for us!

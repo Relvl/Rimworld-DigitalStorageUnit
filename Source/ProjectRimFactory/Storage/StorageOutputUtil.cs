@@ -14,7 +14,6 @@ namespace ProjectRimFactory.Storage
     /// </summary>
     public class StorageOutputUtil
     {
-
         public StorageOutputUtil(Building building)
         {
             map = building.Map;
@@ -23,6 +22,7 @@ namespace ProjectRimFactory.Storage
             //Note: While 2 below the current post could be outside them map we probably don't need to handle this as that would be outside the build zone
             outputCell = building.GetComp<CompOutputAdjustable>()?.CurrentCell ?? building.Position + new IntVec3(0, 0, -2);
         }
+
         private IntVec3 outputCell = IntVec3.Invalid;
         private Map map;
 
@@ -33,15 +33,14 @@ namespace ProjectRimFactory.Storage
         /// </summary>
         /// <param name="intVec3"></param>
         /// <returns></returns>
-        private bool ValidatePos(IntVec3 intVec3 )
+        private bool ValidatePos(IntVec3 intVec3)
         {
             return !intVec3.GetThingList(map).Any(e => e is ILinkableStorageParent);
         }
 
         public bool OutputItem(Thing item)
         {
-            return GenPlace.TryPlaceThing(item.SplitOff(item.stackCount), outputCell, map, ThingPlaceMode.Near,null, ValidatePos);
+            return GenPlace.TryPlaceThing(item.SplitOff(item.stackCount), outputCell, map, ThingPlaceMode.Near, null, ValidatePos);
         }
-
     }
 }

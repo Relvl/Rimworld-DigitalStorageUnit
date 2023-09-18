@@ -24,14 +24,17 @@ namespace ProjectRimFactory.Storage
             Scribe_Values.Look(ref min, "min");
             Scribe_Values.Look(ref max, "max");
         }
+
         public bool SatisfiesMax(int stackCount, int stackLimit)
         {
             return CountNeededToReachMax(stackCount, stackLimit) > 0;
         }
+
         public bool SatisfiesMin(int stackCount)
         {
             return !useMin || stackCount >= min;
         }
+
         public int CountNeededToReachMax(int currentCount, int limit)
         {
             if (useMax)
@@ -41,12 +44,12 @@ namespace ProjectRimFactory.Storage
 
         public void Copy(OutputSettings other)
         {
-            other.minTooltip = this.minTooltip;
-            other.maxTooltip = this.maxTooltip;
-            other.useMin = this.useMin;
-            other.useMax = this.useMax;
-            other.min = this.min;
-            other.max = this.max;
+            other.minTooltip = minTooltip;
+            other.maxTooltip = maxTooltip;
+            other.useMin = useMin;
+            other.useMax = useMax;
+            other.min = min;
+            other.max = max;
         }
 
         public string minTooltip;

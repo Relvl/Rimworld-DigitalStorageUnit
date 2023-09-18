@@ -14,16 +14,16 @@ namespace ProjectRimFactory.Common
     //   and the effecter will still Tick() every tick.
     public class CompEffecter : ThingComp, ITicker
     {
-        public CompProperties_Effecter Props => (CompProperties_Effecter)this.props;
+        public CompProperties_Effecter Props => (CompProperties_Effecter)props;
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
 
-            this.InitializeEffecter();
+            InitializeEffecter();
 
-            this.parent.Map.GetComponent<PRFMapComponent>()?.AddTicker(this);
-            this.UpdateEffecter();
+            parent.Map.GetComponent<PRFMapComponent>()?.AddTicker(this);
+            UpdateEffecter();
         }
 
         private Effecter effecter;
@@ -34,10 +34,10 @@ namespace ProjectRimFactory.Common
 
         public void Tick()
         {
-            if (this.effectOnInt)
+            if (effectOnInt)
             {
-                this.effecter?.EffectTick(this.parent, this.parent);
-                this.sound?.SustainerUpdate();
+                effecter?.EffectTick(parent, parent);
+                sound?.SustainerUpdate();
             }
         }
 
@@ -45,7 +45,7 @@ namespace ProjectRimFactory.Common
         {
             base.PostDeSpawn(map);
 
-            this.FinalizeEffecter();
+            FinalizeEffecter();
             map.GetComponent<PRFMapComponent>()?.RemoveTicker(this);
         }
 
@@ -53,30 +53,27 @@ namespace ProjectRimFactory.Common
 
         private void InitializeEffecter()
         {
-            this.effecter = this.Props?.effect?.Spawn();
-            this.sound = this.Props?.sound?.TrySpawnSustainer(this.parent);
+            effecter = Props?.effect?.Spawn();
+            sound = Props?.sound?.TrySpawnSustainer(parent);
         }
 
         private void FinalizeEffecter()
         {
-            this.effecter?.Cleanup();
-            this.sound?.End();
-            this.effecter = null;
-            this.sound = null;
+            effecter?.Cleanup();
+            sound?.End();
+            effecter = null;
+            sound = null;
         }
 
         public bool Enable
         {
-            get
-            {
-                return this.enable;
-            }
+            get => enable;
             set
             {
-                if (this.enable != value)
+                if (enable != value)
                 {
-                    this.enable = value;
-                    this.UpdateEffecter();
+                    enable = value;
+                    UpdateEffecter();
                 }
             }
         }
@@ -85,29 +82,34 @@ namespace ProjectRimFactory.Common
         {
             get
             {
-                if (!this.parent.Spawned)
+                if (!parent.Spawned)
                 {
                     return false;
                 }
-                if (!FlickUtility.WantsToBeOn(this.parent))
+
+                if (!FlickUtility.WantsToBeOn(parent))
                 {
                     return false;
                 }
-                CompPowerTrader compPowerTrader = this.parent.TryGetComp<CompPowerTrader>();
+
+                var compPowerTrader = parent.TryGetComp<CompPowerTrader>();
                 if (compPowerTrader != null && !compPowerTrader.PowerOn)
                 {
                     return false;
                 }
-                CompRefuelable compRefuelable = this.parent.TryGetComp<CompRefuelable>();
+
+                var compRefuelable = parent.TryGetComp<CompRefuelable>();
                 if (compRefuelable != null && !compRefuelable.HasFuel)
                 {
                     return false;
                 }
-                CompSendSignalOnCountdown compSendSignalOnCountdown = this.parent.TryGetComp<CompSendSignalOnCountdown>();
+
+                var compSendSignalOnCountdown = parent.TryGetComp<CompSendSignalOnCountdown>();
                 if (compSendSignalOnCountdown != null && compSendSignalOnCountdown.ticksLeft <= 0)
                 {
                     return false;
                 }
+
                 //Todo: Check if we need a replacement (I'm a bit lost here)
                 //CompSendSignalOnPawnProximity compSendSignalOnPawnProximity = this.parent.TryGetComp<CompSendSignalOnPawnProximity>();
                 //return compSendSignalOnPawnProximity == null || !compSendSignalOnPawnProximity.Sent;
@@ -117,21 +119,21 @@ namespace ProjectRimFactory.Common
 
         private void UpdateEffecter()
         {
-            var shouldBeEffectNow = this.ShouldBeEffectNow && this.enable;
-            if (this.effectOnInt == shouldBeEffectNow)
+            var shouldBeEffectNow = ShouldBeEffectNow && enable;
+            if (effectOnInt == shouldBeEffectNow)
             {
                 return;
             }
-            this.effectOnInt = shouldBeEffectNow;
+
+            effectOnInt = shouldBeEffectNow;
             if (effectOnInt)
             {
-                this.InitializeEffecter();
+                InitializeEffecter();
             }
             else
             {
-                this.FinalizeEffecter();
+                FinalizeEffecter();
             }
-
         }
 
         public override void ReceiveCompSignal(string signal)
@@ -145,9 +147,9 @@ namespace ProjectRimFactory.Common
                 signal == CompRefuelable.RanOutOfFuelSignal ||
                 signal == CompSchedule.ScheduledOnSignal ||
                 signal == CompSchedule.ScheduledOffSignal)
-            //                signal == MechClusterUtility.DefeatedSignal)
+                //                signal == MechClusterUtility.DefeatedSignal)
             {
-                this.UpdateEffecter();
+                UpdateEffecter();
             }
         }
     }
@@ -160,7 +162,7 @@ namespace ProjectRimFactory.Common
 
         public CompProperties_Effecter()
         {
-            this.compClass = typeof(CompEffecter);
+            compClass = typeof(CompEffecter);
         }
     }
 }

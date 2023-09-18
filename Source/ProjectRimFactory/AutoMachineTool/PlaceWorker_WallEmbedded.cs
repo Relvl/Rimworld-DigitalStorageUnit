@@ -14,15 +14,16 @@ namespace ProjectRimFactory.AutoMachineTool
                 .Where(t => !t.def.building.isNaturalRock)
                 .Where(t => t.def.passability == Traversability.Impassable)
                 // Walls or (Smoothed) Rocks:  (smoothed rocks are !.isNaturalRock)
-                .Any(t => (t.def.graphicData.linkFlags & LinkFlags.Wall) > 0    //walls
-                       || (t.def.graphicData.linkFlags & LinkFlags.Rock) > 0))  //smoothed rocks
+                .Any(
+                    t => (t.def.graphicData.linkFlags & LinkFlags.Wall) > 0 //walls
+                         ||
+                         (t.def.graphicData.linkFlags & LinkFlags.Rock) > 0
+                )) //smoothed rocks
             {
                 return AcceptanceReport.WasAccepted;
             }
-            else
-            {
-                return new AcceptanceReport("PRF.AutoMachineTool.MustInWall".Translate());
-            }
+
+            return new AcceptanceReport("PRF.AutoMachineTool.MustInWall".Translate());
         }
     }
 }

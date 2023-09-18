@@ -30,11 +30,11 @@ namespace ProjectRimFactory.SAL3.Things.Assemblers.Special
         /// Slightly favors low quality at low progress, and high quality at high progress.
         /// </summary>
         public float NormalizedProgress => (Progress * 1.2f) - 0.1f;
-        WorkSpeedFactorManager manager = new WorkSpeedFactorManager();
-        protected override float ProductionSpeedFactor =>
-            currentBillReport == null ? FactorOffset : manager.GetFactorFor(currentBillReport.bill.recipe) + FactorOffset;
 
-        private ModExtension_LearningAssembler modExtension_LearningAssembler => this.def.GetModExtension<ModExtension_LearningAssembler>();
+        WorkSpeedFactorManager manager = new WorkSpeedFactorManager();
+        protected override float ProductionSpeedFactor => currentBillReport == null ? FactorOffset : manager.GetFactorFor(currentBillReport.bill.recipe) + FactorOffset;
+
+        private ModExtension_LearningAssembler modExtension_LearningAssembler => def.GetModExtension<ModExtension_LearningAssembler>();
 
         //Calculate the Item Quality based on the ProductionSpeedFactor (Used by the Harmony Patch; see Patch_GenRecipe_MakeRecipeProducts.cs)
         QualityCategory ISetQualityDirectly.GetQuality(SkillDef relevantSkill)
@@ -44,9 +44,10 @@ namespace ProjectRimFactory.SAL3.Things.Assemblers.Special
                 Log.Error("Got a Building_Assembler_Learning without a modExtension_LearningAssembler, please report this error!");
                 return QualityCategory.Normal;
             }
-            float maxQualityFactor = (float)modExtension_LearningAssembler.MaxQuality;
-            float centerX = NormalizedProgress * maxQualityFactor;
-            float expectedQuality = Rand.Gaussian(centerX, 1.25f);
+
+            var maxQualityFactor = (float)modExtension_LearningAssembler.MaxQuality;
+            var centerX = NormalizedProgress * maxQualityFactor;
+            var expectedQuality = Rand.Gaussian(centerX, 1.25f);
 
             expectedQuality = Mathf.Clamp(expectedQuality, (int)modExtension_LearningAssembler.MinQuality, (int)modExtension_LearningAssembler.MaxQuality);
 
@@ -56,25 +57,26 @@ namespace ProjectRimFactory.SAL3.Things.Assemblers.Special
         public override void Tick()
         {
             base.Tick();
-            if (currentBillReport != null && this.IsHashIntervalTick(60) && this.Active)
+            if (currentBillReport != null && this.IsHashIntervalTick(60) && Active)
             {
                 if (modExtension_LearningAssembler != null && MaxSpeed <= manager.GetFactorFor(currentBillReport.bill.recipe))
                 {
                     return;
                 }
 
-
                 manager.IncreaseWeight(currentBillReport.bill.recipe, 0.001f * currentBillReport.bill.recipe.workSkillLearnFactor);
             }
         }
+
         public override string GetInspectString()
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine(base.GetInspectString());
             if (currentBillReport != null)
             {
                 stringBuilder.AppendLine("SALCurrentProductionSpeed".Translate(currentBillReport.bill.recipe.label, ProductionSpeedFactor.ToStringPercent()));
             }
+
             return stringBuilder.ToString().TrimEndNewlines();
         }
 
@@ -84,25 +86,31 @@ namespace ProjectRimFactory.SAL3.Things.Assemblers.Special
 
         protected override IEnumerable<FloatMenuOption> GetDebugOptions()
         {
-            foreach (FloatMenuOption option in base.GetDebugOptions())
+            foreach (var option in base.GetDebugOptions())
             {
                 yield return option;
             }
-            yield return new FloatMenuOption("View active skills", () =>
-            {
-                manager.TrimUnnecessaryFactors();
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.AppendLine("Active skills ranked descending:");
-                RecipeDef[] keys = manager.factors.Keys.ToArray();
-                WorkSpeedFactorEntry[] values = manager.factors.Values.ToArray();
-                Array.Sort(values, keys);
-                for (int i = keys.Length - 1; i >= 0; i--)
+
+            yield return new FloatMenuOption(
+                "View active skills",
+                () =>
                 {
-                    stringBuilder.AppendLine($"{keys[i].LabelCap}: {values[i].FactorFinal + FactorOffset}");
+                    manager.TrimUnnecessaryFactors();
+                    var stringBuilder = new StringBuilder();
+                    stringBuilder.AppendLine("Active skills ranked descending:");
+                    var keys = manager.factors.Keys.ToArray();
+                    var values = manager.factors.Values.ToArray();
+                    Array.Sort(values, keys);
+                    for (var i = keys.Length - 1; i >= 0; i--)
+                    {
+                        stringBuilder.AppendLine($"{keys[i].LabelCap}: {values[i].FactorFinal + FactorOffset}");
+                    }
+
+                    Log.Message(stringBuilder.ToString());
                 }
-                Log.Message(stringBuilder.ToString());
-            });
+            );
         }
+
         public override void ExposeData()
         {
             Scribe_Deep.Look(ref manager, "manager");

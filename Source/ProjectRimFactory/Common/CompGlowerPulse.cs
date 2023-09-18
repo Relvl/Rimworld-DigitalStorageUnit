@@ -7,21 +7,21 @@ namespace ProjectRimFactory.Common
 {
     public class CompGlowerPulse : CompGlower, ITicker
     {
-        public new CompProperties_GlowerPulse Props => (CompProperties_GlowerPulse)this.props;
+        public new CompProperties_GlowerPulse Props => (CompProperties_GlowerPulse)props;
 
         public override void PostExposeData()
         {
             base.PostExposeData();
-            Scribe_Values.Look<bool>(ref this.glows, "glows", true);
-            this.Props.Glows = this.glows;
+            Scribe_Values.Look<bool>(ref glows, "glows", true);
+            Props.Glows = glows;
         }
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
-            this.Props.Glows = this.glows;
+            Props.Glows = glows;
 
-            this.parent.Map.GetComponent<PRFMapComponent>()?.AddTicker(this);
+            parent.Map.GetComponent<PRFMapComponent>()?.AddTicker(this);
         }
 
         public override void PostDeSpawn(Map map)
@@ -33,11 +33,11 @@ namespace ProjectRimFactory.Common
 
         public void Tick()
         {
-            if (this.needUpdate || this.Props.pulse)
+            if (needUpdate || Props.pulse)
             {
-                this.Props.Update();
-                this.parent.Map.glowGrid.MarkGlowGridDirty(this.parent.Position);
-                this.needUpdate = false;
+                Props.Update();
+                parent.Map.glowGrid.MarkGlowGridDirty(parent.Position);
+                needUpdate = false;
             }
         }
 
@@ -45,29 +45,26 @@ namespace ProjectRimFactory.Common
 
         public new bool Glows
         {
-            get
-            {
-                return this.glows;
-            }
+            get => glows;
 
             set
             {
-                this.glows = value;
-                this.Props.Glows = value;
-                this.needUpdate = true;
+                glows = value;
+                Props.Glows = value;
+                needUpdate = true;
             }
         }
 
-        [Unsaved]
-        private bool needUpdate = true;
+        [Unsaved] private bool needUpdate = true;
     }
 
     public class CompProperties_GlowerPulse : CompProperties_Glower
     {
         public CompProperties_GlowerPulse()
         {
-            this.compClass = typeof(CompGlowerPulse);
+            compClass = typeof(CompGlowerPulse);
         }
+
         public int lastTick = 0;
 
         public float minGlowRadius = 10f;
@@ -90,44 +87,48 @@ namespace ProjectRimFactory.Common
 
         public void Update()
         {
-            if (this.lastTick == Find.TickManager.TicksGame)
+            if (lastTick == Find.TickManager.TicksGame)
             {
                 return;
             }
-            this.lastTick = Find.TickManager.TicksGame;
-            if (this.Glows)
+
+            lastTick = Find.TickManager.TicksGame;
+            if (Glows)
             {
                 if (!pulse)
                 {
-                    this.glowColor = Color32.Lerp(minGlowColor.ProjectToColor32, maxGlowColor.ProjectToColor32, 0.5f).AsColorInt();
-                    this.glowRadius = Mathf.Lerp(minGlowRadius, maxGlowRadius, 0.5f);
+                    glowColor = Color32.Lerp(minGlowColor.ProjectToColor32, maxGlowColor.ProjectToColor32, 0.5f).AsColorInt();
+                    glowRadius = Mathf.Lerp(minGlowRadius, maxGlowRadius, 0.5f);
                     return;
                 }
-                if (this.easing == null)
+
+                if (easing == null)
                 {
-                    if (this.easingType != null)
+                    if (easingType != null)
                     {
-                        this.easing = (IEasing)Activator.CreateInstance(this.easingType);
+                        easing = (IEasing)Activator.CreateInstance(easingType);
                     }
                     else
                     {
-                        this.easing = new EasingLinear();
+                        easing = new EasingLinear();
                     }
                 }
-                var time = ((Find.TickManager.TicksGame + lag) % (this.intervalTicks * 2)) / this.intervalTicks;
+
+                var time = ((Find.TickManager.TicksGame + lag) % (intervalTicks * 2)) / intervalTicks;
                 if (time > 1.0f)
                 {
                     time = 2.0f - time;
                 }
-                var factor = this.easing.GetValue(time);
 
-                this.glowColor = Color32.Lerp(minGlowColor.ProjectToColor32, maxGlowColor.ProjectToColor32, factor).AsColorInt();
-                this.glowRadius = Mathf.Lerp(minGlowRadius, maxGlowRadius, factor);
+                var factor = easing.GetValue(time);
+
+                glowColor = Color32.Lerp(minGlowColor.ProjectToColor32, maxGlowColor.ProjectToColor32, factor).AsColorInt();
+                glowRadius = Mathf.Lerp(minGlowRadius, maxGlowRadius, factor);
             }
             else
             {
-                this.glowColor = ((Color32)Color.clear).AsColorInt();
-                this.glowRadius = 0;
+                glowColor = ((Color32)Color.clear).AsColorInt();
+                glowRadius = 0;
             }
         }
     }
@@ -207,13 +208,7 @@ namespace ProjectRimFactory.Common
     {
         public float GetValue(float t)
         {
-            return t == 0
-                ? 0
-                : t == 1
-                ? 1
-                : t < 0.5f
-                ? Mathf.Pow(2, 20 * t - 10) / 2
-                : (2 - Mathf.Pow(2, -20 * t + 10)) / 2;
+            return t == 0 ? 0 : t == 1 ? 1 : t < 0.5f ? Mathf.Pow(2, 20 * t - 10) / 2 : (2 - Mathf.Pow(2, -20 * t + 10)) / 2;
         }
     }
 
@@ -223,14 +218,9 @@ namespace ProjectRimFactory.Common
 
         public float GetValue(float t)
         {
-
-            return t == 0
-              ? 0
-              : t == 1
-              ? 1
-              : t < 0.5f
-              ? -(Mathf.Pow(2, 20 * t - 10) * Mathf.Sin((20 * t - 11.125f) * c5)) / 2
-              : (Mathf.Pow(2, -20 * t + 10) * Mathf.Sin((20 * t - 11.125f) * c5)) / 2 + 1;
+            return t == 0 ? 0 :
+                t == 1 ? 1 :
+                t < 0.5f ? -(Mathf.Pow(2, 20 * t - 10) * Mathf.Sin((20 * t - 11.125f) * c5)) / 2 : (Mathf.Pow(2, -20 * t + 10) * Mathf.Sin((20 * t - 11.125f) * c5)) / 2 + 1;
         }
     }
 
@@ -238,9 +228,7 @@ namespace ProjectRimFactory.Common
     {
         public float GetValue(float t)
         {
-            return t < 0.5
-                ? (1 - EaseBounceOut(1 - 2 * t)) / 2
-                : (1 + EaseBounceOut(2 * t - 1)) / 2;
+            return t < 0.5 ? (1 - EaseBounceOut(1 - 2 * t)) / 2 : (1 + EaseBounceOut(2 * t - 1)) / 2;
         }
 
         const float n1 = 7.5625f;
@@ -252,19 +240,20 @@ namespace ProjectRimFactory.Common
             {
                 return n1 * t * t;
             }
-            else if (t < 2 / d1)
+
+            if (t < 2 / d1)
             {
                 return n1 * (t -= 1.5f / d1) * t + 0.75f;
             }
-            else if (t < 2.5 / d1)
+
+            if (t < 2.5 / d1)
             {
                 return n1 * (t -= 2.25f / d1) * t + 0.9375f;
             }
-            else
-            {
-                return n1 * (t -= 2.625f / d1) * t + 0.984375f;
-            }
+
+            return n1 * (t -= 2.625f / d1) * t + 0.984375f;
         }
     }
+
     #endregion
 }

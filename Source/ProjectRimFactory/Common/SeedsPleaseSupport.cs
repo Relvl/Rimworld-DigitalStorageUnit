@@ -11,7 +11,6 @@ namespace ProjectRimFactory.Common
 {
     internal static class SeedsPleaseSupport
     {
-
         public static CellRect InputArea(Building building)
         {
             return building.OccupiedRect().ExpandedBy(1);
@@ -22,14 +21,15 @@ namespace ProjectRimFactory.Common
             if (ProjectRimFactory_ModComponent.ModSupport_SeedsPlease)
             {
                 return tryPlantNew(plantDef, SeedInputArea, map);
-            }else if (ProjectRimFactory_ModComponent.ModSupport_SeedsPleaseLite)
+            }
+
+            if (ProjectRimFactory_ModComponent.ModSupport_SeedsPleaseLite)
             {
-                return tryPlantNew(plantDef, SeedInputArea, map); ;
+                return tryPlantNew(plantDef, SeedInputArea, map);
             }
 
             //No Seeds Mod Active
             return true;
-            
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace ProjectRimFactory.Common
         /// <param name="SeedInputArea"></param>
         /// <param name="map"></param>
         /// <returns></returns>
-        private static bool tryPlantNew(ThingDef plantDef,CellRect SeedInputArea,Map map)
+        private static bool tryPlantNew(ThingDef plantDef, CellRect SeedInputArea, Map map)
         {
             //Search for seeds in SeedInputArea
             Thing seed = null;
@@ -50,6 +50,7 @@ namespace ProjectRimFactory.Common
                 seed = cell.GetThingList(map).Find(t => t.def == plantDef.blueprintDef);
                 if (seed != null) break;
             }
+
             if (seed == null) return false;
 
             //remove the Seed
@@ -84,15 +85,15 @@ namespace ProjectRimFactory.Common
         /// <summary>
         /// SeedsPlease activated code for creating plant products, credit to notfood for original mod
         /// </summary>
-        private static void CreatePlantSeeds_SeedsPlease(Plant p, IntVec3 outputCell,Map map)
+        private static void CreatePlantSeeds_SeedsPlease(Plant p, IntVec3 outputCell, Map map)
         {
             var seed = p.def.blueprintDef;
             var type = seed.GetType();
             var props = type.GetField("seed").GetValue(seed);
             var propType = props.GetType();
-            int count = 0;
+            var count = 0;
             //This section of code adapted of notfood's original source
-            float parameter = Mathf.Max(Mathf.InverseLerp(p.def.plant.harvestMinGrowth, 1.2f, p.Growth), 1f);
+            var parameter = Mathf.Max(Mathf.InverseLerp(p.def.plant.harvestMinGrowth, 1.2f, p.Growth), 1f);
             if ((float)propType.GetField("seedFactor").GetValue(props) > 0f && Rand.Value < (float)propType.GetField("baseChance").GetValue(props) * parameter)
             {
                 if (Rand.Value < (float)propType.GetField("extraChance").GetValue(props))
@@ -103,11 +104,11 @@ namespace ProjectRimFactory.Common
                 {
                     count = 1;
                 }
+
                 var thing = ThingMaker.MakeThing(seed);
                 thing.stackCount = count;
                 GenSpawn.Spawn(thing, outputCell, map);
             }
         }
-
     }
 }

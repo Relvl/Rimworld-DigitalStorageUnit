@@ -7,7 +7,7 @@ namespace ProjectRimFactory.Drones.AI
     {
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            foreach (Toil t in base.MakeNewToils())
+            foreach (var t in base.MakeNewToils())
                 yield return t;
             yield return new Toil()
             {

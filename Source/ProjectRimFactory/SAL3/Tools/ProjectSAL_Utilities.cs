@@ -25,12 +25,15 @@ namespace ProjectRimFactory.SAL3.Tools
                 {
                     return stuffs[0];
                 }
-                if (RecipeDef.products.Any((ThingDefCountClass x) => x.thingDef.MadeFromStuff))
+
+                if (RecipeDef.products.Any(x => x.thingDef.MadeFromStuff))
                 {
-                    return stuffs.Where((Thing x) => x.def.IsStuff).RandomElementByWeight((Thing x) => x.stackCount);
+                    return stuffs.Where(x => x.def.IsStuff).RandomElementByWeight(x => x.stackCount);
                 }
-                return stuffs.RandomElementByWeight((Thing x) => x.stackCount); ;
+
+                return stuffs.RandomElementByWeight(x => x.stackCount);
             }
+
             //Return steel instead of Null to prevent null ref in some cases
             return ThingMaker.MakeThing(ThingDefOf.Steel);
         }

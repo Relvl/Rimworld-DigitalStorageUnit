@@ -1,7 +1,6 @@
 ﻿using RimWorld;
 using Verse;
 
-
 /*
 Code Taken from https://github.com/KiameV/rimworld-rimfridge/blob/09e15aeef1c702dd729f267e4b51016edbb6f63f/Source/CompProperties_SecondLayer.cs & https://github.com/KiameV/rimworld-rimfridge/blob/09e15aeef1c702dd729f267e4b51016edbb6f63f/Source/CompSecondLayer.cs
 Code has been published with the MIT Licence
@@ -27,8 +26,10 @@ namespace ProjectRimFactory.Common
                         Log.ErrorOnce(parent.def + " has no SecondLayer graphicData but we are trying to access it.", 764532);
                         return BaseContent.BadGraphic;
                     }
+
                     graphicInt = Props.graphicData.GraphicColoredFor(parent);
                 }
+
                 return graphicInt;
             }
         }
@@ -39,6 +40,7 @@ namespace ProjectRimFactory.Common
             Graphic.Draw(GenThing.TrueCenter(parent.Position, parent.Rotation, parent.def.size, Props.Altitude), parent.Rotation, parent);
         }
     }
+
     internal class CompProperties_SecondLayer : CompProperties
     {
         public GraphicData graphicData = null;

@@ -9,7 +9,8 @@ namespace ProjectRimFactory.Common.HarmonyPatches
     {
         //canReachThing Holds the Last item that was checked and Required the use of a Advanced IO Port
         //This is used in other patches to force the use of an IO Port
-        private static Thing canReachThing =null;
+        private static Thing canReachThing = null;
+
         public static bool CanReachThing(Thing thing)
         {
             var ret = thing == canReachThing;
@@ -35,19 +36,18 @@ namespace ProjectRimFactory.Common.HarmonyPatches
 
             var thing = dest.Thing;
 
-
             //Ignore everything that is not a Item
             if (thing == null || thing.def.category != ThingCategory.Item) return;
 
             //Quickly get the Map Component (abort if nonexistent)
             var mapcomp = PatchStorageUtil.GetPRFMapComponent(___map);
             if (mapcomp == null) return;
- 
+
             //Is in a DSU
-            if (hasPathToItem(thing,mapcomp,__instance,start,traverseParams))
+            if (hasPathToItem(thing, mapcomp, __instance, start, traverseParams))
             {
                 canReachThing = thing;
-                 __result = true;
+                __result = true;
             }
         }
 
@@ -64,7 +64,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             var AdvancedIOLocations = mapComp.GetadvancedIOLocations;
             var cnt = AdvancedIOLocations.Count;
             //Check Every Advanced IO Port
-            for (int i = 0; i < cnt; i++)
+            for (var i = 0; i < cnt; i++)
             {
                 var current = AdvancedIOLocations.ElementAt(i);
 

@@ -13,12 +13,12 @@ namespace ProjectRimFactory.CultivatorTools
             base.SpawnSetup(map, respawningAfterLoad);
             RadialCellCount = GenRadial.NumCellsInRadius(def.specialDisplayRadius);
         }
+
         public override void DrawExtraSelectionOverlays()
         {
             base.DrawExtraSelectionOverlays();
         }
 
         protected override int cellCount => RadialCellCount;
-
     }
 }

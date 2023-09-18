@@ -6,9 +6,7 @@ namespace ProjectRimFactory.Common
 {
     class ReserchSkillModifier
     {
-
         private static int reserchSkillLevelDefault = 10; //Set if no other Reserch takes Effect
-
 
         /// <summary>
         /// Check The Resech for the apropriate Level to return
@@ -20,20 +18,21 @@ namespace ProjectRimFactory.Common
             //Order Matters
             if (PRFDefOf.PRF_AdvancedDrones.IsFinished)
             {
-                return 20;//Advanced Version
+                return 20; //Advanced Version
             }
-            else if (PRFDefOf.PRF_ImprovedDrones.IsFinished)
+
+            if (PRFDefOf.PRF_ImprovedDrones.IsFinished)
             {
                 return 15; //Improved Version
             }
-            else if (PRFDefOf.PRF_BasicDrones.IsFinished)
+
+            if (PRFDefOf.PRF_BasicDrones.IsFinished)
             {
                 return 10; //Basic
             }
 
             return reserchSkillLevelDefault;
         }
-
 
         public static int GetResechSkillLevel(Type callertype, SkillDef skillDef = null)
         {
@@ -43,22 +42,21 @@ namespace ProjectRimFactory.Common
                 //Order Matters
                 if (PRFDefOf.PRF_AdvancedDrones.IsFinished)
                 {
-                    return 20;//Advanced Version
+                    return 20; //Advanced Version
                 }
-                else if (PRFDefOf.PRF_ImprovedDrones.IsFinished)
+
+                if (PRFDefOf.PRF_ImprovedDrones.IsFinished)
                 {
                     return 15; //Improved Version
                 }
-                else if (PRFDefOf.PRF_BasicDrones.IsFinished)
+
+                if (PRFDefOf.PRF_BasicDrones.IsFinished)
                 {
                     return 10; //Basic
                 }
             }
 
-
-
             return reserchSkillLevelDefault;
         }
-
     }
 }

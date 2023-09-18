@@ -7,7 +7,6 @@ namespace ProjectRimFactory.Storage
 {
     public class Building_AdvancedStorageUnitIOPort : Building_StorageUnitIOBase
     {
-
         public override bool ShowLimitGizmo => false;
 
         private List<Thing> placementQueue = new List<Thing>();
@@ -19,43 +18,33 @@ namespace ProjectRimFactory.Storage
 
         public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
         {
-            this.Map.GetComponent<PRFMapComponent>().DeRegisteradvancedIOLocations(this.Position);
+            Map.GetComponent<PRFMapComponent>().DeRegisteradvancedIOLocations(Position);
             base.DeSpawn(mode);
         }
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
-            map.GetComponent<PRFMapComponent>().RegisteradvancedIOLocations(this.Position, this);
+            map.GetComponent<PRFMapComponent>().RegisteradvancedIOLocations(Position, this);
         }
 
         public override StorageIOMode IOMode
         {
-            get
-            {
-                return StorageIOMode.Output;
-            }
-            set
-            {
-            }
+            get => StorageIOMode.Output;
+            set { }
         }
 
-        public override bool ForbidPawnInput
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool ForbidPawnInput => true;
 
         private Thing GetstoredItem()
         {
             var map = Map;
             if (map is null)
             {
-                Log.Error($"PRF GetstoredItem @{this.Position} map is null");
+                Log.Error($"PRF GetstoredItem @{Position} map is null");
                 return null;
             }
+
             return WorkPosition.GetFirstItem(Map);
         }
 
@@ -77,7 +66,7 @@ namespace ProjectRimFactory.Storage
         {
             if (thing != null)
             {
-                thing.Position = this.Position;
+                thing.Position = Position;
             }
         }
 
@@ -88,13 +77,11 @@ namespace ProjectRimFactory.Storage
             if (this.IsHashIntervalTick(10))
             {
                 var thing = GetstoredItem();
-                if (thing != null && !this.Map.reservationManager.AllReservedThings().Contains(thing))
+                if (thing != null && !Map.reservationManager.AllReservedThings().Contains(thing))
                 {
                     RefreshInput();
                 }
             }
-
         }
-
     }
 }

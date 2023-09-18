@@ -16,14 +16,14 @@ namespace ProjectRimFactory.Common.HarmonyPatches
     {
         static void Postfix(Map map, ref IEnumerable<Thing> __result)
         {
-            HashSet<Thing> yieldedThings = new HashSet<Thing>();
+            var yieldedThings = new HashSet<Thing>();
             yieldedThings.AddRange<Thing>(__result);
-            foreach (ILinkableStorageParent dsu in TradePatchHelper.AllPowered(map))
+            foreach (var dsu in TradePatchHelper.AllPowered(map))
             {
                 yieldedThings.AddRange<Thing>(dsu.StoredItems);
             }
-            __result = yieldedThings;
 
+            __result = yieldedThings;
         }
     }
 
@@ -33,44 +33,41 @@ namespace ProjectRimFactory.Common.HarmonyPatches
     public static class Patch_PassingShip_c__DisplayClass24_0
     {
         public static Type predicateClass;
-        static MethodBase TargetMethod()//The target method is found using the custom logic defined here
+
+        static MethodBase TargetMethod() //The target method is found using the custom logic defined here
         {
-            predicateClass = typeof(PassingShip).GetNestedTypes(HarmonyLib.AccessTools.all)
-               .FirstOrDefault(t => t.FullName.Contains("c__DisplayClass23_0"));
+            predicateClass = typeof(PassingShip).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName.Contains("c__DisplayClass23_0"));
             if (predicateClass == null)
             {
                 Log.Error("PRF Harmony Error - predicateClass == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
                 return null;
             }
 
-            var m = predicateClass.GetMethods(AccessTools.all)
-                                 .FirstOrDefault(t => t.Name.Contains("b__1"));
+            var m = predicateClass.GetMethods(AccessTools.all).FirstOrDefault(t => t.Name.Contains("b__1"));
             if (m == null)
             {
                 Log.Error("PRF Harmony Error - m == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
             }
+
             return m;
         }
 
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
+            var hiddenClass = typeof(PassingShip).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName.Contains("c__DisplayClass23_0"));
 
-            Type hiddenClass = typeof(PassingShip).GetNestedTypes(HarmonyLib.AccessTools.all)
-               .FirstOrDefault(t => t.FullName.Contains("c__DisplayClass23_0"));
-
-            bool foundLocaterString = false;
+            var foundLocaterString = false;
             foreach (var instruction in instructions)
             {
-
                 //Patch shall change:
                 //if (!Building_OrbitalTradeBeacon.AllPowered(<>4__this.Map).Any())
                 //
                 //To:
                 //if (!Building_OrbitalTradeBeacon.AllPowered(<>4__this.Map).Any() && !Building_MassStorageUnitPowered.AllPowered(<>4__this.Map).Any() )
 
-
                 //Find the refrence Point
-                if (instruction.opcode == OpCodes.Call && (instruction.operand as MethodInfo) == AccessTools.Method(typeof(Building_OrbitalTradeBeacon), nameof(Building_OrbitalTradeBeacon.AllPowered)))
+                if (instruction.opcode == OpCodes.Call &&
+                    (instruction.operand as MethodInfo) == AccessTools.Method(typeof(Building_OrbitalTradeBeacon), nameof(Building_OrbitalTradeBeacon.AllPowered)))
                 {
                     foundLocaterString = true;
                 }
@@ -86,18 +83,14 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(hiddenClass, "<>4__this"));
                     yield return new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(PassingShip), "Map"));
                     //Call --> Building_MassStorageUnitPowered.AnyPowerd with the above as an argument
-                    yield return new CodeInstruction(OpCodes.Call, HarmonyLib.AccessTools
-                        .Method(typeof(TradePatchHelper), nameof(TradePatchHelper.AnyPowerd), new[] { typeof(Map) }));
+                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(TradePatchHelper), nameof(TradePatchHelper.AnyPowerd), new[] { typeof(Map) }));
                     yield return new CodeInstruction(OpCodes.Brtrue_S, instruction.operand);
                     continue;
-
                 }
+
                 //Keep the other instructions
                 yield return instruction;
-
             }
-
-
         }
     }
 
@@ -118,6 +111,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     if (any) break;
                 }
             }
+
             var cs = PatchStorageUtil.GetPRFMapComponent(map).ColdStorageBuildings.Select(b => b as ILinkableStorageParent);
             foreach (var item in cs)
             {
@@ -125,8 +119,4 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             }
         }
     }
-
-
-
-
 }

@@ -49,51 +49,52 @@ namespace ProjectRimFactory.Common
                     patched = false;
                 }
             }
-
         }
 
         //conditional
         private static Harmony harmony_instance = null;
 
         public static TogglePatch Patch_Reachability_CanReach = new TogglePatch(
-            AccessTools.Method(typeof(Verse.Reachability), "CanReach", new Type[] { typeof(IntVec3), typeof(LocalTargetInfo), typeof(PathEndMode), typeof(TraverseParms) }),
+            AccessTools.Method(typeof(Reachability), "CanReach", new Type[] { typeof(IntVec3), typeof(LocalTargetInfo), typeof(PathEndMode), typeof(TraverseParms) }),
             null,
-            AccessTools.Method(typeof(ProjectRimFactory.Common.HarmonyPatches.Patch_Reachability_CanReach), "Postfix")
-            );
+            AccessTools.Method(typeof(HarmonyPatches.Patch_Reachability_CanReach), "Postfix")
+        );
 
         //Storage Patches
         public static TogglePatch Patch_MinifiedThing_Print = new TogglePatch(
             AccessTools.Method(typeof(RimWorld.MinifiedThing), "Print", new Type[] { typeof(SectionLayer) }),
-            AccessTools.Method(typeof(ProjectRimFactory.Common.HarmonyPatches.Patch_MinifiedThing_Print), "Prefix")
-            );
+            AccessTools.Method(typeof(HarmonyPatches.Patch_MinifiedThing_Print), "Prefix")
+        );
+
         public static TogglePatch Patch_Thing_Print = new TogglePatch(
-            AccessTools.Method(typeof(Verse.Thing), "Print", new Type[] { typeof(SectionLayer) }),
-            AccessTools.Method(typeof(ProjectRimFactory.Common.HarmonyPatches.Patch_Thing_Print), "Prefix")
-            );
+            AccessTools.Method(typeof(Thing), "Print", new Type[] { typeof(SectionLayer) }),
+            AccessTools.Method(typeof(HarmonyPatches.Patch_Thing_Print), "Prefix")
+        );
+
         public static TogglePatch Patch_ThingWithComps_DrawGUIOverlay = new TogglePatch(
-           AccessTools.Method(typeof(Verse.ThingWithComps), "DrawGUIOverlay"),
-           AccessTools.Method(typeof(ProjectRimFactory.Common.HarmonyPatches.Patch_ThingWithComps_DrawGUIOverlay), "Prefix")
-           );
+            AccessTools.Method(typeof(ThingWithComps), "DrawGUIOverlay"),
+            AccessTools.Method(typeof(HarmonyPatches.Patch_ThingWithComps_DrawGUIOverlay), "Prefix")
+        );
+
         public static TogglePatch Patch_Thing_DrawGUIOverlay = new TogglePatch(
-           AccessTools.Method(typeof(Verse.Thing), "DrawGUIOverlay"),
-           AccessTools.Method(typeof(ProjectRimFactory.Common.HarmonyPatches.Patch_Thing_DrawGUIOverlay), "Prefix")
-           );
+            AccessTools.Method(typeof(Thing), "DrawGUIOverlay"),
+            AccessTools.Method(typeof(HarmonyPatches.Patch_Thing_DrawGUIOverlay), "Prefix")
+        );
+
         public static TogglePatch Patch_FloatMenuMakerMap_ChoicesAtFor = new TogglePatch(
-          AccessTools.Method(typeof(RimWorld.FloatMenuMakerMap), "ChoicesAtFor", new Type[] { typeof(UnityEngine.Vector3), typeof(Pawn), typeof(bool) }),
-          AccessTools.Method(typeof(ProjectRimFactory.Common.HarmonyPatches.Patch_FloatMenuMakerMap_ChoicesAtFor), "Prefix")
-          );
+            AccessTools.Method(typeof(RimWorld.FloatMenuMakerMap), "ChoicesAtFor", new Type[] { typeof(UnityEngine.Vector3), typeof(Pawn), typeof(bool) }),
+            AccessTools.Method(typeof(HarmonyPatches.Patch_FloatMenuMakerMap_ChoicesAtFor), "Prefix")
+        );
+
         public static TogglePatch Patch_Building_Storage_Accepts = new TogglePatch(
-         AccessTools.Method(typeof(RimWorld.Building_Storage), "Accepts", new Type[] { typeof(Verse.Thing) }),
-         AccessTools.Method(typeof(ProjectRimFactory.Common.HarmonyPatches.Patch_Building_Storage_Accepts), "Prefix")
-         );
+            AccessTools.Method(typeof(RimWorld.Building_Storage), "Accepts", new Type[] { typeof(Thing) }),
+            AccessTools.Method(typeof(HarmonyPatches.Patch_Building_Storage_Accepts), "Prefix")
+        );
+
         public static TogglePatch Patch_ForbidUtility_IsForbidden = new TogglePatch(
-         AccessTools.Method(typeof(RimWorld.ForbidUtility), "IsForbidden", new Type[] { typeof(Thing), typeof(Pawn) }),
-         AccessTools.Method(typeof(ProjectRimFactory.Common.HarmonyPatches.Patch_ForbidUtility_IsForbidden), "Prefix")
-         );
-
-
-
-
+            AccessTools.Method(typeof(RimWorld.ForbidUtility), "IsForbidden", new Type[] { typeof(Thing), typeof(Pawn) }),
+            AccessTools.Method(typeof(HarmonyPatches.Patch_ForbidUtility_IsForbidden), "Prefix")
+        );
 
         public static void InitHarmony(Harmony harmony)
         {
@@ -104,7 +105,7 @@ namespace ProjectRimFactory.Common
 
         private static void updatePatchStorage()
         {
-            bool state = building_MassStorages.Count > 0;
+            var state = building_MassStorages.Count > 0;
 
             Patch_MinifiedThing_Print.PatchHandler(state);
             Patch_Thing_Print.PatchHandler(state);
@@ -120,11 +121,11 @@ namespace ProjectRimFactory.Common
             building_MassStorages.Add(building);
             updatePatchStorage();
         }
+
         public static void Deregister(Building_MassStorageUnit building)
         {
             building_MassStorages.Remove(building);
             updatePatchStorage();
         }
-
     }
 }

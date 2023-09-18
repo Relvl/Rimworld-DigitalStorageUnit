@@ -20,7 +20,6 @@ namespace ProjectRimFactory
             ForbidOn = ContentFinder<Texture2D>.Get("UI/Designators/ForbidOn", true);
             ForbidOff = ContentFinder<Texture2D>.Get("UI/Designators/ForbidOff", true);
 
-
             OutputDirectionIcon = ContentFinder<Texture2D>.Get("PRFUi/OutputDirection", true);
             ForbidIcon = ContentFinder<Texture2D>.Get("PRFUi/Forbid", true);
             PlayIcon = ContentFinder<Texture2D>.Get("PRFUi/Play", true);
@@ -31,13 +30,11 @@ namespace ProjectRimFactory
             SplitterArrow_Left = ContentFinder<Texture2D>.Get("PRFUi/LeftArrow", true);
             SplitterArrow_Down = ContentFinder<Texture2D>.Get("PRFUi/DownArrow", true);
 
-
             DeleteX = ContentFinder<Texture2D>.Get("UI/Buttons/Delete", true);
 
             Arrow = ContentFinder<Texture2D>.Get("UI/Overlays/Arrow", true);
             // Initialize graphics for SpecialSculptures:
-            foreach (var s in ProjectRimFactory.Common.
-                     ProjectRimFactory_ModComponent.availableSpecialSculptures)
+            foreach (var s in Common.ProjectRimFactory_ModComponent.availableSpecialSculptures)
                 s.Init();
         }
 

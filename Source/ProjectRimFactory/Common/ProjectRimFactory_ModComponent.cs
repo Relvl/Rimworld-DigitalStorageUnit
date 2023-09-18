@@ -17,13 +17,13 @@ namespace ProjectRimFactory.Common
             try
             {
                 ProjectRimFactory_ModSettings.LoadXml(content);
-                this.Settings = GetSettings<ProjectRimFactory_ModSettings>();
-                this.HarmonyInstance = new Harmony("com.spdskatr.projectrimfactory");
-                this.HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
+                Settings = GetSettings<ProjectRimFactory_ModSettings>();
+                HarmonyInstance = new Harmony("com.spdskatr.projectrimfactory");
+                HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
                 Log.Message($"Project RimFactory Core {typeof(ProjectRimFactory_ModComponent).Assembly.GetName().Version} - Harmony patches successful");
                 availableSpecialSculptures = SpecialSculpture.LoadAvailableSpecialSculptures(content);
-                
-                ConditionalPatchHelper.InitHarmony(this.HarmonyInstance);
+
+                ConditionalPatchHelper.InitHarmony(HarmonyInstance);
                 ConditionalPatchHelper.Patch_Reachability_CanReach.PatchHandler(ProjectRimFactory_ModSettings.PRF_Patch_Reachability_CanReach);
             }
             catch (Exception ex)
@@ -39,17 +39,16 @@ namespace ProjectRimFactory.Common
             {
                 Log.Error("Project RimFactory Core :: LoadModSupport Caught exception: " + ex);
             }
-
         }
 
         //Mod Support
         //Cached MethodInfo as Reflection is Slow
-        public static System.Reflection.MethodInfo ModSupport_RrimFridge_GetFridgeCache = null;
-        public static System.Reflection.MethodInfo ModSupport_RrimFridge_HasFridgeAt = null;
+        public static MethodInfo ModSupport_RrimFridge_GetFridgeCache = null;
+        public static MethodInfo ModSupport_RrimFridge_HasFridgeAt = null;
         public static bool ModSupport_RrimFrige_Dispenser = false;
 
-        public static System.Reflection.MethodInfo ModSupport_ReserchPal_ResetLayout = null;
-        public static System.Reflection.MethodInfo ModSupport_ReserchPowl_ResetLayout = null;
+        public static MethodInfo ModSupport_ReserchPal_ResetLayout = null;
+        public static MethodInfo ModSupport_ReserchPowl_ResetLayout = null;
         public static bool ModSupport_ReserchPal = false;
         public static bool ModSupport_ReserchPowl = false;
 
@@ -81,8 +80,8 @@ namespace ProjectRimFactory.Common
 
                     if (RrimFridge_CompRefrigerator_CompTickRare != null)
                     {
-                        var postfix = typeof(HarmonyPatches.Patch_CompRefrigerator_CompTickRare).GetMethod("Postfix");
-                        this.HarmonyInstance.Patch(RrimFridge_CompRefrigerator_CompTickRare, null, new HarmonyMethod(postfix));
+                        var postfix = typeof(Patch_CompRefrigerator_CompTickRare).GetMethod("Postfix");
+                        HarmonyInstance.Patch(RrimFridge_CompRefrigerator_CompTickRare, null, new HarmonyMethod(postfix));
 
                         Log.Message("Project Rimfactory - added Support for Fridge DSU Power using RimFridge");
                     }
@@ -91,23 +90,21 @@ namespace ProjectRimFactory.Common
                         Log.Warning("Project Rimfactory - Failed to add Support for Fridge DSU Power using RimFridge");
                     }
                 }
-
-
-
             }
+
             if (ModLister.HasActiveModWithName("Simple Utilities: Fridge"))
             {
-
                 MethodBase SimpleFridge_FridgeUtility_Tick = null;
-                Type FridgeUtility = Type.GetType("SimpleFridge.FridgeUtility, SimpleUtilitiesFridge", false);
+                var FridgeUtility = Type.GetType("SimpleFridge.FridgeUtility, SimpleUtilitiesFridge", false);
                 if (FridgeUtility != null)
                 {
                     SimpleFridge_FridgeUtility_Tick = AccessTools.Method(FridgeUtility, "Tick");
                 }
+
                 if (SimpleFridge_FridgeUtility_Tick != null)
                 {
-                    var postfix = typeof(HarmonyPatches.Patch_FridgeUtility_Tick).GetMethod("Postfix");
-                    this.HarmonyInstance.Patch(SimpleFridge_FridgeUtility_Tick, null, new HarmonyMethod(postfix));
+                    var postfix = typeof(Patch_FridgeUtility_Tick).GetMethod("Postfix");
+                    HarmonyInstance.Patch(SimpleFridge_FridgeUtility_Tick, null, new HarmonyMethod(postfix));
 
                     Log.Message("Project Rimfactory - added Support for Fridge DSU Power using Simple Utilities: Fridge");
                 }
@@ -116,6 +113,7 @@ namespace ProjectRimFactory.Common
                     Log.Warning("Project Rimfactory - Failed to add Support for Fridge DSU Power using Simple Utilities: Fridge");
                 }
             }
+
             if (ModLister.HasActiveModWithName("ResearchPal - Forked"))
             {
                 ModSupport_ReserchPal_ResetLayout = AccessTools.Method("ResearchPal.Tree:ResetLayout");
@@ -142,39 +140,45 @@ namespace ProjectRimFactory.Common
                     Log.Warning("Project Rimfactory - Failed to added Support for ResearchPowl when using Lite Mode");
                 }
             }
+
             if (ModLister.HasActiveModWithName("[KV] Save Storage, Outfit, Crafting, Drug, & Operation Settings [1.4]"))
             {
                 //Get the Local Transpilers
                 //Billstack makes it function
                 //IsWorkTable makes the Gizmos Visible
                 var Transpiler_Billstack = AccessTools.Method("ProjectRimFactory.Common.HarmonyPatches.Patch_SaveStorageSettings_Patch_Building_GetGizmos:Transpiler_Billstack");
-                var Transpiler_IsWorkTable = AccessTools.Method("ProjectRimFactory.Common.HarmonyPatches.Patch_SaveStorageSettings_Patch_Building_GetGizmos:Transpiler_IsWorkTable");
+                var Transpiler_IsWorkTable =
+                    AccessTools.Method("ProjectRimFactory.Common.HarmonyPatches.Patch_SaveStorageSettings_Patch_Building_GetGizmos:Transpiler_IsWorkTable");
 
                 //Get the Patch that is adding the Save Storage Gizmos
                 var sss_Assembly = LoadedModManager.RunningMods.Where(c => c.PackageId.ToLower() == "savestoragesettings.kv.rw".ToLower())
-                    .First().assemblies.loadedAssemblies.Where(a => a.GetType("SaveStorageSettings.Patch_Building_GetGizmos") != null).First();
+                    .First()
+                    .assemblies.loadedAssemblies.Where(a => a.GetType("SaveStorageSettings.Patch_Building_GetGizmos") != null)
+                    .First();
                 if (sss_Assembly is not null)
                 {
                     //In the Compiled IL the code adding those Gizmos is hidden away in "new" Types
                     var toplevel_Class = sss_Assembly.GetType("SaveStorageSettings.Patch_Building_GetGizmos");
-                    var AllNestedTpyes = toplevel_Class?.GetNestedTypes(HarmonyLib.AccessTools.all);
+                    var AllNestedTpyes = toplevel_Class?.GetNestedTypes(AccessTools.all);
                     if (toplevel_Class is not null && AllNestedTpyes is not null)
                     {
                         //Get the Method BaseMethod_IsWorkTable
-                        HarmonyPatches.Patch_SaveStorageSettings_Patch_Building_GetGizmos.Patch_Building_Gizmos = AllNestedTpyes.FirstOrDefault(t => t.FullName.Contains("d__0"));
+                        Patch_SaveStorageSettings_Patch_Building_GetGizmos.Patch_Building_Gizmos = AllNestedTpyes.FirstOrDefault(t => t.FullName.Contains("d__0"));
 
-                        var BaseMethod_IsWorkTable = HarmonyPatches.Patch_SaveStorageSettings_Patch_Building_GetGizmos.Patch_Building_Gizmos?.GetMethod("MoveNext", BindingFlags.NonPublic | BindingFlags.Instance);
+                        var BaseMethod_IsWorkTable =
+                            Patch_SaveStorageSettings_Patch_Building_GetGizmos.Patch_Building_Gizmos?.GetMethod("MoveNext", BindingFlags.NonPublic | BindingFlags.Instance);
 
                         //Check if we have found Patch_Building_Gizmos
-                        if (HarmonyPatches.Patch_SaveStorageSettings_Patch_Building_GetGizmos.Patch_Building_Gizmos is not null && BaseMethod_IsWorkTable is not null)
+                        if (Patch_SaveStorageSettings_Patch_Building_GetGizmos.Patch_Building_Gizmos is not null && BaseMethod_IsWorkTable is not null)
                         {
                             //Patch Patch_Building_Gizmos
-                            this.HarmonyInstance.Patch(BaseMethod_IsWorkTable, null, null, new HarmonyMethod(Transpiler_IsWorkTable));
+                            HarmonyInstance.Patch(BaseMethod_IsWorkTable, null, null, new HarmonyMethod(Transpiler_IsWorkTable));
 
                             //The Code adding the different Gizmos is hidden in another Display Class
                             //That Class Contains the relevant Code in Methods with a Simelar naming
                             var BaseMethods_Billstack = AllNestedTpyes.FirstOrDefault(t => t.FullName.Contains("c__DisplayClass0_1"))
-                                .GetMethods(HarmonyLib.AccessTools.all).Where(m => m.Name.Contains("b__"));
+                                .GetMethods(AccessTools.all)
+                                .Where(m => m.Name.Contains("b__"));
 
                             if (BaseMethods_Billstack is not null)
                             {
@@ -183,8 +187,9 @@ namespace ProjectRimFactory.Common
                                 foreach (MethodBase BaseMethod_Billstack in BaseMethods_Billstack)
                                 {
                                     if (BaseMethod_Billstack == null) continue;
-                                    this.HarmonyInstance.Patch(BaseMethod_Billstack, null, null, new HarmonyMethod(Transpiler_Billstack));
+                                    HarmonyInstance.Patch(BaseMethod_Billstack, null, null, new HarmonyMethod(Transpiler_Billstack));
                                 }
+
                                 Log.Message("Added Support for: [KV] Save Storage, Outfit, Crafting, Drug, & Operation Settings");
                             }
                             else
@@ -207,19 +212,23 @@ namespace ProjectRimFactory.Common
                     Log.Error("PRF Could not find savestoragesettings.kv.rw assembly");
                 }
             }
+
             if (ModLister.HasActiveModWithName("SeedsPlease"))
             {
                 Log.Warning("PRF - SeedsPlease Detected - Compatibility probably requires an Update. Please Notify the PRF Team");
                 ModSupport_SeedsPlease = true;
             }
+
             if (ModLister.HasActiveModWithName("SeedsPlease: Lite"))
             {
                 ModSupport_SeedsPleaseLite = true;
             }
+
             if (ModLister.HasActiveModWithName("Vanilla Expanded Framework"))
             {
                 ModSupport_VEF_DualCropExtension = true;
             }
+
             if (ModLister.HasActiveModWithName("QualityBuilder"))
             {
                 MethodBase QualityBuilder_pawnCanConstruct = AccessTools.Method("QualityBuilder.QualityBuilder:pawnCanConstruct");
@@ -227,22 +236,18 @@ namespace ProjectRimFactory.Common
 
                 if (QualityBuilder_pawnCanConstruct != null && QualityBuilder_getPawnConstructionSkill != null)
                 {
-                    var postfix_pawnCanConstruct = typeof(HarmonyPatches.Patch_QualityBuilder_pawnCanConstruct).GetMethod("Postfix");
-                    var prefix_getPawnConstructionSkill = typeof(HarmonyPatches.Patch_QualityBuilder_getPawnConstructionSkill).GetMethod("Prefix");
-                    this.HarmonyInstance.Patch(QualityBuilder_pawnCanConstruct, null, new HarmonyMethod(postfix_pawnCanConstruct));
-                    this.HarmonyInstance.Patch(QualityBuilder_getPawnConstructionSkill, new HarmonyMethod(prefix_getPawnConstructionSkill));
+                    var postfix_pawnCanConstruct = typeof(Patch_QualityBuilder_pawnCanConstruct).GetMethod("Postfix");
+                    var prefix_getPawnConstructionSkill = typeof(Patch_QualityBuilder_getPawnConstructionSkill).GetMethod("Prefix");
+                    HarmonyInstance.Patch(QualityBuilder_pawnCanConstruct, null, new HarmonyMethod(postfix_pawnCanConstruct));
+                    HarmonyInstance.Patch(QualityBuilder_getPawnConstructionSkill, new HarmonyMethod(prefix_getPawnConstructionSkill));
                     Log.Message("Project Rimfactory - Added Support for QualityBuilder");
-                }   
+                }
                 else
                 {
                     Log.Warning("Project Rimfactory - Failed to add Support for QualityBuilder");
                 }
-                
             }
-
-
         }
-
 
         public Harmony HarmonyInstance { get; private set; }
 
@@ -260,9 +265,9 @@ namespace ProjectRimFactory.Common
 
         public override void WriteSettings()
         {
-            this.Settings.Apply();
+            Settings.Apply();
             Settings.Write();
-            if (this.Settings.RequireReboot)
+            if (Settings.RequireReboot)
             {
                 Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation("PRF.Settings.RequireReboot".Translate(), () => GenCommandLine.Restart()));
             }

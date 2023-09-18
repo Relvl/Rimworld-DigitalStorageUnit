@@ -4,31 +4,24 @@ using System.Linq;
 using Verse;
 using Verse.AI;
 
-
 namespace ProjectRimFactory.Common.HarmonyPatches
 {
-
-    [HarmonyPatch(typeof(Verse.AI.ReservationManager), "Reserve")]
+    [HarmonyPatch(typeof(ReservationManager), "Reserve")]
     class Patch_Reservation_Reservation_IO
     {
         static bool Prefix(Pawn claimant, Job job, LocalTargetInfo target, ref bool __result, Map ___map)
         {
             if (target.HasThing == false && ___map != null && target.Cell.InBounds(___map))
             {
-                Building_StorageUnitIOBase building_target = (Building_StorageUnitIOBase)target.Cell.GetThingList(___map).Where(t => t is Building_StorageUnitIOBase).FirstOrDefault();
+                var building_target = (Building_StorageUnitIOBase)target.Cell.GetThingList(___map).Where(t => t is Building_StorageUnitIOBase).FirstOrDefault();
                 if (building_target != null && building_target.mode == StorageIOMode.Input)
                 {
                     __result = true;
                     return false;
                 }
-
-
-
             }
 
             return true;
-
-
         }
     }
 }

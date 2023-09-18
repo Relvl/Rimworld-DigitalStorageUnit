@@ -11,6 +11,7 @@ namespace ProjectRimFactory.Common
             {
                 return base.ApplyWorker(xml);
             }
+
             return true;
         }
     }

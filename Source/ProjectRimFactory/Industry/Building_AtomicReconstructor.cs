@@ -15,13 +15,7 @@ namespace ProjectRimFactory.Industry
         CompRefuelable refuelableComp;
         CompOutputAdjustable outputComp;
 
-        public int PaperclipConsumptionFactor
-        {
-            get
-            {
-                return speedFactor * speedFactor;
-            }
-        }
+        public int PaperclipConsumptionFactor => speedFactor * speedFactor;
 
         public int TotalWorkRequired
         {
@@ -53,34 +47,20 @@ namespace ProjectRimFactory.Industry
             }
         }
 
-        public string ProgressToStringPercent
-        {
-            get
-            {
-                return ThingToGenerate == null ? 0f.ToStringPercent() : (progressTicks / (float)TotalWorkRequired).ToStringPercent();
-            }
-        }
+        public string ProgressToStringPercent => ThingToGenerate == null ? 0f.ToStringPercent() : (progressTicks / (float)TotalWorkRequired).ToStringPercent();
 
-        public string EstimatedProductionTimeLeftPeriod
-        {
-            get
-            {
-                return ((TotalWorkRequired - progressTicks) / speedFactor).ToStringTicksToPeriod();
-            }
-        }
+        public string EstimatedProductionTimeLeftPeriod => ((TotalWorkRequired - progressTicks) / speedFactor).ToStringTicksToPeriod();
 
         public ThingDef ThingToGenerate
         {
-            get
-            {
-                return thingToGenerate;
-            }
+            get => thingToGenerate;
             set
             {
                 thingToGenerate = value;
                 progressTicks = 0;
             }
         }
+
         public override void PostMake()
         {
             base.PostMake();
@@ -104,14 +84,14 @@ namespace ProjectRimFactory.Industry
             {
                 if (ThingToGenerate != null)
                 {
-                    float fuel = refuelableComp.Fuel;
+                    var fuel = refuelableComp.Fuel;
                     if (fuel >= FuelConsumptionPerTick)
                     {
                         refuelableComp.ConsumeFuel(FuelConsumptionPerTick);
                         progressTicks += speedFactor;
                         if (progressTicks >= TotalWorkRequired)
                         {
-                            Thing thing = ThingMaker.MakeThing(ThingToGenerate);
+                            var thing = ThingMaker.MakeThing(ThingToGenerate);
                             GenPlace.TryPlaceThing(thing, outputComp.CurrentCell, Map, ThingPlaceMode.Near);
                             progressTicks = 0;
                         }
@@ -122,12 +102,13 @@ namespace ProjectRimFactory.Industry
 
         public override string GetInspectString()
         {
-            StringBuilder builder = new StringBuilder();
-            string str = base.GetInspectString();
+            var builder = new StringBuilder();
+            var str = base.GetInspectString();
             if (!string.IsNullOrEmpty(str))
             {
                 builder.AppendLine(str);
             }
+
             builder.Append("AtomicReconstructorProgress".Translate(ProgressToStringPercent));
             return builder.ToString().TrimEndNewlines();
         }

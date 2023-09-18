@@ -12,11 +12,13 @@ namespace ProjectRimFactory.Drones
 
         private int dronesLeft;
 
-        public override int DronesLeft { get => dronesLeft - spawnedDrones.Count; }
+        public override int DronesLeft => dronesLeft - spawnedDrones.Count;
+
         public override void Notify_DroneLost()
         {
             dronesLeft--;
         }
+
         public override void Notify_DroneGained()
         {
             dronesLeft++;
@@ -37,13 +39,13 @@ namespace ProjectRimFactory.Drones
             }
         }
 
-
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            foreach (Gizmo baseGizmo in base.GetGizmos())
+            foreach (var baseGizmo in base.GetGizmos())
             {
                 yield return baseGizmo;
             }
+
             yield return new Command_Action
             {
                 action = MakeMatchingGrowZone,
@@ -56,10 +58,8 @@ namespace ProjectRimFactory.Drones
 
         protected void MakeMatchingGrowZone()
         {
-            Designator_ZoneAdd_Growing designator = new Designator_ZoneAdd_Growing();
-            designator.DesignateMultiCell(from tempCell in cashed_GetCoverageCells
-                                          where designator.CanDesignateCell(tempCell).Accepted
-                                          select tempCell);
+            var designator = new Designator_ZoneAdd_Growing();
+            designator.DesignateMultiCell(from tempCell in cashed_GetCoverageCells where designator.CanDesignateCell(tempCell).Accepted select tempCell);
         }
 
         //Save Drone Count
@@ -69,6 +69,4 @@ namespace ProjectRimFactory.Drones
             Scribe_Values.Look(ref dronesLeft, "dronesLeft");
         }
     }
-
-
 }

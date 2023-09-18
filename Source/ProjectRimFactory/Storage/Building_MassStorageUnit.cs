@@ -12,18 +12,23 @@ using Verse;
 namespace ProjectRimFactory.Storage
 {
     [StaticConstructorOnStartup]
-    public abstract class Building_MassStorageUnit : Building_Storage, IHideItem, IHideRightClickMenu,
-        IForbidPawnOutputItem, IForbidPawnInputItem, IRenameBuilding, ILinkableStorageParent, ILimitWatcher
+    public abstract class Building_MassStorageUnit : Building_Storage, IHideItem, IHideRightClickMenu, IForbidPawnOutputItem, IForbidPawnInputItem, IRenameBuilding,
+        ILinkableStorageParent, ILimitWatcher
     {
         private static readonly Texture2D RenameTex = ContentFinder<Texture2D>.Get("UI/Buttons/Rename");
 
         private readonly List<Thing> items = new List<Thing>();
         private List<Building_StorageUnitIOBase> ports = new List<Building_StorageUnitIOBase>();
 
-        public string UniqueName { get => uniqueName; set => uniqueName = value; }
+        public string UniqueName
+        {
+            get => uniqueName;
+            set => uniqueName = value;
+        }
+
         private string uniqueName;
         public Building Building => this;
-        public IntVec3 GetPosition => this.Position;
+        public IntVec3 GetPosition => Position;
         public StorageSettings GetSettings => settings;
 
         public bool CanUseIOPort => def.GetModExtension<DefModExtension_CanUseStorageIOPorts>() != null;
@@ -34,10 +39,10 @@ namespace ProjectRimFactory.Storage
         public DefModExtension_Crate ModExtension_Crate = null;
 
         public abstract bool CanStoreMoreItems { get; }
+
         // The maximum number of item stacks at this.Position:
         //   One item on each cell and the rest multi-stacked on Position?
-        public int MaxNumberItemsInternal => (ModExtension_Crate?.limit ?? int.MaxValue)
-                                              - def.Size.Area + 1;
+        public int MaxNumberItemsInternal => (ModExtension_Crate?.limit ?? int.MaxValue) - def.Size.Area + 1;
         public List<Thing> StoredItems => items;
         public int StoredItemsCount => items.Count;
         public override string LabelNoCount => uniqueName ?? base.LabelNoCount;
@@ -70,8 +75,7 @@ namespace ProjectRimFactory.Storage
 
         public virtual bool HideItems => ModExtension_Crate?.hideItems ?? false;
 
-        public virtual bool HideRightClickMenus =>
-            ModExtension_Crate?.hideRightClickMenus ?? false;
+        public virtual bool HideRightClickMenus => ModExtension_Crate?.hideRightClickMenus ?? false;
 
         public bool AdvancedIOAllowed => true;
 
@@ -173,12 +177,14 @@ namespace ProjectRimFactory.Storage
                     thingsToSplurge[i].DeSpawn();
                     GenPlace.TryPlaceThing(thingsToSplurge[i], Position, Map, ThingPlaceMode.Near);
                 }
+
             Map.GetComponent<PRFMapComponent>().RemoveIHideRightClickMenu(this);
             foreach (var cell in this.OccupiedRect().Cells)
             {
                 Map.GetComponent<PRFMapComponent>().DeRegisterIHideItemPos(cell, this);
                 Map.GetComponent<PRFMapComponent>().DeRegisterIForbidPawnOutputItem(cell, this);
             }
+
             base.DeSpawn(mode);
             ConditionalPatchHelper.Deregister(this);
         }
@@ -194,6 +200,7 @@ namespace ProjectRimFactory.Storage
                 map.GetComponent<PRFMapComponent>().RegisterIHideItemPos(cell, this);
                 map.GetComponent<PRFMapComponent>().RegisterIForbidPawnOutputItem(cell, this);
             }
+
             ModExtension_Crate ??= def.GetModExtension<DefModExtension_Crate>();
             RefreshStorage();
             foreach (var port in ports)
@@ -206,7 +213,6 @@ namespace ProjectRimFactory.Storage
                     }
                 }
             }
-
         }
 
         public override void DrawGUIOverlay()
@@ -220,7 +226,6 @@ namespace ProjectRimFactory.Storage
         {
             return outputUtil.OutputItem(item);
         }
-
 
         //TODO Why do we need to clear Items here?
         public virtual void RefreshStorage()
@@ -268,6 +273,7 @@ namespace ProjectRimFactory.Storage
             //    }
             //}
         }
+
         //-----------    For compatibility with Pick Up And Haul:    -----------
         //                  (not used internally in any way)
         // true if can store, capacity is how many can store (more than one stack possible)
@@ -275,15 +281,16 @@ namespace ProjectRimFactory.Storage
         {
             //Some Sanity Checks
             capacity = 0;
-            if (thing == null || map == null || map != this.Map || cell == null || !this.Spawned)
+            if (thing == null || map == null || map != Map || cell == null || !Spawned)
             {
                 Log.Error("PRF DSU CapacityAt Sanity Check Error");
                 return false;
             }
+
             thing = thing.GetInnerIfMinified();
 
             //Check if thing can be stored based upon the storgae settings
-            if (!this.Accepts(thing))
+            if (!Accepts(thing))
             {
                 return false;
             }
@@ -295,10 +302,10 @@ namespace ProjectRimFactory.Storage
             var storedItems = Position.GetThingList(Map).Where(t => t.def.category == ThingCategory.Item);
 
             //Find the Stack size for the thing
-            int maxstacksize = thing.def.stackLimit;
+            var maxstacksize = thing.def.stackLimit;
             //Get capacity of partial Stacks
             //  So 45 Steel and 75 Steel and 11 Steel give 30+64 more capacity for steel
-            foreach (Thing partialStack in storedItems.Where(t => t.def == thing.def && t.stackCount < maxstacksize))
+            foreach (var partialStack in storedItems.Where(t => t.def == thing.def && t.stackCount < maxstacksize))
             {
                 capacity += maxstacksize - partialStack.stackCount;
             }
@@ -319,8 +326,10 @@ namespace ProjectRimFactory.Storage
                     capacity += thing.def.stackLimit;
                 }
             }
+
             return capacity > 0;
         }
+
         // ...The above? I think?  But without needing to know how many
         public bool StackableAt(Thing thing, IntVec3 cell, Map map)
         {
@@ -353,25 +362,25 @@ namespace ProjectRimFactory.Storage
             return AllSlotCells()?.Contains(pos) ?? false;
         }
 
-        void ItemCountsRemoved(ThingDef def , int cnt)
+        void ItemCountsRemoved(ThingDef def, int cnt)
         {
-            if(ItemCounts.TryGetValue(def, out var count))
+            if (ItemCounts.TryGetValue(def, out var count))
             {
                 if (cnt > count)
                 {
                     Log.Error($"ItemCountsRemoved attempted to remove {cnt}/{count} Items of {def}");
                     ItemCounts[def] = 0;
                 }
-                ItemCounts[def] -= cnt;
 
+                ItemCounts[def] -= cnt;
             }
             else
             {
                 Log.Error($"ItemCountsRemoved attempted to remove nonexistent def {def}");
             }
-
         }
-        void ItemCountsAdded(ThingDef def , int cnt)
+
+        void ItemCountsAdded(ThingDef def, int cnt)
         {
             if (!ItemCounts.TryAdd(def, cnt))
             {
@@ -381,20 +390,20 @@ namespace ProjectRimFactory.Storage
 
         readonly Dictionary<ThingDef, int> ItemCounts = new();
 
-        public bool ItemIsLimit(ThingDef thing,bool CntStacks, int limit)
+        public bool ItemIsLimit(ThingDef thing, bool CntStacks, int limit)
         {
             if (limit < 0)
             {
                 return true;
             }
 
-            int cnt = 0;
+            var cnt = 0;
             ItemCounts.TryGetValue(thing, out cnt);
             if (CntStacks)
             {
                 cnt = Mathf.CeilToInt(((float)cnt) / thing.stackLimit);
             }
-            
+
             return cnt >= limit;
         }
     }

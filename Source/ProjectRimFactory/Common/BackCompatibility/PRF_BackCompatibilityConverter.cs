@@ -11,11 +11,12 @@ namespace ProjectRimFactory.Common.BackCompatibility
             return true;
         }
 
-        public PRF_BackCompatibilityConverter() { }
+        public PRF_BackCompatibilityConverter()
+        {
+        }
 
         public override string BackCompatibleDefName(Type defType, string defName, bool forDefInjections = false, XmlNode node = null)
         {
-
             if (defType == typeof(ResearchProjectDef))
             {
                 switch (defName)
@@ -70,8 +71,6 @@ namespace ProjectRimFactory.Common.BackCompatibility
                         return "PRF_Research_AdvPlasticTextiles";
                     case "PRF_GlitterPlasticTextiles":
                         return "PRF_Research_GlitterPlasticTextiles";
-
-
                 }
             }
             else if (defType == typeof(RecipeDef))
@@ -141,9 +140,9 @@ namespace ProjectRimFactory.Common.BackCompatibility
             switch (providedClassName)
             {
                 case "ProjectRimFactory.AutoMachineTool.PRF_SAL_Trarget+Bill_ProductionWithUftPawnForbidded":
-                    return typeof(ProjectRimFactory.AutoMachineTool.SAL_TargetWorktable.Bill_ProductionWithUftPawnForbidded);
+                    return typeof(AutoMachineTool.SAL_TargetWorktable.Bill_ProductionWithUftPawnForbidded);
                 case "ProjectRimFactory.AutoMachineTool.PRF_SAL_Trarget+Bill_ProductionPawnForbidded":
-                    return typeof(ProjectRimFactory.AutoMachineTool.SAL_TargetWorktable.Bill_ProductionPawnForbidded);
+                    return typeof(AutoMachineTool.SAL_TargetWorktable.Bill_ProductionPawnForbidded);
             }
 
             return null;
@@ -151,7 +150,6 @@ namespace ProjectRimFactory.Common.BackCompatibility
 
         public override void PostExposeData(object obj)
         {
-
         }
     }
 }

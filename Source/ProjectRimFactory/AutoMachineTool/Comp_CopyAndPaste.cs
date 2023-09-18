@@ -10,11 +10,13 @@ namespace ProjectRimFactory.AutoMachineTool
     {
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            return base.CompGetGizmosExtra().Concat(
-                Option(this.parent as IStorageSetting)
-                    .Select(s => s.StorageSettings)
-                    .Select(x => StorageSettingsClipboard.CopyPasteGizmosFor(x))
-                    .GetOrDefault(Enumerable.Empty<Gizmo>()));
+            return base.CompGetGizmosExtra()
+                .Concat(
+                    Option(parent as IStorageSetting)
+                        .Select(s => s.StorageSettings)
+                        .Select(x => StorageSettingsClipboard.CopyPasteGizmosFor(x))
+                        .GetOrDefault(Enumerable.Empty<Gizmo>())
+                );
         }
     }
 

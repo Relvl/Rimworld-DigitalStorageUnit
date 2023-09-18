@@ -21,6 +21,7 @@ namespace ProjectRimFactory.Common
         /// <returns><c>true</c>, if item was accepted, <c>false</c> otherwise.</returns>
         /// <param name="newThing">New item.</param>
         bool AcceptsThing(Thing newThing, IPRF_Building giver = null);
+
         /// <summary>
         /// Ask the IPRF_Building for an item matching the optional validator
         ///   (or any thing available).  For example, if you only want something
@@ -31,22 +32,22 @@ namespace ProjectRimFactory.Common
         /// the IPRF_Building, or null if no such Things are available.</returns>
         /// <param name="optionalValidator">Optional validator.</param>
         Thing GetThingBy(Func<Thing, bool> optionalValidator = null);
+
         IEnumerable<Thing> AvailableThings { get; }
+
         /// <summary>
         /// Should the Building forbid output items?
         /// </summary>
         /// <returns><c>true</c>, if, on placing, thing should be forbidden, <c>false</c> otherwise.</returns>
         bool ForbidOnPlacing(Thing t);
+
         bool ForbidOnPlacingDefault { get; set; }
         bool ObeysStorageFilters { get; }
         bool OutputToEntireStockpile { get; }
         void EffectOnPlaceThing(Thing t);
         void EffectOnAcceptThing(Thing t);
 
-
-
         // some basic building things:
         Map Map { get; }
-
     }
 }

@@ -7,16 +7,14 @@ using Verse;
 
 namespace ProjectRimFactory.AutoMachineTool
 {
-
     public class Building_AutoMachineTool : Building_BaseRange<Building_AutoMachineTool>, IRecipeProductWorker
     {
-
         public override bool ProductLimitationDisable => true;
 
         public Building_AutoMachineTool()
         {
-            this.forcePlace = false;
-            this.targetEnumrationCount = 0;
+            forcePlace = false;
+            targetEnumrationCount = 0;
         }
 
         private bool forbidItem = false;
@@ -25,77 +23,71 @@ namespace ProjectRimFactory.AutoMachineTool
 
         ModExtension_Skills extension_Skills;
 
-        public ModExtension_ModifyProduct ModifyProductExt => this.def.GetModExtension<ModExtension_ModifyProduct>();
+        public ModExtension_ModifyProduct ModifyProductExt => def.GetModExtension<ModExtension_ModifyProduct>();
 
         public int GetSkillLevel(SkillDef def)
         {
-            return extension_Skills?.GetExtendedSkillLevel(def, typeof(Building_AutoMachineTool)) ?? this.SkillLevel ?? 0;
+            return extension_Skills?.GetExtendedSkillLevel(def, typeof(Building_AutoMachineTool)) ?? SkillLevel ?? 0;
         }
 
-        protected override int? SkillLevel { get { return this.def.GetModExtension<ModExtension_Tier>()?.skillLevel; } }
+        protected override int? SkillLevel => def.GetModExtension<ModExtension_Tier>()?.skillLevel;
 
         public override bool Glowable => false;
 
         public override void ExposeData()
         {
-            Scribe_Deep.Look<SAL_TargetBench>(ref this.salTarget, "salTarget");
+            Scribe_Deep.Look<SAL_TargetBench>(ref salTarget, "salTarget");
             base.ExposeData();
-            Scribe_Values.Look<bool>(ref this.forbidItem, "forbidItem");
-
+            Scribe_Values.Look<bool>(ref forbidItem, "forbidItem");
         }
 
         public bool GetTarget()
         {
-            bool verdict = GetTarget(this.Position, this.Rotation, this.Map, true);
+            var verdict = GetTarget(Position, Rotation, Map, true);
             //Alter visuals based on the target
             if (verdict && !(salTarget is SAL_TargetWorktable))
             {
-                this.compOutputAdjustable.Visible = false;
-                this.powerWorkSetting.RangeSettingHide = true;
+                compOutputAdjustable.Visible = false;
+                powerWorkSetting.RangeSettingHide = true;
             }
             else if (verdict)
             {
-                this.compOutputAdjustable.Visible = true;
-                this.powerWorkSetting.RangeSettingHide = false;
+                compOutputAdjustable.Visible = true;
+                powerWorkSetting.RangeSettingHide = false;
             }
 
             return verdict;
         }
+
         public bool GetTarget(IntVec3 pos, Rot4 rot, Map map, bool spawned = false)
         {
+            var buildings = (pos + rot.FacingCell).GetThingList(map).Where(t => t.def.category == ThingCategory.Building).Where(t => t.InteractionCell == pos);
 
-            var buildings = (pos + rot.FacingCell).GetThingList(map)
-                .Where(t => t.def.category == ThingCategory.Building)
-                .Where(t => t.InteractionCell == pos);
-
-            Building_WorkTable new_my_workTable = (Building_WorkTable)buildings
-                .Where(t => t is Building_WorkTable)
-                .FirstOrDefault();
-            Building new_drilltypeBuilding = (Building)buildings
-                .Where(t => t is Building && t.TryGetComp<CompDeepDrill>() != null)
-                .FirstOrDefault();
-            Building_ResearchBench new_researchBench = (Building_ResearchBench)buildings
-                .Where(t => t is Building_ResearchBench)
-                .FirstOrDefault();
+            var new_my_workTable = (Building_WorkTable)buildings.Where(t => t is Building_WorkTable).FirstOrDefault();
+            var new_drilltypeBuilding = (Building)buildings.Where(t => t is Building && t.TryGetComp<CompDeepDrill>() != null).FirstOrDefault();
+            var new_researchBench = (Building_ResearchBench)buildings.Where(t => t is Building_ResearchBench).FirstOrDefault();
             if (spawned)
             {
-                if ((salTarget is SAL_TargetWorktable && new_my_workTable == null) || (salTarget is SAL_TargetResearch && new_researchBench == null) || (salTarget is SAL_TargetDeepDrill && new_drilltypeBuilding == null))
+                if ((salTarget is SAL_TargetWorktable && new_my_workTable == null) ||
+                    (salTarget is SAL_TargetResearch && new_researchBench == null) ||
+                    (salTarget is SAL_TargetDeepDrill && new_drilltypeBuilding == null))
                 {
                     //Log.Message($"new_my_workTable == null: {new_my_workTable == null}|| new_researchBench == null: {new_researchBench == null}|| new_drilltypeBuilding == null: {new_drilltypeBuilding == null} ");
                     salTarget.Free();
                 }
             }
+
             if (new_my_workTable != null)
             {
-                salTarget = new SAL_TargetWorktable(this, this.Position, this.Map, this.Rotation, new_my_workTable);
+                salTarget = new SAL_TargetWorktable(this, Position, Map, Rotation, new_my_workTable);
             }
             else if (new_drilltypeBuilding != null)
             {
-                salTarget = new SAL_TargetDeepDrill(this, this.Position, this.Map, this.Rotation, new_drilltypeBuilding);
+                salTarget = new SAL_TargetDeepDrill(this, Position, Map, Rotation, new_drilltypeBuilding);
             }
             else if (new_researchBench != null)
             {
-                salTarget = new SAL_TargetResearch(this, this.Position, this.Map, this.Rotation, new_researchBench);
+                salTarget = new SAL_TargetResearch(this, Position, Map, Rotation, new_researchBench);
             }
             else
             {
@@ -109,13 +101,14 @@ namespace ProjectRimFactory.AutoMachineTool
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
-            if (salTarget == null && this.State != WorkingState.Ready) this.State = WorkingState.Ready;
+            if (salTarget == null && State != WorkingState.Ready) State = WorkingState.Ready;
             base.SpawnSetup(map, respawningAfterLoad);
 
             if (salTarget == null)
             {
                 GetTarget();
             }
+
             extension_Skills = def.GetModExtension<ModExtension_Skills>();
         }
 
@@ -129,12 +122,12 @@ namespace ProjectRimFactory.AutoMachineTool
         public override void PostMapInit()
         {
             base.PostMapInit();
-            this.WorkTableSetting();
+            WorkTableSetting();
         }
 
         protected override void Reset()
         {
-            salTarget.Reset(this.State);
+            salTarget.Reset(State);
 
             base.Reset();
         }
@@ -142,16 +135,14 @@ namespace ProjectRimFactory.AutoMachineTool
         protected override void CleanupWorkingEffect()
         {
             base.CleanupWorkingEffect();
-            salTarget?.CleanupWorkingEffect(this.MapManager);
+            salTarget?.CleanupWorkingEffect(MapManager);
         }
 
         protected override void CreateWorkingEffect()
         {
             base.CreateWorkingEffect();
-            salTarget?.CreateWorkingEffect(this.MapManager);
+            salTarget?.CreateWorkingEffect(MapManager);
         }
-
-
 
         protected override TargetInfo ProgressBarTarget()
         {
@@ -166,23 +157,20 @@ namespace ProjectRimFactory.AutoMachineTool
             if (salTarget == null)
             {
                 GetTarget();
-                this.Reset();
+                Reset();
             }
         }
 
         protected override void Ready()
         {
-            this.WorkTableSetting();
+            WorkTableSetting();
             base.Ready();
         }
 
         private IntVec3 FacingCell()
         {
-            return this.Position + this.Rotation.FacingCell;
+            return Position + Rotation.FacingCell;
         }
-
-
-
 
         /// <summary>
         /// Try to start a new Bill to work on
@@ -210,7 +198,7 @@ namespace ProjectRimFactory.AutoMachineTool
 
         public List<IntVec3> OutputZone()
         {
-            return this.OutputCell().SlotGroupCells(Map);
+            return OutputCell().SlotGroupCells(Map);
         }
 
         public override IntVec3 OutputCell()
@@ -223,8 +211,6 @@ namespace ProjectRimFactory.AutoMachineTool
             return base.GetInspectTabs();
         }
 
-
-
         public override IEnumerable<Gizmo> GetGizmos()
         {
             foreach (var g in base.GetGizmos())
@@ -235,7 +221,7 @@ namespace ProjectRimFactory.AutoMachineTool
 
         public override string GetInspectString()
         {
-            String msg = base.GetInspectString();
+            var msg = base.GetInspectString();
             return msg;
         }
 
@@ -244,13 +230,14 @@ namespace ProjectRimFactory.AutoMachineTool
             return RegionAndRoomQuery.GetRoom(this, type);
         }
 
-
         private Building_WorkTable GetmyTragetWorktable()
         {
-            return (Building_WorkTable)this.FacingCell().GetThingList(Map)
+            return (Building_WorkTable)FacingCell()
+                .GetThingList(Map)
                 .Where(t => t.def.category == ThingCategory.Building)
                 .Where(t => t is Building_WorkTable)
-                .Where(t => t.InteractionCell == this.Position).FirstOrDefault();
+                .Where(t => t.InteractionCell == Position)
+                .FirstOrDefault();
         }
 
         protected override bool WorkInterruption(Building_AutoMachineTool working)
@@ -266,7 +253,5 @@ namespace ProjectRimFactory.AutoMachineTool
             var notready = !salTarget.Ready();
             return notready;
         }
-
     }
-
 }

@@ -1,5 +1,6 @@
 using HarmonyLib;
 using RimWorld;
+
 namespace ProjectRimFactory.Industry
 {
     /* Vanilla Deep Drills can disturb insects.  We want the same functionality for PRF miners
@@ -9,7 +10,7 @@ namespace ProjectRimFactory.Industry
      * However, this means the PRF miners can cause infestations even when powered down.
      * So, we patch CanCreateInfestationNow to fix that:
      */
-    [HarmonyPatch(typeof(RimWorld.CompCreatesInfestations), "get_CanCreateInfestationNow")]
+    [HarmonyPatch(typeof(CompCreatesInfestations), "get_CanCreateInfestationNow")]
     static class Patch_CanCreateInfestationNow
     {
         static bool Prefix(CompCreatesInfestations __instance, ref bool __result)
@@ -20,14 +21,17 @@ namespace ProjectRimFactory.Industry
                     !__instance.CantFireBecauseCreatedInfestationRecently &&
                     !__instance.CantFireBecauseSomethingElseCreatedInfestationRecently)
                 {
-                    __result = true;  // can cause infestation
+                    __result = true; // can cause infestation
                 }
                 else
-                { // any logic for DeepQuarries that do not use power should go here: (fuel?  etc)
+                {
+                    // any logic for DeepQuarries that do not use power should go here: (fuel?  etc)
                     __result = false;
                 }
+
                 return false; // skip vanilla result
             }
+
             return true; // not deep quarry, run vanilla test
         }
     }

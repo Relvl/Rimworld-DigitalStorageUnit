@@ -35,7 +35,9 @@ namespace ProjectRimFactory.Common.HarmonyPatches
         /// </summary>
         private static readonly Type hiddenClass = AccessTools.FirstInner(
             typeof(GenRecipe),
-            type => type.HasAttribute<CompilerGeneratedAttribute>() && type.Name.Contains(nameof(GenRecipe.MakeRecipeProducts)));
+            type => type.HasAttribute<CompilerGeneratedAttribute>() && type.Name.Contains(nameof(GenRecipe.MakeRecipeProducts))
+        );
+
         public static MethodBase TargetMethod()
         {
             // Decompiler showed the hidden inner class is "<MakeRecipeProducts>d__0"
@@ -44,11 +46,13 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 Log.Error("Couldn't find iterator class -- This should never be reached.");
                 return null;
             }
+
             // and we want the iterator's MoveNext:
-            MethodBase iteratorMethod = HarmonyLib.AccessTools.Method(hiddenClass, "MoveNext");
+            MethodBase iteratorMethod = AccessTools.Method(hiddenClass, "MoveNext");
             if (iteratorMethod == null) Log.Error("Couldn't find MoveNext");
             return iteratorMethod;
         }
+
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var codeHasStoredCompPoisonable = false;
@@ -64,6 +68,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     // CompFoodPoisonable stored, the next condition will be the food poison check.
                     codeHasStoredCompPoisonable = true;
                 }
+
                 if (instruction.opcode == OpCodes.Brfalse_S && codeHasStoredCompPoisonable)
                 {
                     // For this branch, we emit the original instruction first. 
@@ -74,9 +79,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(hiddenClass, "billGiver"));
                     // Call our UsingSpaceCooker method
-                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(
-                        typeof(Patch_GenRecipe_foodPoisoning),
-                        nameof(Patch_GenRecipe_foodPoisoning.UsingSpaceCooker)));
+                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_GenRecipe_foodPoisoning), nameof(UsingSpaceCooker)));
                     // If that returned true, skip past the original condition
                     yield return new CodeInstruction(OpCodes.Brtrue_S, (Label)instruction.operand);
                     codeHasStoredCompPoisonable = false;
@@ -96,15 +99,15 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     // Load billGiver onto the stack.
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(hiddenClass, "billGiver"));
-                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(
-                        typeof(Patch_GenRecipe_foodPoisoning),
-                        nameof(Patch_GenRecipe_foodPoisoning.GetRoomOfPawnOrGiver)));
+                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_GenRecipe_foodPoisoning), nameof(GetRoomOfPawnOrGiver)));
 
                     continue; // Don't emit the original instruction.
                 }
+
                 yield return instruction;
             }
         }
+
         public static bool UsingSpaceCooker(IBillGiver billGiver)
         {
             // NOTE: This could be made more efficient by having a Def already loaded
@@ -117,6 +120,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 // Log.Message("Using Spacer Cooker - skipping poison test");
                 return true;
             }
+
             // Log.Message("Not using space cooker for this recipe");
             return false;
         }
@@ -135,6 +139,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             {
                 return RegionAndRoomQuery.RoomAt(assembler.OutputCell(), billGiver.Map, RegionType.Set_Passable);
             }
+
             return pawn.GetRoom(allowedRegionTypes);
         }
     }
@@ -144,22 +149,22 @@ namespace ProjectRimFactory.Common.HarmonyPatches
     {
         static bool Prefix(ref QualityCategory __result, Pawn pawn, SkillDef relevantSkill)
         {
-            ISetQualityDirectly isqd = PatchStorageUtil.Get<ISetQualityDirectly>(pawn.Map, pawn.Position);
+            var isqd = PatchStorageUtil.Get<ISetQualityDirectly>(pawn.Map, pawn.Position);
             if (isqd != null)
             {
                 __result = isqd.GetQuality(relevantSkill);
                 return false;
             }
+
             return true;
         }
 
         //Prevent Biotech(Mech Changes) from interfering with Drone Skills
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-
-            bool foundReplaceMarker = false;
-            bool repacedCheck = false;
-            int cnt = 0;
+            var foundReplaceMarker = false;
+            var repacedCheck = false;
+            var cnt = 0;
             foreach (var instruction in instructions)
             {
                 cnt++;
@@ -170,25 +175,23 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                     foundReplaceMarker = true;
                     cnt = 0;
                 }
+
                 //remove IL_0001: callvirt instance class Verse.RaceProperties Verse.Pawn::get_RaceProps()
                 if (instruction.opcode == OpCodes.Callvirt && foundReplaceMarker && cnt == 1)
                 {
                     continue;
                 }
+
                 if (instruction.opcode == OpCodes.Callvirt && foundReplaceMarker && cnt == 2)
                 {
                     //Replace IL_0006: callvirt instance bool Verse.RaceProperties::get_IsMechanoid()
                     //with a call to Patch_GenRecipe_GenerateQualityCreatedByPawn:IsMechanoid(Pawn pawn)
-                    instruction.operand = AccessTools.Method(
-                        typeof(Patch_GenRecipe_GenerateQualityCreatedByPawn),
-                        nameof(Patch_GenRecipe_GenerateQualityCreatedByPawn.IsMechanoid), new[] { typeof(Pawn)});
+                    instruction.operand = AccessTools.Method(typeof(Patch_GenRecipe_GenerateQualityCreatedByPawn), nameof(IsMechanoid), new[] { typeof(Pawn) });
                     foundReplaceMarker = false;
                 }
 
-
                 yield return instruction;
             }
-
         }
 
         /// <summary>
@@ -203,14 +206,13 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             {
                 return false;
             }
+
             return pawn.RaceProps.IsMechanoid;
         }
-
     }
 
     interface ISetQualityDirectly
     {
         QualityCategory GetQuality(SkillDef relevantSkill);
     }
-
 }

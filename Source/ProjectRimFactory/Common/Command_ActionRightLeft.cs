@@ -6,7 +6,6 @@ namespace ProjectRimFactory.Common
 {
     class Command_ActionRightLeft : Command
     {
-
         private static bool wasRightClick = false;
 
         public Action actionL;
@@ -27,7 +26,6 @@ namespace ProjectRimFactory.Common
             {
                 actionL();
             }
-
         }
 
         public override void DrawIcon(Rect rect, Material buttonMat, GizmoRenderParms parms)
@@ -38,6 +36,7 @@ namespace ProjectRimFactory.Common
             {
                 wasRightClick = false;
             }
+
             if (Input.GetMouseButtonDown(1))
             {
                 wasRightClick = true;
@@ -48,6 +47,5 @@ namespace ProjectRimFactory.Common
         {
             iconDrawColorOverride = color;
         }
-
     }
 }

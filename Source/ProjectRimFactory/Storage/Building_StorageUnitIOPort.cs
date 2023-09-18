@@ -9,13 +9,11 @@ using Verse;
 
 namespace ProjectRimFactory.Storage
 {
-
     public interface IRenameBuilding
     {
         public string UniqueName { set; get; }
         public Building Building { get; }
     }
-
 
     [StaticConstructorOnStartup]
     public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawnInputItem, IRenameBuilding
@@ -29,7 +27,7 @@ namespace ProjectRimFactory.Storage
         protected StorageSettings outputStoreSettings;
         private OutputSettings outputSettings;
 
-        public virtual IntVec3 WorkPosition => this.Position;
+        public virtual IntVec3 WorkPosition => Position;
 
         protected CompPowerTrader powerComp;
 
@@ -37,8 +35,12 @@ namespace ProjectRimFactory.Storage
 
         public virtual bool ShowLimitGizmo => true;
 
+        public string UniqueName
+        {
+            get => uniqueName;
+            set => uniqueName = value;
+        }
 
-        public string UniqueName { get => uniqueName; set => uniqueName = value; }
         private string uniqueName;
         public Building Building => this;
         public override string LabelNoCount => uniqueName ?? base.LabelNoCount;
@@ -48,17 +50,14 @@ namespace ProjectRimFactory.Storage
         private bool forbidOnPlacement = false;
         public virtual bool ForbidOnPlacement => forbidOnPlacement;
 
-
-        public override Graphic Graphic => this.IOMode == StorageIOMode.Input ?
-            base.Graphic.GetColoredVersion(base.Graphic.Shader, this.def.GetModExtension<DefModExtension_StorageUnitIOPortColor>().inColor, Color.white) :
-            base.Graphic.GetColoredVersion(base.Graphic.Shader, this.def.GetModExtension<DefModExtension_StorageUnitIOPortColor>().outColor, Color.white);
+        public override Graphic Graphic =>
+            IOMode == StorageIOMode.Input
+                ? base.Graphic.GetColoredVersion(base.Graphic.Shader, def.GetModExtension<DefModExtension_StorageUnitIOPortColor>().inColor, Color.white)
+                : base.Graphic.GetColoredVersion(base.Graphic.Shader, def.GetModExtension<DefModExtension_StorageUnitIOPortColor>().outColor, Color.white);
 
         public virtual StorageIOMode IOMode
         {
-            get
-            {
-                return mode;
-            }
+            get => mode;
             set
             {
                 if (mode == value) return;
@@ -69,10 +68,7 @@ namespace ProjectRimFactory.Storage
 
         public ILinkableStorageParent BoundStorageUnit
         {
-            get
-            {
-                return boundStorageUnit;
-            }
+            get => boundStorageUnit;
             set
             {
                 boundStorageUnit?.DeregisterPort(this);
@@ -90,12 +86,10 @@ namespace ProjectRimFactory.Storage
                 {
                     outputSettings = new OutputSettings("IOPort_Minimum_UseTooltip", "IOPort_Maximum_UseTooltip");
                 }
+
                 return outputSettings;
             }
-            set
-            {
-                outputSettings = value;
-            }
+            set => outputSettings = value;
         }
 
         //
@@ -106,17 +100,18 @@ namespace ProjectRimFactory.Storage
                 if (IOMode == StorageIOMode.Output && OutputSettings.useMax)
                 {
                     //Only get currentItem if needed
-                    Thing currentItem = WorkPosition.GetFirstItem(Map);
+                    var currentItem = WorkPosition.GetFirstItem(Map);
                     if (currentItem != null)
                     {
                         return OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit) <= 0;
                     }
                 }
+
                 return false;
             }
         }
 
-        public Thing NPDI_Item => WorkPosition.GetFirstItem(this.Map);
+        public Thing NPDI_Item => WorkPosition.GetFirstItem(Map);
 
         public override void ExposeData()
         {
@@ -128,14 +123,15 @@ namespace ProjectRimFactory.Storage
             Scribe_Values.Look(ref uniqueName, "uniqueName");
             Scribe_Values.Look(ref forbidOnPlacement, "forbidOnPlacement");
         }
+
         public override string GetInspectString()
         {
-            if (OutputSettings.useMin && OutputSettings.useMax) return base.GetInspectString() + "\n" + "IOPort_Minimum".Translate(OutputSettings.min) + "\n" + "IOPort_Maximum".Translate(OutputSettings.max);
-            else if (OutputSettings.useMin && !OutputSettings.useMax) return base.GetInspectString() + "\n" + "IOPort_Minimum".Translate(OutputSettings.min);
-            else if (!OutputSettings.useMin && OutputSettings.useMax) return base.GetInspectString() + "\n" + "IOPort_Maximum".Translate(OutputSettings.max);
-            else return base.GetInspectString();
+            if (OutputSettings.useMin && OutputSettings.useMax)
+                return base.GetInspectString() + "\n" + "IOPort_Minimum".Translate(OutputSettings.min) + "\n" + "IOPort_Maximum".Translate(OutputSettings.max);
+            if (OutputSettings.useMin && !OutputSettings.useMax) return base.GetInspectString() + "\n" + "IOPort_Minimum".Translate(OutputSettings.min);
+            if (!OutputSettings.useMin && OutputSettings.useMax) return base.GetInspectString() + "\n" + "IOPort_Maximum".Translate(OutputSettings.max);
+            return base.GetInspectString();
         }
-
 
         public override void PostMake()
         {
@@ -203,7 +199,6 @@ namespace ProjectRimFactory.Storage
             }
         }
 
-
         public override void Tick()
         {
             base.Tick();
@@ -238,7 +233,7 @@ namespace ProjectRimFactory.Storage
         {
             if (powerComp.PowerOn)
             {
-                Thing item = WorkPosition.GetFirstItem(Map);
+                var item = WorkPosition.GetFirstItem(Map);
                 if (mode == StorageIOMode.Input && item != null && (boundStorageUnit?.CanReciveThing(item) ?? false))
                 {
                     boundStorageUnit.HandleNewItem(item);
@@ -251,43 +246,46 @@ namespace ProjectRimFactory.Storage
             if (currentItem != null)
             {
                 itemCandidates = itemCandidates.Where(t => currentItem.CanStackWith(t)).ToList();
-                int minReqierd = OutputSettings.useMin ? outputSettings.min : 0;
-                int count = currentItem.stackCount;
-                int i = 0;
+                var minReqierd = OutputSettings.useMin ? outputSettings.min : 0;
+                var count = currentItem.stackCount;
+                var i = 0;
                 while (i < itemCandidates.Count && count < minReqierd)
                 {
                     count += itemCandidates[i].stackCount;
                     i++;
                 }
+
                 return OutputSettings.SatisfiesMin(count);
             }
-            //I wonder if GroupBy is benifficial or not
-            return itemCandidates.GroupBy(t => t.def)
-                .FirstOrDefault(g => OutputSettings.SatisfiesMin(g.Sum(t => t.stackCount)))?.Any() ?? false;
-        }
 
+            //I wonder if GroupBy is benifficial or not
+            return itemCandidates.GroupBy(t => t.def).FirstOrDefault(g => OutputSettings.SatisfiesMin(g.Sum(t => t.stackCount)))?.Any() ?? false;
+        }
 
         protected virtual void RefreshOutput() //
         {
             if (powerComp.PowerOn)
             {
-                Thing currentItem = WorkPosition.GetFirstItem(Map);
-                bool storageSlotAvailable = currentItem == null || (settings.AllowedToAccept(currentItem) &&
-                                                                    OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit));
+                var currentItem = WorkPosition.GetFirstItem(Map);
+                var storageSlotAvailable = currentItem == null ||
+                                           (settings.AllowedToAccept(currentItem) && OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit));
                 if (boundStorageUnit != null && boundStorageUnit.CanReceiveIO)
                 {
                     if (storageSlotAvailable)
                     {
-                        List<Thing> itemCandidates = new List<Thing>(from Thing t in boundStorageUnit.StoredItems where settings.AllowedToAccept(t) select t); // ToList very important - evaluates enumerable
+                        var itemCandidates =
+                            new List<Thing>(
+                                from Thing t in boundStorageUnit.StoredItems where settings.AllowedToAccept(t) select t
+                            ); // ToList very important - evaluates enumerable
                         if (ItemsThatSatisfyMin(ref itemCandidates, currentItem))
                         {
-                            foreach (Thing item in itemCandidates)
+                            foreach (var item in itemCandidates)
                             {
                                 if (currentItem != null)
                                 {
                                     if (currentItem.CanStackWith(item))
                                     {
-                                        int count = Math.Min(item.stackCount, OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit));
+                                        var count = Math.Min(item.stackCount, OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit));
                                         if (count > 0)
                                         {
                                             var ThingToRemove = item.SplitOff(count);
@@ -298,7 +296,7 @@ namespace ProjectRimFactory.Storage
                                 }
                                 else
                                 {
-                                    int count = OutputSettings.CountNeededToReachMax(0, item.stackCount);
+                                    var count = OutputSettings.CountNeededToReachMax(0, item.stackCount);
                                     if (count > 0)
                                     {
                                         var ThingToRemove = item.SplitOff(count);
@@ -306,6 +304,7 @@ namespace ProjectRimFactory.Storage
                                         currentItem = GenSpawn.Spawn(ThingToRemove, WorkPosition, Map);
                                     }
                                 }
+
                                 if (currentItem != null && !OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit))
                                 {
                                     break;
@@ -313,23 +312,29 @@ namespace ProjectRimFactory.Storage
                             }
                         }
                     }
+
                     //Transfre a item back if it is either too few or disallowed
-                    if (currentItem != null && (!settings.AllowedToAccept(currentItem) || !OutputSettings.SatisfiesMin(currentItem.stackCount)) && boundStorageUnit.GetSettings.AllowedToAccept(currentItem))
+                    if (currentItem != null &&
+                        (!settings.AllowedToAccept(currentItem) || !OutputSettings.SatisfiesMin(currentItem.stackCount)) &&
+                        boundStorageUnit.GetSettings.AllowedToAccept(currentItem))
                     {
                         currentItem.SetForbidden(false, false);
                         boundStorageUnit.HandleNewItem(currentItem);
                     }
+
                     //Transfer the diffrence back if it is too much
-                    if (currentItem != null && (!OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) && boundStorageUnit.GetSettings.AllowedToAccept(currentItem)))
+                    if (currentItem != null &&
+                        (!OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) && boundStorageUnit.GetSettings.AllowedToAccept(currentItem)))
                     {
-                        int splitCount = -OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit);
+                        var splitCount = -OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit);
                         if (splitCount > 0)
                         {
-                            Thing returnThing = currentItem.SplitOff(splitCount);
+                            var returnThing = currentItem.SplitOff(splitCount);
                             returnThing.SetForbidden(false, false);
                             boundStorageUnit.HandleNewItem(returnThing);
                         }
                     }
+
                     if (currentItem != null)
                     {
                         currentItem.SetForbidden(ForbidOnPlacement, false);
@@ -337,24 +342,26 @@ namespace ProjectRimFactory.Storage
                 }
             }
         }
+
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            foreach (Gizmo g in base.GetGizmos()) yield return g;
+            foreach (var g in base.GetGizmos()) yield return g;
             yield return new Command_Action()
             {
                 defaultLabel = "PRFBoundStorageBuilding".Translate() + ": " + (boundStorageUnit?.LabelCap ?? "NoneBrackets".Translate()),
                 action = () =>
                 {
                     //ILinkableStorageParent
-                    List<Building> mylist = Map.listerBuildings.allBuildingsColonist.Where(b => (b as ILinkableStorageParent) != null && (b as ILinkableStorageParent).CanUseIOPort).ToList();
+                    var mylist = Map.listerBuildings.allBuildingsColonist.Where(b => (b as ILinkableStorageParent) != null && (b as ILinkableStorageParent).CanUseIOPort).ToList();
                     if (IsAdvancedPort) mylist.RemoveAll(b => !(b as ILinkableStorageParent).AdvancedIOAllowed);
-                    List<FloatMenuOption> list = new List<FloatMenuOption>(
+                    var list = new List<FloatMenuOption>(
                         mylist.Select(b => new FloatMenuOption(b.LabelCap, () => SelectedPorts().ToList().ForEach(p => p.BoundStorageUnit = (b as ILinkableStorageParent))))
                     );
                     if (list.Count == 0)
                     {
                         list.Add(new FloatMenuOption("NoneBrackets".Translate(), null));
                     }
+
                     Find.WindowStack.Add(new FloatMenu(list));
                 },
                 icon = CargoPlatformTex
@@ -373,24 +380,26 @@ namespace ProjectRimFactory.Storage
                 {
                     icon = ContentFinder<Texture2D>.Get("UI/Commands/SetTargetFuelLevel"),
                     defaultLabel = "PRFIOOutputSettings".Translate(),
-                    action = () => Find.WindowStack.Add(new Dialog_OutputMinMax(OutputSettings, () => SelectedPorts().Where(p => p.IOMode == StorageIOMode.Output).ToList().ForEach(p => this.OutputSettings.Copy(p.OutputSettings))))
+                    action = () => Find.WindowStack.Add(
+                        new Dialog_OutputMinMax(
+                            OutputSettings,
+                            () => SelectedPorts().Where(p => p.IOMode == StorageIOMode.Output).ToList().ForEach(p => OutputSettings.Copy(p.OutputSettings))
+                        )
+                    )
                 };
             }
+
             if (mode == StorageIOMode.Output)
             {
                 yield return new Command_Toggle()
                 {
-                    isActive = () => this.forbidOnPlacement,
-                    toggleAction = () => this.forbidOnPlacement = !this.forbidOnPlacement,
+                    isActive = () => forbidOnPlacement,
+                    toggleAction = () => forbidOnPlacement = !forbidOnPlacement,
                     defaultLabel = "PRF_Toggle_ForbidOnPlacement".Translate(),
                     defaultDesc = "PRF_Toggle_ForbidOnPlacementDesc".Translate(),
                     icon = forbidOnPlacement ? RS.ForbidOn : RS.ForbidOff
-
                 };
             }
-
-
-
         }
 
         private IEnumerable<Building_StorageUnitIOBase> SelectedPorts()
@@ -400,6 +409,7 @@ namespace ProjectRimFactory.Storage
             {
                 l.Add(this);
             }
+
             return l;
         }
 
@@ -407,42 +417,42 @@ namespace ProjectRimFactory.Storage
         {
             if (boundStorageUnit?.CanReceiveIO ?? false)
             {
-                return GenPlace.TryPlaceThing(thing.SplitOff(thing.stackCount), WorkPosition, Map, ThingPlaceMode.Near,
-                    null, pos =>
+                return GenPlace.TryPlaceThing(
+                    thing.SplitOff(thing.stackCount),
+                    WorkPosition,
+                    Map,
+                    ThingPlaceMode.Near,
+                    null,
+                    pos =>
                     {
                         if (settings.AllowedToAccept(thing) && OutputSettings.SatisfiesMin(thing.stackCount))
                             if (pos == WorkPosition)
                                 return true;
-                        foreach (Thing t in Map.thingGrid.ThingsListAt(pos))
+                        foreach (var t in Map.thingGrid.ThingsListAt(pos))
                         {
                             if (t is Building_StorageUnitIOPort) return false;
                         }
 
                         return true;
-                    });
+                    }
+                );
             }
 
             return false;
         }
     }
 
-
-
-
     [StaticConstructorOnStartup]
     public class Building_StorageUnitIOPort : Building_StorageUnitIOBase
     {
-
-        public override Graphic Graphic => this.IOMode == StorageIOMode.Input ?
-            base.Graphic.GetColoredVersion(base.Graphic.Shader, this.def.GetModExtension<DefModExtension_StorageUnitIOPortColor>().inColor, Color.white) :
-            base.Graphic.GetColoredVersion(base.Graphic.Shader, this.def.GetModExtension<DefModExtension_StorageUnitIOPortColor>().outColor, Color.white);
+        public override Graphic Graphic =>
+            IOMode == StorageIOMode.Input
+                ? base.Graphic.GetColoredVersion(base.Graphic.Shader, def.GetModExtension<DefModExtension_StorageUnitIOPortColor>().inColor, Color.white)
+                : base.Graphic.GetColoredVersion(base.Graphic.Shader, def.GetModExtension<DefModExtension_StorageUnitIOPortColor>().outColor, Color.white);
 
         public override StorageIOMode IOMode
         {
-            get
-            {
-                return mode;
-            }
+            get => mode;
             set
             {
                 if (mode == value) return;
@@ -467,7 +477,7 @@ namespace ProjectRimFactory.Storage
         {
             if (powerComp.PowerOn)
             {
-                Thing item = Position.GetFirstItem(Map);
+                var item = Position.GetFirstItem(Map);
                 if (mode == StorageIOMode.Input && item != null && (boundStorageUnit?.CanReciveThing(item) ?? false))
                 {
                     boundStorageUnit.HandleNewItem(item);
@@ -487,19 +497,17 @@ namespace ProjectRimFactory.Storage
         /// <returns></returns>
         private static bool AbsorbAmmount(ref Thing baseThing, ref Thing toBeAbsorbed, int count)
         {
-
             if (!baseThing.CanStackWith(toBeAbsorbed))
             {
                 return false;
             }
-            int num = count;
 
+            var num = count;
 
             if (baseThing.def.useHitPoints)
             {
                 baseThing.HitPoints = Mathf.CeilToInt((float)(baseThing.HitPoints * baseThing.stackCount + toBeAbsorbed.HitPoints * num) / (float)(baseThing.stackCount + num));
             }
-
 
             baseThing.stackCount += num;
             toBeAbsorbed.stackCount -= num;
@@ -507,46 +515,50 @@ namespace ProjectRimFactory.Storage
             {
                 baseThing.DirtyMapMesh(baseThing.Map);
             }
+
             StealAIDebugDrawer.Notify_ThingChanged(baseThing);
             if (baseThing.Spawned)
             {
                 baseThing.Map.listerMergeables.Notify_ThingStackChanged(baseThing);
             }
+
             if (toBeAbsorbed.stackCount <= 0)
             {
                 toBeAbsorbed.Destroy();
                 return true;
             }
+
             return false;
-
-
         }
 
         protected override void RefreshOutput()
         {
             if (powerComp.PowerOn)
             {
-                Thing currentItem = Position.GetFirstItem(Map);
-                bool storageSlotAvailable = currentItem == null || (settings.AllowedToAccept(currentItem) &&
-                                                                    OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit));
+                var currentItem = Position.GetFirstItem(Map);
+                var storageSlotAvailable = currentItem == null ||
+                                           (settings.AllowedToAccept(currentItem) && OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit));
                 if (boundStorageUnit != null && boundStorageUnit.CanReceiveIO)
                 {
                     if (storageSlotAvailable)
                     {
-                        List<Thing> itemCandidates = new List<Thing>(from Thing t in boundStorageUnit.StoredItems where settings.AllowedToAccept(t) select t); // ToList very important - evaluates enumerable
+                        var itemCandidates =
+                            new List<Thing>(
+                                from Thing t in boundStorageUnit.StoredItems where settings.AllowedToAccept(t) select t
+                            ); // ToList very important - evaluates enumerable
                         //ItemsThatSatisfyMin somtimes spikes to 0.1 but it is mostly an none issue
                         if (ItemsThatSatisfyMin(ref itemCandidates, currentItem))
                         {
-                            foreach (Thing item in itemCandidates)
+                            foreach (var item in itemCandidates)
                             {
                                 if (currentItem != null)
                                 {
                                     if (currentItem.CanStackWith(item))
                                     {
-                                        int count = Math.Min(item.stackCount, OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit));
+                                        var count = Math.Min(item.stackCount, OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit));
                                         if (count > 0)
                                         {
-                                            Thing Mything = item;
+                                            var Mything = item;
                                             //Merge Stacks - Gab count required to fulfill settings and merge them to the stuff on the IO Port
                                             //For SplitOff "MakeThing" is expensive
                                             //For TryAbsorbStack "Destroy" is expensive
@@ -557,7 +569,7 @@ namespace ProjectRimFactory.Storage
                                 }
                                 else
                                 {
-                                    int count = OutputSettings.CountNeededToReachMax(0, item.stackCount);
+                                    var count = OutputSettings.CountNeededToReachMax(0, item.stackCount);
                                     if (count > 0)
                                     {
                                         //Nothing on the IO Port - grab thing from storage and place it on the port
@@ -567,6 +579,7 @@ namespace ProjectRimFactory.Storage
                                         currentItem = GenSpawn.Spawn(ThingToRemove, Position, Map);
                                     }
                                 }
+
                                 if (currentItem != null && !OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit))
                                 {
                                     break;
@@ -574,23 +587,29 @@ namespace ProjectRimFactory.Storage
                             }
                         }
                     }
+
                     //Transfre a item back if it is either too few or disallowed
-                    if (currentItem != null && (!settings.AllowedToAccept(currentItem) || !OutputSettings.SatisfiesMin(currentItem.stackCount)) && boundStorageUnit.GetSettings.AllowedToAccept(currentItem))
+                    if (currentItem != null &&
+                        (!settings.AllowedToAccept(currentItem) || !OutputSettings.SatisfiesMin(currentItem.stackCount)) &&
+                        boundStorageUnit.GetSettings.AllowedToAccept(currentItem))
                     {
                         currentItem.SetForbidden(false, false);
                         boundStorageUnit.HandleNewItem(currentItem);
                     }
+
                     //Transfer the diffrence back if it is too much
-                    if (currentItem != null && (!OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) && boundStorageUnit.GetSettings.AllowedToAccept(currentItem)))
+                    if (currentItem != null &&
+                        (!OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) && boundStorageUnit.GetSettings.AllowedToAccept(currentItem)))
                     {
-                        int splitCount = -OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit);
+                        var splitCount = -OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit);
                         if (splitCount > 0)
                         {
-                            Thing returnThing = currentItem.SplitOff(splitCount);
+                            var returnThing = currentItem.SplitOff(splitCount);
                             returnThing.SetForbidden(false, false);
                             boundStorageUnit.HandleNewItem(returnThing);
                         }
                     }
+
                     if (currentItem != null)
                     {
                         currentItem.SetForbidden(ForbidOnPlacement, false);
@@ -598,19 +617,24 @@ namespace ProjectRimFactory.Storage
                 }
             }
         }
+
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            foreach (Gizmo g in base.GetGizmos()) yield return g;
+            foreach (var g in base.GetGizmos()) yield return g;
             yield return new Command_Action()
             {
                 defaultLabel = "PRFIOMode".Translate() + ": " + (IOMode == StorageIOMode.Input ? "PRFIOInput".Translate() : "PRFIOOutput".Translate()),
                 action = () =>
                 {
-                    Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>()
-                    {
-                        new FloatMenuOption("PRFIOInput".Translate(), () => SelectedPorts().ToList().ForEach(p => p.IOMode = StorageIOMode.Input)),
-                        new FloatMenuOption("PRFIOOutput".Translate(), () => SelectedPorts().ToList().ForEach(p => p.IOMode = StorageIOMode.Output))
-                    }));
+                    Find.WindowStack.Add(
+                        new FloatMenu(
+                            new List<FloatMenuOption>()
+                            {
+                                new FloatMenuOption("PRFIOInput".Translate(), () => SelectedPorts().ToList().ForEach(p => p.IOMode = StorageIOMode.Input)),
+                                new FloatMenuOption("PRFIOOutput".Translate(), () => SelectedPorts().ToList().ForEach(p => p.IOMode = StorageIOMode.Output))
+                            }
+                        )
+                    );
                 },
                 icon = IOModeTex
             };
@@ -623,6 +647,7 @@ namespace ProjectRimFactory.Storage
             {
                 l.Add(this);
             }
+
             return l;
         }
 
@@ -630,19 +655,25 @@ namespace ProjectRimFactory.Storage
         {
             if (boundStorageUnit?.CanReceiveIO ?? false)
             {
-                return GenPlace.TryPlaceThing(thing.SplitOff(thing.stackCount), Position, Map, ThingPlaceMode.Near,
-                    null, pos =>
+                return GenPlace.TryPlaceThing(
+                    thing.SplitOff(thing.stackCount),
+                    Position,
+                    Map,
+                    ThingPlaceMode.Near,
+                    null,
+                    pos =>
                     {
                         if (settings.AllowedToAccept(thing) && OutputSettings.SatisfiesMin(thing.stackCount))
                             if (pos == Position)
                                 return true;
-                        foreach (Thing t in Map.thingGrid.ThingsListAt(pos))
+                        foreach (var t in Map.thingGrid.ThingsListAt(pos))
                         {
                             if (t is Building_StorageUnitIOPort) return false;
                         }
 
                         return true;
-                    });
+                    }
+                );
             }
 
             return false;

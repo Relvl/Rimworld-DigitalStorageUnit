@@ -7,6 +7,7 @@ namespace ProjectRimFactory.Archo.Things
     public class Building_HexCapacitor : Building
     {
         CompPowerBattery batteryComp;
+
         public override void DrawGUIOverlay()
         {
             base.DrawGUIOverlay();
@@ -15,11 +16,13 @@ namespace ProjectRimFactory.Archo.Things
                 GenMapUI.DrawThingLabel(GenMapUI.LabelDrawPosFor(this, 0f), batteryComp.StoredEnergy.ToString("F0"), Color.white);
             }
         }
+
         public override void PostMake()
         {
             base.PostMake();
             batteryComp = GetComp<CompPowerBattery>();
         }
+
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);

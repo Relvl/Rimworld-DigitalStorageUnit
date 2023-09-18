@@ -4,7 +4,6 @@ namespace ProjectRimFactory.Common
 {
     class CommonColors
     {
-
         static public Color GetCellPatternColor(CellPattern pat)
         {
             switch (pat)
@@ -26,6 +25,7 @@ namespace ProjectRimFactory.Common
                 case CellPattern.InputZone:
                     return inputZone;
             }
+
             return Color.white;
         }
 
@@ -39,8 +39,7 @@ namespace ProjectRimFactory.Common
         static public Color outputZone = Color.yellow.A(0.5f);
         static public Color WorkbenchCell = Color.blue;
         static public Color WorkbenchAlpha = Color.blue.A(0.5f);
-        static public Color SeedsInputZone = new Color(0.3f, 0.15f, 0f);//#4d2600
-
+        static public Color SeedsInputZone = new Color(0.3f, 0.15f, 0f); //#4d2600
 
         public enum CellPattern
         {
@@ -53,7 +52,5 @@ namespace ProjectRimFactory.Common
             InputCell,
             InputZone,
         }
-
-
     }
 }

@@ -16,6 +16,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             {
                 map.GetComponent<MapTickManager>().HandleTimeSkip(newTicksGame);
             }
+
             return true;
         }
     }

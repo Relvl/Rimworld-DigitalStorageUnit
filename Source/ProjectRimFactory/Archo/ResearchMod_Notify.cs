@@ -5,6 +5,7 @@ namespace ProjectRimFactory.Archo
     public class ResearchMod_Notify : ResearchMod
     {
         public string text;
+
         public override void Apply()
         {
             if (Find.WindowStack.WindowOfType<Dialog_MessageBox>() == null && !Current.Game.World.GetComponent<WorldComponent_NotificatonManager>().notifiedMessages.Contains(text))

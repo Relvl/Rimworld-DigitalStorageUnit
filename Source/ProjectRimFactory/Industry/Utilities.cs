@@ -1,4 +1,5 @@
 ﻿using Verse;
+
 namespace ProjectRimFactory.Industry
 {
     public class DeepQuarryDefModExtension : DefModExtension

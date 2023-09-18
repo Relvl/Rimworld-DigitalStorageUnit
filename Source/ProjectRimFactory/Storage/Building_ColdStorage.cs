@@ -22,7 +22,12 @@ namespace ProjectRimFactory.Storage
 
         private List<Building_StorageUnitIOBase> ports = new List<Building_StorageUnitIOBase>();
 
-        public string UniqueName { get => uniqueName; set => uniqueName = value; }
+        public string UniqueName
+        {
+            get => uniqueName;
+            set => uniqueName = value;
+        }
+
         private string uniqueName;
         public Building Building => this;
 
@@ -32,10 +37,10 @@ namespace ProjectRimFactory.Storage
         public DefModExtension_Crate ModExtension_Crate = null;
 
         public abstract bool CanStoreMoreItems { get; }
+
         // The maximum number of item stacks at this.Position:
         //   One item on each cell and the rest multi-stacked on Position?
-        public int MaxNumberItemsInternal => (ModExtension_Crate?.limit ?? int.MaxValue)
-                                              - def.Size.Area + 1;
+        public int MaxNumberItemsInternal => (ModExtension_Crate?.limit ?? int.MaxValue) - def.Size.Area + 1;
         public List<Thing> StoredItems => items;
         public int StoredItemsCount => items.Count;
         public override string LabelNoCount => uniqueName ?? base.LabelNoCount;
@@ -51,18 +56,17 @@ namespace ProjectRimFactory.Storage
 
         public virtual bool HideItems => ModExtension_Crate?.hideItems ?? false;
 
-        public virtual bool HideRightClickMenus =>
-            ModExtension_Crate?.hideRightClickMenus ?? false;
+        public virtual bool HideRightClickMenus => ModExtension_Crate?.hideRightClickMenus ?? false;
 
-        IntVec3 IHaulDestination.Position => this.Position;
+        IntVec3 IHaulDestination.Position => Position;
 
-        Map IHaulDestination.Map => this.Map;
+        Map IHaulDestination.Map => Map;
 
         bool IStoreSettingsParent.StorageTabVisible => true;
 
         public bool AdvancedIOAllowed => false;
 
-        public IntVec3 GetPosition => this.Position;
+        public IntVec3 GetPosition => Position;
 
         public StorageSettings GetSettings => settings;
 
@@ -86,10 +90,11 @@ namespace ProjectRimFactory.Storage
         {
             foreach (var g in base.GetGizmos())
                 yield return g;
-            foreach (Gizmo item in StorageSettingsClipboard.CopyPasteGizmosFor(settings))
+            foreach (var item in StorageSettingsClipboard.CopyPasteGizmosFor(settings))
             {
                 yield return item;
             }
+
             yield return new Command_Action
             {
                 icon = RenameTex,
@@ -137,6 +142,7 @@ namespace ProjectRimFactory.Storage
                 {
                     newItem.holdingOwner.Remove(newItem);
                 }
+
                 //TryAdd Could also handle Merging this is disabled for the following reasons
                 //We already handle that above
                 //Our option should be faster
@@ -147,6 +153,7 @@ namespace ProjectRimFactory.Storage
                 {
                     newItem.Position = Position;
                 }
+
                 if (newItem.Spawned) newItem.DeSpawn();
             }
         }
@@ -155,7 +162,7 @@ namespace ProjectRimFactory.Storage
         {
             base.ExposeData();
             Scribe_Collections.Look(ref ports, "ports", LookMode.Reference);
-            Scribe_Deep.Look(ref this.thingOwner, "thingowner", this);
+            Scribe_Deep.Look(ref thingOwner, "thingowner", this);
             Scribe_Values.Look(ref uniqueName, "uniqueName");
             Scribe_Deep.Look(ref settings, "settings", this);
             ModExtension_Crate ??= def.GetModExtension<DefModExtension_Crate>();
@@ -179,6 +186,7 @@ namespace ProjectRimFactory.Storage
                     //thingsToSplurge[i].DeSpawn();
                     GenPlace.TryPlaceThing(thingsToSplurge[i], Position, Map, ThingPlaceMode.Near);
                 }
+
             PatchStorageUtil.GetPRFMapComponent(Map).DeRegisterColdStorageBuilding(this);
             base.DeSpawn(mode);
         }
@@ -199,14 +207,13 @@ namespace ProjectRimFactory.Storage
                     }
                 }
             }
-
         }
 
         public float GetItemWealth()
         {
             float output = 0;
             var itemsc = items.Count;
-            for (int i = 0; i < itemsc; i++)
+            for (var i = 0; i < itemsc; i++)
             {
                 var item = items[i];
                 output += item.MarketValue * item.stackCount;
@@ -234,15 +241,16 @@ namespace ProjectRimFactory.Storage
         {
             //Some Sanity Checks
             capacity = 0;
-            if (thing == null || map == null || map != this.Map || cell == null || !this.Spawned)
+            if (thing == null || map == null || map != Map || cell == null || !Spawned)
             {
                 Log.Error("PRF DSU CapacityAt Sanity Check Error");
                 return false;
             }
+
             thing = thing.GetInnerIfMinified();
 
             //Check if thing can be stored based upon the storgae settings
-            if (!this.Accepts(thing))
+            if (!Accepts(thing))
             {
                 return false;
             }
@@ -254,10 +262,10 @@ namespace ProjectRimFactory.Storage
             var storedItems = Position.GetThingList(Map).Where(t => t.def.category == ThingCategory.Item);
 
             //Find the Stack size for the thing
-            int maxstacksize = thing.def.stackLimit;
+            var maxstacksize = thing.def.stackLimit;
             //Get capacity of partial Stacks
             //  So 45 Steel and 75 Steel and 11 Steel give 30+64 more capacity for steel
-            foreach (Thing partialStack in storedItems.Where(t => t.def == thing.def && t.stackCount < maxstacksize))
+            foreach (var partialStack in storedItems.Where(t => t.def == thing.def && t.stackCount < maxstacksize))
             {
                 capacity += maxstacksize - partialStack.stackCount;
             }
@@ -278,6 +286,7 @@ namespace ProjectRimFactory.Storage
                     capacity += thing.def.stackLimit;
                 }
             }
+
             return capacity > 0;
         }
 
@@ -299,11 +308,12 @@ namespace ProjectRimFactory.Storage
 
         StorageSettings IStoreSettingsParent.GetParentStoreSettings()
         {
-            StorageSettings fixedStorageSettings = def.building.fixedStorageSettings;
+            var fixedStorageSettings = def.building.fixedStorageSettings;
             if (fixedStorageSettings != null)
             {
                 return fixedStorageSettings;
             }
+
             return StorageSettings.EverStorableFixedSettings();
         }
 
@@ -338,14 +348,12 @@ namespace ProjectRimFactory.Storage
 
         public void GetChildHolders(List<IThingHolder> outChildren)
         {
-
         }
 
         public ThingOwner GetDirectlyHeldThings()
         {
             return thingOwner;
         }
-
 
         //Only used for Advanced IO
         public bool HoldsPos(IntVec3 pos)

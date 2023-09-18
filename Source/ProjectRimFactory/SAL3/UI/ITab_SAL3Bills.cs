@@ -14,11 +14,10 @@ namespace ProjectRimFactory.SAL3.UI
     public interface IBillTab
     {
         BillStack BillStack { get; }
-        Map Map { get; } 
+        Map Map { get; }
         IEnumerable<RecipeDef> GetAllRecipes();
         IntVec3 Position { get; }
     }
-
 
     [StaticConstructorOnStartup]
     public class ITab_SAL3Bills : ITab
@@ -37,13 +36,7 @@ namespace ProjectRimFactory.SAL3.UI
 
         public static readonly FieldInfo PasteSizeField = typeof(ITab_Bills).GetField("PasteSize", BindingFlags.NonPublic | BindingFlags.Static);
 
-        protected IBillTab SelBuilding
-        {
-            get
-            {
-                return (IBillTab)SelThing;
-            }
-        }
+        protected IBillTab SelBuilding => (IBillTab)SelThing;
 
         public ITab_SAL3Bills()
         {
@@ -55,11 +48,11 @@ namespace ProjectRimFactory.SAL3.UI
 
         protected override void FillTab()
         {
-            float pasteX = (float)PasteXField.GetValue(null);
-            float pasteY = (float)PasteYField.GetValue(null);
-            float pasteSize = (float)PasteSizeField.GetValue(null);
+            var pasteX = (float)PasteXField.GetValue(null);
+            var pasteY = (float)PasteYField.GetValue(null);
+            var pasteSize = (float)PasteSizeField.GetValue(null);
             PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.BillsTab, KnowledgeAmount.FrameDisplayed);
-            Rect rect = new Rect(WinSize.x - pasteX, pasteY, pasteSize, pasteSize);
+            var rect = new Rect(WinSize.x - pasteX, pasteY, pasteSize, pasteSize);
             if (BillUtility.Clipboard == null)
             {
                 GUI.color = Color.gray;
@@ -85,40 +78,56 @@ namespace ProjectRimFactory.SAL3.UI
             {
                 if (Widgets.ButtonImageFitted(rect, Textures.Paste, Color.white))
                 {
-                    Bill bill = BillUtility.Clipboard.Clone();
+                    var bill = BillUtility.Clipboard.Clone();
                     bill.InitializeAfterClone();
                     SelBuilding.BillStack.AddBill(bill);
                     SoundDefOf.Tick_Low.PlayOneShotOnCamera(null);
                 }
+
                 TooltipHandler.TipRegion(rect, "PasteBillTip".Translate());
             }
-            Rect rect2 = new Rect(0f, 0f, WinSize.x, WinSize.y).ContractedBy(10f);
-            Func<List<FloatMenuOption>> recipeOptionsMaker = delegate ()
+
+            var rect2 = new Rect(0f, 0f, WinSize.x, WinSize.y).ContractedBy(10f);
+            var recipeOptionsMaker = delegate()
             {
-                List<FloatMenuOption> list = new List<FloatMenuOption>();
-                foreach (RecipeDef recipe in SelBuilding.GetAllRecipes())
+                var list = new List<FloatMenuOption>();
+                foreach (var recipe in SelBuilding.GetAllRecipes())
                 {
                     if (recipe.AvailableNow)
                     {
-                        list.Add(new FloatMenuOption(recipe.LabelCap, delegate ()
-                        {
-                            if (!SelBuilding.Map.mapPawns.FreeColonists.Any((Pawn col) => recipe.PawnSatisfiesSkillRequirements(col)))
-                            {
-                                Bill.CreateNoPawnsWithSkillDialog(recipe);
-                            }
-                            Bill bill2 = recipe.MakeNewBill();
-                            SelBuilding.BillStack.AddBill(bill2);
-                            if (recipe.conceptLearned != null)
-                            {
-                                PlayerKnowledgeDatabase.KnowledgeDemonstrated(recipe.conceptLearned, KnowledgeAmount.Total);
-                            }
-                        }, MenuOptionPriority.Default, null, null, 29f, (Rect r) => Widgets.InfoCardButton(r.x + 5f, r.y + (r.height - 24f) / 2f, recipe), null));
+                        list.Add(
+                            new FloatMenuOption(
+                                recipe.LabelCap,
+                                delegate()
+                                {
+                                    if (!SelBuilding.Map.mapPawns.FreeColonists.Any(col => recipe.PawnSatisfiesSkillRequirements(col)))
+                                    {
+                                        Bill.CreateNoPawnsWithSkillDialog(recipe);
+                                    }
+
+                                    var bill2 = recipe.MakeNewBill();
+                                    SelBuilding.BillStack.AddBill(bill2);
+                                    if (recipe.conceptLearned != null)
+                                    {
+                                        PlayerKnowledgeDatabase.KnowledgeDemonstrated(recipe.conceptLearned, KnowledgeAmount.Total);
+                                    }
+                                },
+                                MenuOptionPriority.Default,
+                                null,
+                                null,
+                                29f,
+                                r => Widgets.InfoCardButton(r.x + 5f, r.y + (r.height - 24f) / 2f, recipe),
+                                null
+                            )
+                        );
                     }
                 }
+
                 if (!list.Any())
                 {
                     list.Add(new FloatMenuOption("NoneBrackets".Translate(), null, MenuOptionPriority.Default, null, null, 0f, null, null));
                 }
+
                 return list;
             };
             mouseoverBill = SelBuilding.BillStack.DoListing(rect2, recipeOptionsMaker, ref scrollPosition, ref viewHeight);

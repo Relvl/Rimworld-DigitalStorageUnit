@@ -9,19 +9,20 @@ namespace ProjectRimFactory.AutoMachineTool
         public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing thing = null)
         {
             //base.DrawGhost(def, center, rot, ghostCol, thing);
-            IntVec3 inputCell = center;
-            IntVec3 outputCell = center;
+            var inputCell = center;
+            var outputCell = center;
 
             //outputCell = center + rot.FacingCell;
             inputCell = center + rot.Opposite.FacingCell;
 
             //Not shure how i should sopport the angeled one
-            bool isRight = false;
+            var isRight = false;
 
             if (thing != null && !thing.def.IsBlueprint)
             {
                 isRight = (thing as Building_ItemPuller)?.Getright ?? false;
             }
+
             if (def.IsBlueprint || def.IsFrame)
             {
                 outputCell = def.entityDefToBuild.GetModExtension<ModExtension_Puller>().GetOutputCell(center, rot, isRight);

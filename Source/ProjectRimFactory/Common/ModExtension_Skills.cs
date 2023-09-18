@@ -19,6 +19,7 @@ namespace ProjectRimFactory.Common
 
         public enum_ModExtension_SkillsskillUsage SkillUsage = enum_ModExtension_SkillsskillUsage.ReserchOverrides;
         public int BaseSkill = 0; //The Base levelInt to uses in case another one is not specified
+
         public List<SkillRecord> skills = null; //List of specific Skill levelInts
         /* Usage Sample -----------------------------------------------------------------------
          <skills>
@@ -80,45 +81,44 @@ namespace ProjectRimFactory.Common
 
         public int GetExtendedSkillLevel(SkillDef skillDef, Type type)
         {
-            int returnval = 0;
+            var returnval = 0;
             switch (SkillUsage)
             {
                 case enum_ModExtension_SkillsskillUsage.ThisOverrides:
-                    {
-                        returnval = GetSkillLevel(skillDef);
-                        break;
-                    }
+                {
+                    returnval = GetSkillLevel(skillDef);
+                    break;
+                }
                 case enum_ModExtension_SkillsskillUsage.ReserchIsCapping:
-                    {
-                        returnval = Mathf.Clamp(GetSkillLevel(skillDef), 0, ReserchSkillModifier.GetResechSkillLevel(type));
-                        break;
-                    }
+                {
+                    returnval = Mathf.Clamp(GetSkillLevel(skillDef), 0, ReserchSkillModifier.GetResechSkillLevel(type));
+                    break;
+                }
                 case enum_ModExtension_SkillsskillUsage.ThisIsCapping:
-                    {
-                        returnval = Mathf.Clamp(ReserchSkillModifier.GetResechSkillLevel(type), 0, GetSkillLevel(skillDef));
-                        break;
-                    }
+                {
+                    returnval = Mathf.Clamp(ReserchSkillModifier.GetResechSkillLevel(type), 0, GetSkillLevel(skillDef));
+                    break;
+                }
                 case enum_ModExtension_SkillsskillUsage.ReserchOverrides:
-                    {
-                        returnval = ReserchSkillModifier.GetResechSkillLevel(type);
-                        break;
-                    }
+                {
+                    returnval = ReserchSkillModifier.GetResechSkillLevel(type);
+                    break;
+                }
                 default:
-                    {
-                        returnval = GetSkillLevel(skillDef);
-                        break;
-                    }
+                {
+                    returnval = GetSkillLevel(skillDef);
+                    break;
+                }
             }
+
             return returnval;
         }
 
         public string GetDescription(ThingDef def)
         {
+            var text = "";
 
-            string text = "";
-
-
-            switch (this.SkillUsage)
+            switch (SkillUsage)
             {
                 case enum_ModExtension_SkillsskillUsage.ThisOverrides:
                     text += "PRF_UTD_ModExtension_Skills_ThisOverrides".Translate();
@@ -140,7 +140,7 @@ namespace ProjectRimFactory.Common
             if (skills != null)
             {
                 text += "\r\n";
-                foreach (SkillRecord skillRecord in skills)
+                foreach (var skillRecord in skills)
                 {
                     text += $"  - {skillRecord.def.LabelCap}: {skillRecord.levelInt}";
                     text += "\r\n";
@@ -150,6 +150,4 @@ namespace ProjectRimFactory.Common
             return text;
         }
     }
-
-
 }

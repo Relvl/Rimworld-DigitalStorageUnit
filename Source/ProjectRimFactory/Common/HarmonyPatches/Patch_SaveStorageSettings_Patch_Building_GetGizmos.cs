@@ -33,12 +33,12 @@ namespace ProjectRimFactory.Common.HarmonyPatches
         /// <returns></returns>
         static IEnumerable<CodeInstruction> Transpiler_Billstack(IEnumerable<CodeInstruction> instructions)
         {
-            bool Found_WindowStackCall = false;
-            int ldfld_cnt = 0;
+            var Found_WindowStackCall = false;
+            var ldfld_cnt = 0;
             foreach (var instruction in instructions)
             {
                 //find the Start Point
-                if (instruction.opcode == OpCodes.Call && (instruction.operand as MethodInfo) == AccessTools.Method(typeof(Verse.Find), "get_WindowStack"))
+                if (instruction.opcode == OpCodes.Call && (instruction.operand as MethodInfo) == AccessTools.Method(typeof(Find), "get_WindowStack"))
                 {
                     Found_WindowStackCall = true;
                     ldfld_cnt = 0;
@@ -61,12 +61,14 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 {
                     Found_WindowStackCall = false;
                     ldfld_cnt = 0;
-                    var newist = new CodeInstruction(OpCodes.Call, HarmonyLib.AccessTools
-                        .Method(typeof(Patch_SaveStorageSettings_Patch_Building_GetGizmos), nameof(Patch_SaveStorageSettings_Patch_Building_GetGizmos.GetBillstack), new[] { typeof(Building) }));
+                    var newist = new CodeInstruction(
+                        OpCodes.Call,
+                        AccessTools.Method(typeof(Patch_SaveStorageSettings_Patch_Building_GetGizmos), nameof(GetBillstack), new[] { typeof(Building) })
+                    );
                     yield return newist;
                     continue;
-
                 }
+
                 yield return instruction;
             }
         }
@@ -81,24 +83,25 @@ namespace ProjectRimFactory.Common.HarmonyPatches
         /// <returns></returns>
         static IEnumerable<CodeInstruction> Transpiler_IsWorkTable(IEnumerable<CodeInstruction> instructions)
         {
-            bool forundCall = false;
+            var forundCall = false;
 
             foreach (var instruction in instructions)
             {
                 //For our Method we need the Building as the first and only Parameter
                 //Therfore we want to remove the ldfld that would get the the thingdef instead
-                if (forundCall == false && instruction.opcode == OpCodes.Ldfld && (instruction.operand as FieldInfo) == AccessTools.Field(typeof(Verse.Thing), "def"))
+                if (forundCall == false && instruction.opcode == OpCodes.Ldfld && (instruction.operand as FieldInfo) == AccessTools.Field(typeof(Thing), "def"))
                 {
                     continue;
                 }
 
                 //Check for the get_IsWorkTable call and replace it with our method
-                if (instruction.opcode == OpCodes.Callvirt &&
-                    (instruction.operand as MethodInfo) == AccessTools.Method(typeof(Verse.ThingDef), "get_IsWorkTable"))
+                if (instruction.opcode == OpCodes.Callvirt && (instruction.operand as MethodInfo) == AccessTools.Method(typeof(ThingDef), "get_IsWorkTable"))
                 {
                     forundCall = true;
-                    yield return new CodeInstruction(OpCodes.Call, HarmonyLib.AccessTools
-                        .Method(typeof(Patch_SaveStorageSettings_Patch_Building_GetGizmos), nameof(Patch_SaveStorageSettings_Patch_Building_GetGizmos.IsValidBuilding), new[] { typeof(Building) }));
+                    yield return new CodeInstruction(
+                        OpCodes.Call,
+                        AccessTools.Method(typeof(Patch_SaveStorageSettings_Patch_Building_GetGizmos), nameof(IsValidBuilding), new[] { typeof(Building) })
+                    );
                     continue;
                 }
 
@@ -123,18 +126,15 @@ namespace ProjectRimFactory.Common.HarmonyPatches
         /// <returns></returns>
         public static BillStack GetBillstack(Building building)
         {
-            Building_WorkTable building_WorkTable = building as Building_WorkTable;
+            var building_WorkTable = building as Building_WorkTable;
             if (building_WorkTable != null) return building_WorkTable.billStack;
 
-            IBillTab building_IBillTab = building as IBillTab;
+            var building_IBillTab = building as IBillTab;
             if (building_IBillTab != null) return building_IBillTab.BillStack;
 
             //This should never happen
             Log.Error($"PRF Error GetBillstack returns null - {building}");
             return null;
-
         }
-
-
     }
 }

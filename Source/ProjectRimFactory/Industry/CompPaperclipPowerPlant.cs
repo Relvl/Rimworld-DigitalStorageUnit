@@ -17,21 +17,9 @@ namespace ProjectRimFactory.Industry
         public int currentPowerModifierPct = 100;
         int maxPowerModifierPct = 100;
 
-        protected float PowerProductionModifier
-        {
-            get
-            {
-                return (currentPowerModifierPct * fuelPerSecond) / 10; // 100W per paperclip per second
-            }
-        }
+        protected float PowerProductionModifier => (currentPowerModifierPct * fuelPerSecond) / 10; // 100W per paperclip per second
 
-        protected override float DesiredPowerOutput
-        {
-            get
-            {
-                return -(float)ReflectionUtility.CompProperties_Power_basePowerConsumption.GetValue(Props) * PowerProductionModifier;
-            }
-        }
+        protected override float DesiredPowerOutput => -(float)ReflectionUtility.CompProperties_Power_basePowerConsumption.GetValue(Props) * PowerProductionModifier;
 
         public override void ReceiveCompSignal(string signal)
         {
@@ -79,7 +67,7 @@ namespace ProjectRimFactory.Industry
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            foreach (Gizmo g in base.CompGetGizmosExtra()) yield return g;
+            foreach (var g in base.CompGetGizmosExtra()) yield return g;
             yield return new Command_Action()
             {
                 defaultLabel = "SetPaperclipConsumptionPerSecond".Translate(),
@@ -91,10 +79,10 @@ namespace ProjectRimFactory.Industry
 
         public override string CompInspectStringExtra()
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             builder.AppendLine(base.CompInspectStringExtra());
             builder.AppendLine("PaperclipGeneratorEfficiency".Translate(currentPowerModifierPct, maxPowerModifierPct));
-            int runsOutTicks = (int)(parent.GetComp<CompRefuelable>().Fuel / fuelPerSecond * 60f);
+            var runsOutTicks = (int)(parent.GetComp<CompRefuelable>().Fuel / fuelPerSecond * 60f);
             builder.Append("PaperclipsRunOutIn".Translate(runsOutTicks.ToStringTicksToPeriod()));
             return builder.ToString();
         }

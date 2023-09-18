@@ -14,18 +14,17 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             var map = playerNegotiator.Map;
             if (map is null) return;
 
-            HashSet<Thing> yieldedThings = new HashSet<Thing>();
+            var yieldedThings = new HashSet<Thing>();
             yieldedThings.AddRange<Thing>(__result);
-            foreach (ILinkableStorageParent dsu in TradePatchHelper.AllPowered(map))
+            foreach (var dsu in TradePatchHelper.AllPowered(map))
             {
                 //Only for Cold Storage
                 if (dsu.AdvancedIOAllowed) continue;
 
                 yieldedThings.AddRange<Thing>(dsu.StoredItems);
             }
+
             __result = yieldedThings;
-
         }
-
     }
 }

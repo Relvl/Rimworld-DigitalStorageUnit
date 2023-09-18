@@ -2,7 +2,6 @@
 using RimWorld;
 using Verse;
 
-
 namespace ProjectRimFactory.Common.HarmonyPatches
 {
     [HarmonyPatch(typeof(RoomRequirement_ThingCount), "Count")]
@@ -15,6 +14,5 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 __result += r.ThingCount(PRFDefOf.PRF_MiniDroneColumn);
             }
         }
-
     }
 }

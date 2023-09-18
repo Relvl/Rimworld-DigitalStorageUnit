@@ -17,13 +17,12 @@ namespace ProjectRimFactory.Storage
 
         public override bool Powered => compPowerTrader?.PowerOn ?? false;
 
-        public override bool CanStoreMoreItems => (Powered) && this.Spawned &&
-            (ModExtension_Crate == null || StoredItemsCount < MaxNumberItemsInternal);
-        public override bool CanReceiveIO => base.CanReceiveIO && (compPowerTrader?.PowerOn ?? false) && this.Spawned;
+        public override bool CanStoreMoreItems => (Powered) && Spawned && (ModExtension_Crate == null || StoredItemsCount < MaxNumberItemsInternal);
+        public override bool CanReceiveIO => base.CanReceiveIO && (compPowerTrader?.PowerOn ?? false) && Spawned;
 
-        public override bool ForbidPawnInput => this.ForbidPawnAccess || !this.pawnAccess || !this.CanStoreMoreItems;
+        public override bool ForbidPawnInput => ForbidPawnAccess || !pawnAccess || !CanStoreMoreItems;
 
-        public override bool ForbidPawnOutput => this.ForbidPawnAccess || !this.pawnAccess;
+        public override bool ForbidPawnOutput => ForbidPawnAccess || !pawnAccess;
 
         private bool pawnAccess = true;
 
@@ -52,6 +51,7 @@ namespace ProjectRimFactory.Storage
             {
                 UpdatePowerConsumption();
             }
+
             thingOwner.ThingOwnerTick();
         }
 
@@ -63,26 +63,22 @@ namespace ProjectRimFactory.Storage
 
         public override IEnumerable<Gizmo> GetGizmos()
         {
-            foreach (Gizmo g in base.GetGizmos()) yield return g;
+            foreach (var g in base.GetGizmos()) yield return g;
             if (Prefs.DevMode)
             {
                 yield return new Command_Action()
                 {
-                    defaultLabel = "DEBUG: Debug actions",
-                    action = () =>
-                    {
-                        Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>(DebugActions())));
-                    }
+                    defaultLabel = "DEBUG: Debug actions", action = () => { Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>(DebugActions()))); }
                 };
             }
 
-            if (!this.ForbidPawnAccess)
+            if (!ForbidPawnAccess)
             {
                 yield return new Command_Toggle()
                 {
                     defaultLabel = "PRFPawnAccessLabel".Translate(),
-                    isActive = () => this.pawnAccess,
-                    toggleAction = () => this.pawnAccess = !this.pawnAccess,
+                    isActive = () => pawnAccess,
+                    toggleAction = () => pawnAccess = !pawnAccess,
                     defaultDesc = "PRFPawnAccessDesc".Translate(),
                     icon = StoragePawnAccessSwitchIcon
                 };
@@ -95,9 +91,10 @@ namespace ProjectRimFactory.Storage
             {
                 if (def.GetModExtension<DefModExtension_Crate>()?.destroyContainsItems ?? false)
                 {
-                    this.StoredItems.Where(t => !t.Destroyed).ToList().ForEach(x => x.Destroy());
+                    StoredItems.Where(t => !t.Destroyed).ToList().ForEach(x => x.Destroy());
                 }
             }
+
             base.DeSpawn(mode);
         }
 
@@ -113,10 +110,8 @@ namespace ProjectRimFactory.Storage
             {
                 return "PRFCrateUIThingLabel".Translate(StoredItemsCount, def.GetModExtension<DefModExtension_Crate>().limit);
             }
-            else
-            {
-                return base.GetUIThingLabel();
-            }
+
+            return base.GetUIThingLabel();
         }
 
         public override string GetITabString(int itemsSelected)
@@ -125,10 +120,8 @@ namespace ProjectRimFactory.Storage
             {
                 return "PRFItemsTabLabel_Crate".Translate(StoredItemsCount, def.GetModExtension<DefModExtension_Crate>().limit, itemsSelected);
             }
-            else
-            {
-                return base.GetITabString(itemsSelected);
-            }
+
+            return base.GetITabString(itemsSelected);
         }
 
         //This Exists as I don't know how to call .Any() with CodeInstruction
@@ -140,9 +133,9 @@ namespace ProjectRimFactory.Storage
 
         public static IEnumerable<Building_MassStorageUnitPowered> AllPowered(Map map)
         {
-            foreach (Building_MassStorageUnitPowered item in map.listerBuildings.AllBuildingsColonistOfClass<Building_MassStorageUnitPowered>())
+            foreach (var item in map.listerBuildings.AllBuildingsColonistOfClass<Building_MassStorageUnitPowered>())
             {
-                CompPowerTrader comp = item.GetComp<CompPowerTrader>();
+                var comp = item.GetComp<CompPowerTrader>();
                 if (comp == null || comp.PowerOn)
                 {
                     yield return item;

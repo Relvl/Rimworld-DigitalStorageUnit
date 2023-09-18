@@ -1,5 +1,6 @@
 ﻿using ProjectRimFactory.AutoMachineTool;
 using Verse;
+
 namespace ProjectRimFactory
 {
     /// <summary>
@@ -15,16 +16,18 @@ namespace ProjectRimFactory
         public ThingOwner_Conveyor(IThingHolder owner) : base(owner)
         {
         }
+
         public override bool Remove(Thing item)
         {
             Building_BeltConveyor belt;
-            if (item.holdingOwner == this) belt = this.owner as Building_BeltConveyor;
+            if (item.holdingOwner == this) belt = owner as Building_BeltConveyor;
             else return base.Remove(item);
-            bool result = base.Remove(item);
+            var result = base.Remove(item);
             if (result)
             {
                 belt.Notify_LostItem(item);
             }
+
             return result;
         }
     }

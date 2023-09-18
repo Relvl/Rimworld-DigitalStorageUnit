@@ -25,9 +25,12 @@ namespace ProjectRimFactory.SAL3.Things
 
         private bool pickupFromGround;
 
-        public IPowerSupplyMachine RangePowerSupplyMachine => this.GetComp<CompPowerWorkSetting>();
+        public IPowerSupplyMachine RangePowerSupplyMachine => GetComp<CompPowerWorkSetting>();
 
-        private IEnumerable<IntVec3> CellsToTarget => (this.GetComp<CompPowerWorkSetting>()?.GetRangeCells() ?? GenRadial.RadialCellsAround(Position, this.def.specialDisplayRadius, false)).Where(c => c.GetFirst<Building_SmartHopper>(this.Map) == null);
+        private IEnumerable<IntVec3> CellsToTarget =>
+            (GetComp<CompPowerWorkSetting>()?.GetRangeCells() ?? GenRadial.RadialCellsAround(Position, def.specialDisplayRadius, false)).Where(
+                c => c.GetFirst<Building_SmartHopper>(Map) == null
+            );
 
         public IEnumerable<IntVec3> CellsToSelect
         {
@@ -38,10 +41,7 @@ namespace ProjectRimFactory.SAL3.Things
                     return cachedDetectorCells;
                 }
 
-                var resultCache = from IntVec3 c
-                                  in this.CellsToTarget
-                                  where this.pickupFromGround || c.HasSlotGroupParent(Map)
-                                  select c;
+                var resultCache = from IntVec3 c in CellsToTarget where pickupFromGround || c.HasSlotGroupParent(Map) select c;
                 cachedDetectorCells = resultCache;
                 return resultCache;
             }
@@ -53,8 +53,8 @@ namespace ProjectRimFactory.SAL3.Things
             {
                 foreach (var c in CellsToSelect)
                 {
-                    if (!c.InBounds(this.Map)) continue;
-                    foreach (Thing t in GatherThingsUtility.AllThingsInCellForUse(c, Map,false))
+                    if (!c.InBounds(Map)) continue;
+                    foreach (var t in GatherThingsUtility.AllThingsInCellForUse(c, Map, false))
                     {
                         yield return t;
                     }
@@ -72,12 +72,10 @@ namespace ProjectRimFactory.SAL3.Things
                 {
                     outputSettings = new OutputSettings("SmartHopper_Minimum_UseTooltip", "SmartHopper_Maximum_UseTooltip");
                 }
+
                 return outputSettings;
             }
-            set
-            {
-                outputSettings = value;
-            }
+            set => outputSettings = value;
         }
 
         public Thing NPDI_Item => StoredThing;
@@ -90,9 +88,10 @@ namespace ProjectRimFactory.SAL3.Things
                 settings = new StorageSettings();
                 settings.CopyFrom(GetParentStoreSettings());
             }
+
             if (!respawningAfterLoad)
             {
-                this.pickupFromGround = true;
+                pickupFromGround = true;
             }
         }
 
@@ -101,15 +100,16 @@ namespace ProjectRimFactory.SAL3.Things
             base.ExposeData();
             Scribe_Deep.Look(ref outputSettings, "outputSettings", "SmartHopper_Minimum_UseTooltip", "SmartHopper_Maximum_UseTooltip");
             Scribe_Deep.Look(ref settings, "settings", this);
-            Scribe_Values.Look(ref this.pickupFromGround, "pickupFromGround");
+            Scribe_Values.Look(ref pickupFromGround, "pickupFromGround");
         }
 
         public override string GetInspectString()
         {
-            if (OutputSettings.useMin && OutputSettings.useMax) return base.GetInspectString() + "\n" + "SmartHopper_Minimum".Translate(OutputSettings.min) + "\n" + "SmartHopper_Maximum".Translate(OutputSettings.max);
-            else if (OutputSettings.useMin && !OutputSettings.useMax) return base.GetInspectString() + "\n" + "SmartHopper_Minimum".Translate(OutputSettings.min);
-            else if (!OutputSettings.useMin && OutputSettings.useMax) return base.GetInspectString() + "\n" + "SmartHopper_Maximum".Translate(OutputSettings.max);
-            else return base.GetInspectString();
+            if (OutputSettings.useMin && OutputSettings.useMax)
+                return base.GetInspectString() + "\n" + "SmartHopper_Minimum".Translate(OutputSettings.min) + "\n" + "SmartHopper_Maximum".Translate(OutputSettings.max);
+            if (OutputSettings.useMin && !OutputSettings.useMax) return base.GetInspectString() + "\n" + "SmartHopper_Minimum".Translate(OutputSettings.min);
+            if (!OutputSettings.useMin && OutputSettings.useMax) return base.GetInspectString() + "\n" + "SmartHopper_Maximum".Translate(OutputSettings.max);
+            return base.GetInspectString();
         }
 
         public override void Tick()
@@ -119,7 +119,7 @@ namespace ProjectRimFactory.SAL3.Things
             {
                 foreach (var element in ThingsToSelect)
                 {
-                    bool withinLimits = true;
+                    var withinLimits = true;
                     if (OutputSettings.useMin) withinLimits = (element.stackCount >= OutputSettings.min);
 
                     if (element.def.category == ThingCategory.Item && settings.AllowedToAccept(element) && withinLimits)
@@ -128,11 +128,12 @@ namespace ProjectRimFactory.SAL3.Things
                         break;
                     }
                 }
+
                 if (StoredThing != null)
                 {
                     if (settings.AllowedToAccept(StoredThing))
                     {
-                        bool forbidItem = true;
+                        var forbidItem = true;
 
                         if (OutputSettings.useMin || OutputSettings.useMax)
                         {
@@ -141,12 +142,14 @@ namespace ProjectRimFactory.SAL3.Things
                             else if (OutputSettings.useMax && StoredThing.stackCount > OutputSettings.max)
                                 forbidItem = false;
                         }
+
                         if (forbidItem)
                         {
                             StoredThing.SetForbidden(true, false);
                             return;
                         }
                     }
+
                     StoredThing.SetForbidden(false, false);
                 }
             }
@@ -159,7 +162,8 @@ namespace ProjectRimFactory.SAL3.Things
                 if (StoredThing.CanStackWith(element))
                 {
                     var num = Mathf.Min(element.stackCount, (StoredThing.def.stackLimit - StoredThing.stackCount));
-                    if (OutputSettings.useMax) num = Mathf.Min(element.stackCount, Mathf.Min((StoredThing.def.stackLimit - StoredThing.stackCount), (OutputSettings.max - StoredThing.stackCount)));
+                    if (OutputSettings.useMax)
+                        num = Mathf.Min(element.stackCount, Mathf.Min((StoredThing.def.stackLimit - StoredThing.stackCount), (OutputSettings.max - StoredThing.stackCount)));
 
                     if (num > 0)
                     {
@@ -185,7 +189,7 @@ namespace ProjectRimFactory.SAL3.Things
         public override void DrawExtraSelectionOverlays()
         {
             base.DrawExtraSelectionOverlays();
-            if (!this.pickupFromGround)
+            if (!pickupFromGround)
                 GenDraw.DrawFieldEdges(CellsToSelect.ToList(), Color.green);
         }
 
@@ -193,7 +197,7 @@ namespace ProjectRimFactory.SAL3.Things
         {
             foreach (var g in base.GetGizmos())
                 yield return g;
-            foreach (Gizmo g2 in StorageSettingsClipboard.CopyPasteGizmosFor(settings))
+            foreach (var g2 in StorageSettingsClipboard.CopyPasteGizmosFor(settings))
                 yield return g2;
             yield return new Command_Action
             {
@@ -205,8 +209,8 @@ namespace ProjectRimFactory.SAL3.Things
             {
                 icon = ContentFinder<Texture2D>.Get("PRFUi/PickupFromGround"),
                 defaultLabel = "SmartHopper_PickupFromGround".Translate(),
-                toggleAction = () => this.pickupFromGround = !this.pickupFromGround,
-                isActive = () => this.pickupFromGround
+                toggleAction = () => pickupFromGround = !pickupFromGround,
+                isActive = () => pickupFromGround
             };
         }
 
@@ -217,6 +221,7 @@ namespace ProjectRimFactory.SAL3.Things
                 settings = new StorageSettings();
                 settings.CopyFrom(GetParentStoreSettings());
             }
+
             return settings;
         }
 

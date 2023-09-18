@@ -13,7 +13,9 @@ namespace ProjectRimFactory.SAL3.Things.Assemblers
     {
         public abstract BillStack BillStack { get; }
 
-        public virtual IEnumerable<IntVec3> IngredientStackCells => this.GetComp<CompPowerWorkSetting>()?.GetRangeCells().Where(c => c.InBounds(this.Map)) ?? GenAdj.CellsAdjacent8Way(this).Where(c => c.InBounds(this.Map));
+        public virtual IEnumerable<IntVec3> IngredientStackCells =>
+            GetComp<CompPowerWorkSetting>()?.GetRangeCells().Where(c => c.InBounds(Map)) ?? GenAdj.CellsAdjacent8Way(this).Where(c => c.InBounds(Map));
+
         public bool CurrentlyUsableForBills() => false;
 
         public abstract IEnumerable<RecipeDef> GetAllRecipes();

@@ -26,6 +26,7 @@ namespace ProjectRimFactory.SAL3.Exposables
                 {
                     return workingGraphicData.Graphic;
                 }
+
                 return null;
             }
         }
@@ -38,6 +39,7 @@ namespace ProjectRimFactory.SAL3.Exposables
                 {
                     return powerOffGraphicData.Graphic;
                 }
+
                 return null;
             }
         }
@@ -49,21 +51,23 @@ namespace ProjectRimFactory.SAL3.Exposables
 
         public EffecterDef GetEffecter(RecipeDef recipe)
         {
-            if (!this.doEffect)
+            if (!doEffect)
             {
                 return null;
             }
-            var overridden = this.overrideRecipeEffecter.Where(e => e.recipe == recipe).FirstOrDefault();
+
+            var overridden = overrideRecipeEffecter.Where(e => e.recipe == recipe).FirstOrDefault();
             return overridden == null ? (IsNothingEffectAndSound(recipe) ? defaultEffecter : recipe.effectWorking) : overridden.effecter;
         }
 
         public SoundDef GetSound(RecipeDef recipe)
         {
-            if (!this.doEffect)
+            if (!doEffect)
             {
                 return null;
             }
-            var overridden = this.overrideRecipeEffecter.Where(e => e.recipe == recipe).FirstOrDefault();
+
+            var overridden = overrideRecipeEffecter.Where(e => e.recipe == recipe).FirstOrDefault();
             return overridden == null ? (IsNothingEffectAndSound(recipe) ? defaultSound : recipe.soundWorking) : overridden.sound;
         }
     }
@@ -77,11 +81,13 @@ namespace ProjectRimFactory.SAL3.Exposables
             {
                 DirectXmlCrossRefLoader.RegisterObjectWantsCrossRef(this, "effecter", xmlRoot.Attributes["Effecter"].Value, null, null);
             }
+
             if (xmlRoot.Attributes["Sound"] != null)
             {
                 DirectXmlCrossRefLoader.RegisterObjectWantsCrossRef(this, "sound", xmlRoot.Attributes["Sound"].Value, null, null);
             }
         }
+
         public RecipeDef recipe;
         public EffecterDef effecter;
         public SoundDef sound;

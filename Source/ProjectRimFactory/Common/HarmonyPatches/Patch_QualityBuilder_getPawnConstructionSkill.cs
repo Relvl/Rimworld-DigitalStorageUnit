@@ -19,6 +19,7 @@ namespace ProjectRimFactory.Common.HarmonyPatches
                 __result = pawn.skills.GetSkill(SkillDefOf.Construction).Level;
                 return false;
             }
+
             return true;
         }
     }

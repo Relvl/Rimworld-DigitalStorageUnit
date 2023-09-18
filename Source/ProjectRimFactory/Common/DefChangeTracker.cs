@@ -17,7 +17,7 @@ namespace ProjectRimFactory.Common
     {
         private static Dictionary<string, object> defaultDefValues = new Dictionary<string, object>();
 
-        public bool HasAnyDefaultValues { get { return defaultDefValues.Count > 0; } }
+        public bool HasAnyDefaultValues => defaultDefValues.Count > 0;
 
         public void AddDefaultValue(string defName, string keylet, object defaultValue)
         {
@@ -40,14 +40,15 @@ namespace ProjectRimFactory.Common
 
         public bool IsChanged(string defName)
         {
-            foreach (string key in defaultDefValues.Keys)
+            foreach (var key in defaultDefValues.Keys)
             {
                 // strip keylet off of the key
                 var t = key.Split('_');
                 // get only defname
-                string keyDefName = string.Join("_", t.Take(t.Length - 1).ToArray());
+                var keyDefName = string.Join("_", t.Take(t.Length - 1).ToArray());
                 if (keyDefName == defName) return true;
             }
+
             return false;
         }
 
@@ -57,9 +58,10 @@ namespace ProjectRimFactory.Common
             {
                 return;
             }
+
             // The value in refToChange may not be the original value: user could already have changed it once.  So:
             //    (this IS assignment by value, right?)
-            T defaultValue = GetDefaultValue<T>(defName, keylet, refToChange);
+            var defaultValue = GetDefaultValue<T>(defName, keylet, refToChange);
             refToChange = value;
             // if the user reset/changed to original defaul value, remove the default values key
             if (defaultValue.CompareTo(value) == 0)
@@ -81,6 +83,7 @@ namespace ProjectRimFactory.Common
                 o = null;
                 return false;
             }
+
             var first = defaultDefValues.First();
             var t = first.Key.Split('_');
             // get only defName
@@ -90,6 +93,7 @@ namespace ProjectRimFactory.Common
             o = first.Value;
             return true;
         }
+
         public bool GetFirstDefaultValueFor(string defName, out string keylet, out object o)
         {
             if (defaultDefValues != null && defaultDefValues.Count > 0)
@@ -97,7 +101,7 @@ namespace ProjectRimFactory.Common
                 foreach (var entry in defaultDefValues)
                 {
                     var t = entry.Key.Split('_');
-                    string dN = string.Join("_", t.Take(t.Length - 1).ToArray());
+                    var dN = string.Join("_", t.Take(t.Length - 1).ToArray());
                     if (dN == defName)
                     {
                         keylet = t[t.Length - 1];
@@ -106,6 +110,7 @@ namespace ProjectRimFactory.Common
                     }
                 }
             }
+
             // nothing found
             keylet = null;
             o = null;
@@ -122,6 +127,7 @@ namespace ProjectRimFactory.Common
                     yield return (T)entry.Value;
                 }
             }
+
             yield break;
         }
 
@@ -134,7 +140,7 @@ namespace ProjectRimFactory.Common
         {
             if (Scribe.mode == LoadSaveMode.LoadingVars)
             {
-                T defaultValue = this.GetDefaultValue(defName, keylet, value);
+                var defaultValue = GetDefaultValue(defName, keylet, value);
                 Scribe_Values.Look(ref value, "DSU_" + defName + "_" + keylet, defaultValue);
                 if (defaultValue.CompareTo(value) != 0)
                 {
@@ -147,6 +153,7 @@ namespace ProjectRimFactory.Common
                     }
                 }
             }
+
             if (Scribe.mode == LoadSaveMode.Saving)
             {
                 if (!IsDefaultValue(defName, keylet, value))
@@ -164,14 +171,16 @@ namespace ProjectRimFactory.Common
                 // if loading, default valueis already in our dictionary, all is well...
                 Scribe_Deep.Look(ref value, "DSU_" + defName + "_" + keylet, null);
                 if (value == null)
-                { // we were loading/resetting, loaded null
+                {
+                    // we were loading/resetting, loaded null
                     // ...unless it wasn't saved some how??
                     value = (T)defaultDefValues[defName + "_" + keylet];
                     defaultDefValues.Remove(defName + "_" + keylet);
                 }
             }
             else
-            { // no default currently saved
+            {
+                // no default currently saved
                 T tmp = null;
                 Scribe_Deep.Look(ref tmp, "DSU_" + defName + "_" + keylet, null);
                 // either we loaded a new default, or we saved nothing.
@@ -185,12 +194,10 @@ namespace ProjectRimFactory.Common
 
         public bool IsDefaultValue<T>(string defName, string keylet, T value) where T : IComparable
         {
-            string key = defName + '_' + keylet;
+            var key = defName + '_' + keylet;
             if (!defaultDefValues.ContainsKey(key)) return true;
-            T cur = (T)defaultDefValues[key];
+            var cur = (T)defaultDefValues[key];
             return value.CompareTo(cur) == 0;
         }
-
     }
-
 }

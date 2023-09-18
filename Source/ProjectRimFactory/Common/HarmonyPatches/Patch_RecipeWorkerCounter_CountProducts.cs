@@ -23,39 +23,38 @@ namespace ProjectRimFactory.Common.HarmonyPatches
             //Only run if Check everywhere is set
             if (bill.includeFromZone == null)
             {
-                Map billmap = bill.Map;
-                int i = 0;
-                ThingDef targetDef = __instance.recipe.products[0].thingDef;
+                var billmap = bill.Map;
+                var i = 0;
+                var targetDef = __instance.recipe.products[0].thingDef;
 
                 //Add Items form AssemblerQueue
-                PRFGameComponent gamecomp = Current.Game.GetComponent<PRFGameComponent>();
+                var gamecomp = Current.Game.GetComponent<PRFGameComponent>();
                 for (i = 0; i < gamecomp.AssemblerQueue.Count; i++)
                 {
                     //Don't count Resources of other maps
                     if (billmap != gamecomp.AssemblerQueue[i].Map) continue;
-                    foreach (Thing heldThing in gamecomp.AssemblerQueue[i].GetThingQueue())
+                    foreach (var heldThing in gamecomp.AssemblerQueue[i].GetThingQueue())
                     {
                         TryUpdateResult(ref __result, targetDef, heldThing);
                     }
                 }
 
                 //Add Items stored in ColdStorage
-                List<ILinkableStorageParent> units = PatchStorageUtil.GetPRFMapComponent(billmap).ColdStorageBuildings.Select(b => b as ILinkableStorageParent).ToList();
+                var units = PatchStorageUtil.GetPRFMapComponent(billmap).ColdStorageBuildings.Select(b => b as ILinkableStorageParent).ToList();
 
-                foreach (ILinkableStorageParent dsu in units)
+                foreach (var dsu in units)
                 {
                     foreach (var thing in dsu.StoredItems)
                     {
                         TryUpdateResult(ref __result, targetDef, thing);
                     }
                 }
-
             }
         }
 
         private static void TryUpdateResult(ref int __result, ThingDef targetDef, Thing heldThing)
         {
-            Thing innerIfMinified = heldThing.GetInnerIfMinified();
+            var innerIfMinified = heldThing.GetInnerIfMinified();
             if (innerIfMinified.def == targetDef)
             {
                 __result += innerIfMinified.stackCount;

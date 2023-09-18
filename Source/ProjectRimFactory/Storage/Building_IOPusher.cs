@@ -6,27 +6,20 @@ namespace ProjectRimFactory.Storage
 {
     public class Building_IOPusher : Building_StorageUnitIOBase
     {
+        public override IntVec3 WorkPosition => Position + Rotation.FacingCell;
 
-
-        public override IntVec3 WorkPosition
+        public override StorageIOMode IOMode
         {
-            get
-            {
-                return this.Position + this.Rotation.FacingCell;
-            }
-
+            get => StorageIOMode.Output;
+            set => _ = value;
         }
-
-
-
-        public override StorageIOMode IOMode { get => StorageIOMode.Output; set => _ = value; }
 
         public override bool IsAdvancedPort => false;
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
-            base.mode = IOMode;
+            mode = IOMode;
         }
     }
 
@@ -36,16 +29,9 @@ namespace ProjectRimFactory.Storage
         {
             // base.DrawGhost(def, center, rot, ghostCol, thing);
 
-            IntVec3 outputCell = center + rot.FacingCell;
-
+            var outputCell = center + rot.FacingCell;
 
             GenDraw.DrawFieldEdges(new List<IntVec3> { outputCell }, Common.CommonColors.outputCell);
-
-
-
         }
     }
-
-
-
 }
