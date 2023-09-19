@@ -10,7 +10,7 @@
 
     <!--==================== Base ====================-->
     <ThingDef Name="PRF_MassStorageBase" ParentName="PRF_BuildingBase" Abstract="True">
-        <thingClass>ProjectRimFactory.Storage.Building_Crate</thingClass>
+        <thingClass>DigitalStorageUnit.Storage.Building_Crate</thingClass>
         <designatorDropdown>PRF_StorageGroup</designatorDropdown>
         <uiIconScale>0.7</uiIconScale>
         <tradeTags>
@@ -50,7 +50,7 @@
         <surfaceType>Item</surfaceType>
         <inspectorTabs>
             <li>ITab_Storage</li>
-            <li>ProjectRimFactory.Storage.UI.ITab_Items</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
         </inspectorTabs>
     </ThingDef>
 
@@ -104,7 +104,7 @@
         </researchPrerequisites>
         <constructionSkillPrerequisite>4</constructionSkillPrerequisite>
         <modExtensions>
-            <li Class="ProjectRimFactory.Storage.Editables.DefModExtension_Crate">
+            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>8</limit>
                 <hideItems>true</hideItems>
             </li>
@@ -159,7 +159,7 @@
         </researchPrerequisites>
         <constructionSkillPrerequisite>4</constructionSkillPrerequisite>
         <modExtensions>
-            <li Class="ProjectRimFactory.Storage.Editables.DefModExtension_Crate">
+            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>16</limit>
                 <hideItems>true</hideItems>
             </li>
@@ -214,7 +214,7 @@
             <li>PRF_SteelCrates</li>
         </researchPrerequisites>
         <modExtensions>
-            <li Class="ProjectRimFactory.Storage.Editables.DefModExtension_Crate">
+            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>32</limit>
                 <hideItems>true</hideItems>
             </li>
@@ -267,7 +267,7 @@
             <li>PRF_SteelCrates</li>
         </researchPrerequisites>
         <modExtensions>
-            <li Class="ProjectRimFactory.Storage.Editables.DefModExtension_Crate">
+            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>64</limit>
                 <hideItems>true</hideItems>
             </li>
@@ -281,7 +281,7 @@
         <description>A matter-energy conversion based storage unit which can hold up to 768 stacks, consuming 10 W of power per stack of items. In the event of a power outage, items already inside will be safe, but the DSU will not be able to store more. Don't break it.</description>
         <designatorDropdown>PRF_IoGroup</designatorDropdown>
         <uiIconScale>0.9</uiIconScale>
-        <thingClass>ProjectRimFactory.Storage.Building_MassStorageUnitPowered</thingClass>
+        <thingClass>DigitalStorageUnit.Storage.Building_MassStorageUnitPowered</thingClass>
         <graphicData>
             <texPath>Storage/CargoPlatform</texPath>
             <drawSize>(3,3)</drawSize>
@@ -346,13 +346,13 @@
                 <shortCircuitInRain>true</shortCircuitInRain>
                 <basePowerConsumption>0</basePowerConsumption>
             </li>
-            <li Class="ProjectRimFactory.Common.CompProperties_CompOutputAdjustable"/>
+            <li Class="DigitalStorageUnit.Common.CompProperties_CompOutputAdjustable"/>
             <li Class="CompProperties_Flickable"/>
         </comps>
         <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
         <modExtensions>
-            <li Class="ProjectRimFactory.Storage.Editables.DefModExtension_CanUseStorageIOPorts"/>
-            <li Class="ProjectRimFactory.Storage.Editables.DefModExtension_Crate">
+            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_CanUseStorageIOPorts"/>
+            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>768</limit>
                 <destroyContainsItems>true</destroyContainsItems>
                 <hideItems>true</hideItems>
@@ -364,7 +364,7 @@
 
     <!--==================== Archival Storage Unit ====================-->
     <ThingDef ParentName="PRF_BuildingBase">
-        <thingClass>ProjectRimFactory.Storage.Building_ColdStoragePowered</thingClass>
+        <thingClass>DigitalStorageUnit.Storage.Building_ColdStoragePowered</thingClass>
         <defName>PRF_ColdStorageUnit_I</defName>
         <label>Archival Storage Unit</label>
         <description>A matter-energy conversion based storage unit which can hold up to 10k stacks, consuming 10 W of power per stack of items. In the event of a power outage, items already inside will be safe, but the Archival Storage Unit will not be able to store more. Don't break it.\n\nItems stored in this Device are not spawned and therefore won't be automatically accessible by your pawns. Use I/O Ports to interact with it.</description>
@@ -387,7 +387,7 @@
         <surfaceType>Item</surfaceType>
         <inspectorTabs>
             <li>ITab_Storage</li>
-            <li>ProjectRimFactory.Storage.UI.ITab_Items</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
         </inspectorTabs>
         <graphicData>
             <graphicClass>Graphic_Single</graphicClass>
@@ -460,13 +460,13 @@
                 <shortCircuitInRain>true</shortCircuitInRain>
                 <basePowerConsumption>0</basePowerConsumption>
             </li>
-            <li Class="ProjectRimFactory.Common.CompProperties_CompOutputAdjustable"/>
+            <li Class="DigitalStorageUnit.Common.CompProperties_CompOutputAdjustable"/>
             <li Class="CompProperties_Flickable"/>
         </comps>
         <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
         <modExtensions>
-            <li Class="ProjectRimFactory.Storage.Editables.DefModExtension_CanUseStorageIOPorts"/>
-            <li Class="ProjectRimFactory.Storage.Editables.DefModExtension_Crate">
+            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_CanUseStorageIOPorts"/>
+            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>10000</limit>
                 <destroyContainsItems>true</destroyContainsItems>
                 <hideItems>true</hideItems>
@@ -481,7 +481,7 @@
         <defName>PRF_IOPort_I</defName>
         <label>I/O port</label>
         <description>An advanced connection port for the Digital Storage Unit. It can be set to input/output from any platform remotely within the map.</description>
-        <thingClass>ProjectRimFactory.Storage.Building_StorageUnitIOPort</thingClass>
+        <thingClass>DigitalStorageUnit.Storage.Building_StorageUnitIOPort</thingClass>
         <drawerType>RealtimeOnly</drawerType>
         <uiIconScale>0.7</uiIconScale>
         <designatorDropdown>PRF_IoGroup</designatorDropdown>
@@ -519,8 +519,8 @@
             </defaultStorageSettings>
         </building>
         <inspectorTabs>
-            <li>ProjectRimFactory.Storage.UI.ITab_IOPortStorage</li>
-            <li>ProjectRimFactory.Storage.UI.ITab_Items</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
         </inspectorTabs>
         <castEdgeShadows>true</castEdgeShadows>
         <statBases>
@@ -555,7 +555,7 @@
             <li>PRF_StorageIO</li>
         </researchPrerequisites>
         <modExtensions>
-            <li Class="ProjectRimFactory.Storage.DefModExtension_StorageUnitIOPortColor">
+            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
                 <inColor>(144, 222, 255, 255)</inColor>
                 <outColor>(215, 169, 72, 255)</outColor>
             </li>
@@ -567,7 +567,7 @@
         <defName>PRF_IOPPusher_I</defName>
         <label>I/O pusher</label>
         <description>This modified I/O port allows you to push items directly into next cell, onto a belt, or anywhere else, saving space instead of using a puller.\n More of an output port than input/output.</description>
-        <thingClass>ProjectRimFactory.Storage.Building_IOPusher</thingClass>
+        <thingClass>DigitalStorageUnit.Storage.Building_IOPusher</thingClass>
         <drawerType>RealtimeOnly</drawerType>
         <uiIconScale>0.7</uiIconScale>
         <designatorDropdown>PRF_IoGroup</designatorDropdown>
@@ -604,12 +604,12 @@
             </defaultStorageSettings>
         </building>
         <inspectorTabs>
-            <li>ProjectRimFactory.Storage.UI.ITab_IOPortStorage</li>
-            <li>ProjectRimFactory.Storage.UI.ITab_Items</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
         </inspectorTabs>
         <placeWorkers>
-            <li>ProjectRimFactory.PlaceWorker_Arrow</li>
-            <li>ProjectRimFactory.Storage.PlaceWorker_IOPusherHilight</li>
+            <li>DigitalStorageUnit.PlaceWorker_Arrow</li>
+            <li>DigitalStorageUnit.Storage.PlaceWorker_IOPusherHilight</li>
         </placeWorkers>
         <castEdgeShadows>true</castEdgeShadows>
         <statBases>
@@ -645,7 +645,7 @@
             <li>PRF_StorageIO_II</li>
         </researchPrerequisites>
         <modExtensions>
-            <li Class="ProjectRimFactory.Storage.DefModExtension_StorageUnitIOPortColor">
+            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
                 <inColor>(144, 222, 255, 255)</inColor>
                 <outColor>(215, 169, 72, 255)</outColor>
             </li>
@@ -657,7 +657,7 @@
         <defName>PRF_IOPort_II</defName>
         <label>Adv. I/O port</label>
         <description>An interactive connection port for the Digital Storage Unit. Pawns may request any item from the conneted Digital Storage Unit.</description>
-        <thingClass>ProjectRimFactory.Storage.Building_AdvancedStorageUnitIOPort</thingClass>
+        <thingClass>DigitalStorageUnit.Storage.Building_AdvancedStorageUnitIOPort</thingClass>
         <drawerType>RealtimeOnly</drawerType>
         <uiIconScale>0.7</uiIconScale>
         <designatorDropdown>PRF_IoGroup</designatorDropdown>
@@ -695,8 +695,8 @@
             </defaultStorageSettings>
         </building>
         <inspectorTabs>
-            <li>ProjectRimFactory.Storage.UI.ITab_IOPortStorage</li>
-            <li>ProjectRimFactory.Storage.UI.ITab_Items</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
         </inspectorTabs>
         <castEdgeShadows>true</castEdgeShadows>
         <statBases>
@@ -731,7 +731,7 @@
             <li>PRF_StorageIO_II</li>
         </researchPrerequisites>
         <modExtensions>
-            <li Class="ProjectRimFactory.Storage.DefModExtension_StorageUnitIOPortColor">
+            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
                 <inColor>(144, 222, 255, 255)</inColor>
                 <outColor>(215, 169, 72, 255)</outColor>
             </li>

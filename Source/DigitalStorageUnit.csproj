@@ -1,0 +1,120 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <LangVersion>default</LangVersion>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>..\Assemblies\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <Prefer32Bit>false</Prefer32Bit>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>..\Assemblies\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <DebugSymbols>true</DebugSymbols>
+        <Prefer32Bit>false</Prefer32Bit>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- This package includes all Unity packages as well as Assembly-CSharp
+             Update this either in the GUI (nuget system) or from the command line:
+             nuget restore
+             -->
+        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.4.3704">
+            <PrivateAssets>all</PrivateAssets>
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </PackageReference>
+        <PackageReference Include="Lib.Harmony" Version="2.3.0-prerelease.2" PrivateAssets="All">
+            <PrivateAssets>all</PrivateAssets>
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Remove="Common\HarmonyPatches\Patch_DroneColumn_Royalty.cs"/>
+        <Compile Remove="Common\HarmonyPatches\Patch_GenRecipe_MakeRecipeProducts.cs"/>
+        <Compile Remove="Common\HarmonyPatches\Patch_SaveStorageSettings_Patch_Building_GetGizmos.cs"/>
+        <Compile Remove="Common\CompCallTickRareFromTick.cs"/>
+        <Compile Remove="Common\DefChangeTracker.cs"/>
+        <Compile Remove="Common\GatherThingsUtility.cs"/>
+        <Compile Remove="Common\ProjectRimFactory_ModSettings.cs"/>
+        <Compile Remove="Drones\Building_DroneStation.cs"/>
+        <Compile Remove="SAL3\Things\Building_RecipeHolder.cs"/>
+        <Compile Remove="Industry\**"/>
+        <Compile Remove="Misc\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="..\..\Defs\DesignationCategoryDefs\DesignationCategories.xml">
+            <Link>Defs\DesignationCategoryDefs\DesignationCategories.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\DesignationCategoryDefs\DesignationGroups.xml">
+            <Link>Defs\DesignationCategoryDefs\DesignationGroups.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\RecipeDefs\Recipes_Items.xml">
+            <Link>Defs\RecipeDefs\Recipes_Items.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\ResearchProjectDefs\ResearchProjects_Common.xml">
+            <Link>Defs\ResearchProjectDefs\ResearchProjects_Common.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\ResearchProjectDefs\ResearchProjects_Storage.xml">
+            <Link>Defs\ResearchProjectDefs\ResearchProjects_Storage.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\ResearchProjectDefs\ResearchTabs.xml">
+            <Link>Defs\ResearchProjectDefs\ResearchTabs.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\ThingCategoryDefs\ThingCategories_Buildings.xml">
+            <Link>Defs\ThingCategoryDefs\ThingCategories_Buildings.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\ThingDefs_Buildings\Buildings_Bases.xml">
+            <Link>Defs\ThingDefs_Buildings\Buildings_Bases.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\ThingDefs_Buildings\Buildings_Storage.xml">
+            <Link>Defs\ThingDefs_Buildings\Buildings_Storage.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\ThingDefs_Items\Things_Bases.xml">
+            <Link>Defs\ThingDefs_Items\Things_Bases.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\ThingDefs_Items\Things_Common.xml">
+            <Link>Defs\ThingDefs_Items\Things_Common.xml</Link>
+        </Content>
+        <Content Include="..\..\Defs\ThingDefs_Items\Things_Schematic.xml">
+            <Link>Defs\ThingDefs_Items\Things_Schematic.xml</Link>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Remove="Industry\**"/>
+        <EmbeddedResource Remove="Misc\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Industry\**"/>
+        <None Remove="Misc\**"/>
+    </ItemGroup>
+
+    <ProjectExtensions>
+        <MonoDevelop>
+            <Properties>
+                <Deployment.LinuxDeployData generatePcFile="False"/>
+            </Properties>
+        </MonoDevelop>
+    </ProjectExtensions>
+
+</Project>
