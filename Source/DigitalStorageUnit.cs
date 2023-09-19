@@ -20,7 +20,6 @@ public class DigitalStorageUnit : Mod
             Log.Message($"DigitalStorageUnit {typeof(DigitalStorageUnit).Assembly.GetName().Version} - Harmony patches successful");
 
             ConditionalPatchHelper.InitHarmony(HarmonyInstance);
-            ConditionalPatchHelper.Patch_Reachability_CanReach.PatchHandler(true);
         }
         catch (Exception ex)
         {

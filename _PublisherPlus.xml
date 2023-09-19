@@ -1,9 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Configuration>
   <Excluded>
-    <exclude>E:\steam\steamapps\common\RimWorld\Mods\PRF\.git</exclude>
-    <exclude>E:\steam\steamapps\common\RimWorld\Mods\PRF\About\Preview3.png</exclude>
-    <exclude>E:\steam\steamapps\common\RimWorld\Mods\PRF\Assemblies\ProjectRimFactory.pdb</exclude>
-    <exclude>E:\steam\steamapps\common\RimWorld\Mods\PRF\Source</exclude>
+    <exclude>.git</exclude>
+    <exclude>.idea</exclude>
+    <exclude>Source</exclude>
   </Excluded>
 </Configuration>

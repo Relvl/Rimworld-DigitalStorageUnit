@@ -2,6 +2,7 @@
 using RimWorld;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using DigitalStorageUnit.HarmonyPatches;
 using DigitalStorageUnit.Storage;
 using Verse;
 
@@ -107,7 +108,7 @@ class Patch_FoodUtility_SpawnedFoodSearchInnerScan
         //If the Port is Closer then it is a better choice
         //#691 If the Port is the only Option it must be used
         if (mindist < Distance ||
-            (ConditionalPatchHelper.Patch_Reachability_CanReach.Status &&
+            (/*Patch_Reachability_CanReach.Status -- todo! check the config instead &&*/
              pawn.Map.reachability.CanReach(start, thing, Verse.AI.PathEndMode.Touch, TraverseParms.For(pawn)) &&
              Patch_Reachability_CanReach.CanReachThing(thing)))
         {

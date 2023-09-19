@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
+using DigitalStorageUnit.HarmonyPatches;
 using Verse;
 using Verse.AI;
 
@@ -96,9 +97,9 @@ class Patch_Pawn_JobTracker_StartJob
                 {
                     var PortIsCloser = port.Key < DistanceToTarget;
                     if (PortIsCloser ||
-                        (ConditionalPatchHelper.Patch_Reachability_CanReach.Status &&
-                         ___pawn.Map.reachability.CanReach(___pawn.Position, target.Thing, PathEndMode.Touch, TraverseParms.For(___pawn)) &&
-                         Patch_Reachability_CanReach.CanReachThing(target.Thing)))
+                        ( /*Patch_Reachability_CanReach.Status -- todo check the config instead! &&*/
+                            ___pawn.Map.reachability.CanReach(___pawn.Position, target.Thing, PathEndMode.Touch, TraverseParms.For(___pawn)) &&
+                            Patch_Reachability_CanReach.CanReachThing(target.Thing)))
                     {
                         if (AdvancedIO_PatchHelper.CanMoveItem(port.Value, target.Cell))
                         {

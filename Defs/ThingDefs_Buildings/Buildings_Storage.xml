@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
-    <!--==================== Dropdown Groups ====================-->
-    <DesignatorDropdownGroupDef>
-        <defName>PRF_StorageGroup</defName>
-    </DesignatorDropdownGroupDef>
-    <DesignatorDropdownGroupDef>
-        <defName>PRF_IoGroup</defName>
-    </DesignatorDropdownGroupDef>
-
     <!--==================== Base ====================-->
     <ThingDef Name="PRF_MassStorageBase" ParentName="PRF_BuildingBase" Abstract="True">
         <thingClass>DigitalStorageUnit.Storage.Building_Crate</thingClass>
