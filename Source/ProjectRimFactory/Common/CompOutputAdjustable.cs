@@ -2,82 +2,81 @@
 using UnityEngine;
 using Verse;
 
-namespace ProjectRimFactory.Common
+namespace ProjectRimFactory.Common;
+
+public class CompOutputAdjustable : ThingComp
 {
-    public class CompOutputAdjustable : ThingComp
+    int index;
+
+    public bool Visible = true;
+
+    public CompProperties_CompOutputAdjustable Props => (CompProperties_CompOutputAdjustable)props;
+
+    List<IntVec3> possibleOutputs = new();
+    public IntVec3 CurrentCell => possibleOutputs[index %= possibleOutputs.Count];
+
+    public override void PostSpawnSetup(bool respawningAfterLoad)
     {
-        int index;
-
-        public bool Visible = true;
-
-        public CompProperties_CompOutputAdjustable Props => (CompProperties_CompOutputAdjustable)props;
-
-        List<IntVec3> possibleOutputs = new List<IntVec3>();
-        public IntVec3 CurrentCell => possibleOutputs[index %= possibleOutputs.Count];
-
-        public override void PostSpawnSetup(bool respawningAfterLoad)
+        base.PostSpawnSetup(respawningAfterLoad);
+        if (Props.SupportDiagonal)
         {
-            base.PostSpawnSetup(respawningAfterLoad);
-            if (Props.SupportDiagonal)
-            {
-                possibleOutputs = new List<IntVec3>(GenAdj.CellsAdjacent8Way(parent));
-            }
-            else
-            {
-                possibleOutputs = new List<IntVec3>(GenAdj.CellsAdjacentCardinal(parent));
-            }
+            possibleOutputs = new List<IntVec3>(GenAdj.CellsAdjacent8Way(parent));
         }
-
-        public override void PostDrawExtraSelectionOverlays()
+        else
         {
-            base.PostDrawExtraSelectionOverlays();
-            if (Visible)
-            {
-                GenDraw.DrawFieldEdges(new List<IntVec3> { CurrentCell }, Color.yellow);
-            }
-        }
-
-        public override IEnumerable<Gizmo> CompGetGizmosExtra()
-        {
-            foreach (var g in base.CompGetGizmosExtra()) yield return g;
-            if (Visible)
-            {
-                yield return new Command_ActionRightLeft()
-                {
-                    defaultLabel = "AdjustDirection_Output".Translate(),
-                    actionL = () => index++,
-                    actionR = () =>
-                    {
-                        if (index == 0)
-                        {
-                            index = possibleOutputs.Count - 1;
-                        }
-                        else
-                        {
-                            index--;
-                        }
-                    },
-                    icon = TexUI.RotRightTex,
-                    defaultIconColor = Color.green
-                };
-            }
-        }
-
-        public override void PostExposeData()
-        {
-            base.PostExposeData();
-            Scribe_Values.Look(ref index, "outputSlotIndex");
-            Scribe_Values.Look(ref Visible, "Visible", true);
+            possibleOutputs = new List<IntVec3>(GenAdj.CellsAdjacentCardinal(parent));
         }
     }
 
-    public class CompProperties_CompOutputAdjustable : CompProperties
+    public override void PostDrawExtraSelectionOverlays()
     {
-        public bool SupportDiagonal = false;
-
-        public CompProperties_CompOutputAdjustable()
+        base.PostDrawExtraSelectionOverlays();
+        if (Visible)
         {
-            compClass = typeof(CompOutputAdjustable);
+            GenDraw.DrawFieldEdges(new List<IntVec3> { CurrentCell }, Color.yellow);
         }
+    }
+
+    public override IEnumerable<Gizmo> CompGetGizmosExtra()
+    {
+        foreach (var g in base.CompGetGizmosExtra()) yield return g;
+        if (Visible)
+        {
+            yield return new Command_ActionRightLeft()
+            {
+                defaultLabel = "AdjustDirection_Output".Translate(),
+                actionL = () => index++,
+                actionR = () =>
+                {
+                    if (index == 0)
+                    {
+                        index = possibleOutputs.Count - 1;
+                    }
+                    else
+                    {
+                        index--;
+                    }
+                },
+                icon = TexUI.RotRightTex,
+                defaultIconColor = Color.green
+            };
+        }
+    }
+
+    public override void PostExposeData()
+    {
+        base.PostExposeData();
+        Scribe_Values.Look(ref index, "outputSlotIndex");
+        Scribe_Values.Look(ref Visible, "Visible", true);
+    }
+}
+
+public class CompProperties_CompOutputAdjustable : CompProperties
+{
+    public bool SupportDiagonal = false;
+
+    public CompProperties_CompOutputAdjustable()
+    {
+        compClass = typeof(CompOutputAdjustable);
     }
 }

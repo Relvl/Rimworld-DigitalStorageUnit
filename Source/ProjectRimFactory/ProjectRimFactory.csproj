@@ -39,6 +39,65 @@
     <PackageReference Include="Lib.Harmony" Version="2.2.2" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Common\HarmonyPatches\Patch_DroneColumn_Royalty.cs" />
+    <Compile Remove="Common\HarmonyPatches\Patch_GenRecipe_MakeRecipeProducts.cs" />
+    <Compile Remove="Common\HarmonyPatches\Patch_SaveStorageSettings_Patch_Building_GetGizmos.cs" />
+    <Compile Remove="Common\CompCallTickRareFromTick.cs" />
+    <Compile Remove="Common\DefChangeTracker.cs" />
+    <Compile Remove="Common\GatherThingsUtility.cs" />
+    <Compile Remove="Common\ProjectRimFactory_ModSettings.cs" />
+    <Compile Remove="Drones\Building_DroneStation.cs" />
+    <Compile Remove="SAL3\Things\Building_RecipeHolder.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Industry\HarmonyPatches" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\Defs\DesignationCategoryDefs\DesignationCategories.xml">
+      <Link>Defs\DesignationCategoryDefs\DesignationCategories.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\DesignationCategoryDefs\DesignationGroups.xml">
+      <Link>Defs\DesignationCategoryDefs\DesignationGroups.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\RecipeDefs\Recipes_Items.xml">
+      <Link>Defs\RecipeDefs\Recipes_Items.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\ResearchProjectDefs\ResearchProjects_Common.xml">
+      <Link>Defs\ResearchProjectDefs\ResearchProjects_Common.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\ResearchProjectDefs\ResearchProjects_Storage.xml">
+      <Link>Defs\ResearchProjectDefs\ResearchProjects_Storage.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\ResearchProjectDefs\ResearchTabs.xml">
+      <Link>Defs\ResearchProjectDefs\ResearchTabs.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\ThingCategoryDefs\ThingCategories_Buildings.xml">
+      <Link>Defs\ThingCategoryDefs\ThingCategories_Buildings.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\ThingDefs_Buildings\Buildings_Bases.xml">
+      <Link>Defs\ThingDefs_Buildings\Buildings_Bases.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\ThingDefs_Buildings\Buildings_Storage.xml">
+      <Link>Defs\ThingDefs_Buildings\Buildings_Storage.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\ThingDefs_Items\Things_Bases.xml">
+      <Link>Defs\ThingDefs_Items\Things_Bases.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\ThingDefs_Items\Things_Common.xml">
+      <Link>Defs\ThingDefs_Items\Things_Common.xml</Link>
+    </Content>
+    <Content Include="..\..\Defs\ThingDefs_Items\Things_Schematic.xml">
+      <Link>Defs\ThingDefs_Items\Things_Schematic.xml</Link>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Misc" />
+  </ItemGroup>
+
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>

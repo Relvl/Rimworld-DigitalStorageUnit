@@ -2,50 +2,49 @@
 using UnityEngine;
 using Verse;
 
-namespace ProjectRimFactory.Common
+namespace ProjectRimFactory.Common;
+
+class Command_ActionRightLeft : Command
 {
-    class Command_ActionRightLeft : Command
+    private static bool wasRightClick;
+
+    public Action actionL;
+    public Action actionR;
+
+    private Color? iconDrawColorOverride;
+
+    public override Color IconDrawColor => iconDrawColorOverride ?? base.IconDrawColor;
+
+    public override void ProcessInput(Event ev)
     {
-        private static bool wasRightClick = false;
-
-        public Action actionL;
-        public Action actionR;
-
-        private Color? iconDrawColorOverride;
-
-        public override Color IconDrawColor => iconDrawColorOverride ?? base.IconDrawColor;
-
-        public override void ProcessInput(Event ev)
+        base.ProcessInput(ev);
+        if (wasRightClick)
         {
-            base.ProcessInput(ev);
-            if (wasRightClick)
-            {
-                actionR();
-            }
-            else
-            {
-                actionL();
-            }
+            actionR();
+        }
+        else
+        {
+            actionL();
+        }
+    }
+
+    public override void DrawIcon(Rect rect, Material buttonMat, GizmoRenderParms parms)
+    {
+        base.DrawIcon(rect, buttonMat, parms);
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            wasRightClick = false;
         }
 
-        public override void DrawIcon(Rect rect, Material buttonMat, GizmoRenderParms parms)
+        if (Input.GetMouseButtonDown(1))
         {
-            base.DrawIcon(rect, buttonMat, parms);
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                wasRightClick = false;
-            }
-
-            if (Input.GetMouseButtonDown(1))
-            {
-                wasRightClick = true;
-            }
+            wasRightClick = true;
         }
+    }
 
-        public void SetColorOverride(Color color)
-        {
-            iconDrawColorOverride = color;
-        }
+    public void SetColorOverride(Color color)
+    {
+        iconDrawColorOverride = color;
     }
 }

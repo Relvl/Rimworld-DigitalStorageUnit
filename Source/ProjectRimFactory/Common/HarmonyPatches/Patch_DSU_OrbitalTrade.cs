@@ -8,115 +8,114 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Verse;
 
-namespace ProjectRimFactory.Common.HarmonyPatches
+namespace ProjectRimFactory.Common.HarmonyPatches;
+
+//This patch allows Dsu's to Act as a trade beachon
+[HarmonyPatch(typeof(TradeUtility), "AllLaunchableThingsForTrade")]
+class Patch_TradeUtility_AllLaunchableThingsForTrade
 {
-    //This patch allows Dsu's to Act as a trade beachon
-    [HarmonyPatch(typeof(TradeUtility), "AllLaunchableThingsForTrade")]
-    class Patch_TradeUtility_AllLaunchableThingsForTrade
+    static void Postfix(Map map, ref IEnumerable<Thing> __result)
     {
-        static void Postfix(Map map, ref IEnumerable<Thing> __result)
+        var yieldedThings = new HashSet<Thing>();
+        yieldedThings.AddRange<Thing>(__result);
+        foreach (var dsu in TradePatchHelper.AllPowered(map))
         {
-            var yieldedThings = new HashSet<Thing>();
-            yieldedThings.AddRange<Thing>(__result);
-            foreach (var dsu in TradePatchHelper.AllPowered(map))
-            {
-                yieldedThings.AddRange<Thing>(dsu.StoredItems);
-            }
-
-            __result = yieldedThings;
+            yieldedThings.AddRange<Thing>(dsu.StoredItems);
         }
+
+        __result = yieldedThings;
+    }
+}
+
+//This Patch Allows the player to start an orvital Trade without a Trade beacon but with a DSU.
+//Without this patch a player would need a dummy beacon to use Patch_DSU_OrbitalTrade
+[HarmonyPatch]
+public static class Patch_PassingShip_c__DisplayClass24_0
+{
+    public static Type predicateClass;
+
+    static MethodBase TargetMethod() //The target method is found using the custom logic defined here
+    {
+        predicateClass = typeof(PassingShip).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName.Contains("c__DisplayClass23_0"));
+        if (predicateClass == null)
+        {
+            Log.Error("PRF Harmony Error - predicateClass == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
+            return null;
+        }
+
+        var m = predicateClass.GetMethods(AccessTools.all).FirstOrDefault(t => t.Name.Contains("b__1"));
+        if (m == null)
+        {
+            Log.Error("PRF Harmony Error - m == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
+        }
+
+        return m;
     }
 
-    //This Patch Allows the player to start an orvital Trade without a Trade beacon but with a DSU.
-    //Without this patch a player would need a dummy beacon to use Patch_DSU_OrbitalTrade
-    [HarmonyPatch]
-    public static class Patch_PassingShip_c__DisplayClass24_0
+    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        public static Type predicateClass;
+        var hiddenClass = typeof(PassingShip).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName.Contains("c__DisplayClass23_0"));
 
-        static MethodBase TargetMethod() //The target method is found using the custom logic defined here
+        var foundLocaterString = false;
+        foreach (var instruction in instructions)
         {
-            predicateClass = typeof(PassingShip).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName.Contains("c__DisplayClass23_0"));
-            if (predicateClass == null)
+            //Patch shall change:
+            //if (!Building_OrbitalTradeBeacon.AllPowered(<>4__this.Map).Any())
+            //
+            //To:
+            //if (!Building_OrbitalTradeBeacon.AllPowered(<>4__this.Map).Any() && !Building_MassStorageUnitPowered.AllPowered(<>4__this.Map).Any() )
+
+            //Find the refrence Point
+            if (instruction.opcode == OpCodes.Call &&
+                (instruction.operand as MethodInfo) == AccessTools.Method(typeof(Building_OrbitalTradeBeacon), nameof(Building_OrbitalTradeBeacon.AllPowered)))
             {
-                Log.Error("PRF Harmony Error - predicateClass == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
-                return null;
+                foundLocaterString = true;
             }
 
-            var m = predicateClass.GetMethods(AccessTools.all).FirstOrDefault(t => t.Name.Contains("b__1"));
-            if (m == null)
+            //Find the Check
+            if (instruction.opcode == OpCodes.Brtrue_S && foundLocaterString)
             {
-                Log.Error("PRF Harmony Error - m == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
-            }
-
-            return m;
-        }
-
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var hiddenClass = typeof(PassingShip).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName.Contains("c__DisplayClass23_0"));
-
-            var foundLocaterString = false;
-            foreach (var instruction in instructions)
-            {
-                //Patch shall change:
-                //if (!Building_OrbitalTradeBeacon.AllPowered(<>4__this.Map).Any())
-                //
-                //To:
-                //if (!Building_OrbitalTradeBeacon.AllPowered(<>4__this.Map).Any() && !Building_MassStorageUnitPowered.AllPowered(<>4__this.Map).Any() )
-
-                //Find the refrence Point
-                if (instruction.opcode == OpCodes.Call &&
-                    (instruction.operand as MethodInfo) == AccessTools.Method(typeof(Building_OrbitalTradeBeacon), nameof(Building_OrbitalTradeBeacon.AllPowered)))
-                {
-                    foundLocaterString = true;
-                }
-
-                //Find the Check
-                if (instruction.opcode == OpCodes.Brtrue_S && foundLocaterString)
-                {
-                    foundLocaterString = false;
-                    //Keep the Inctruction
-                    yield return instruction;
-                    //this.Map
-                    yield return new CodeInstruction(OpCodes.Ldarg_0);
-                    yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(hiddenClass, "<>4__this"));
-                    yield return new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(PassingShip), "Map"));
-                    //Call --> Building_MassStorageUnitPowered.AnyPowerd with the above as an argument
-                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(TradePatchHelper), nameof(TradePatchHelper.AnyPowerd), new[] { typeof(Map) }));
-                    yield return new CodeInstruction(OpCodes.Brtrue_S, instruction.operand);
-                    continue;
-                }
-
-                //Keep the other instructions
+                foundLocaterString = false;
+                //Keep the Inctruction
                 yield return instruction;
+                //this.Map
+                yield return new CodeInstruction(OpCodes.Ldarg_0);
+                yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(hiddenClass, "<>4__this"));
+                yield return new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(PassingShip), "Map"));
+                //Call --> Building_MassStorageUnitPowered.AnyPowerd with the above as an argument
+                yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(TradePatchHelper), nameof(TradePatchHelper.AnyPowerd), new[] { typeof(Map) }));
+                yield return new CodeInstruction(OpCodes.Brtrue_S, instruction.operand);
+                continue;
             }
+
+            //Keep the other instructions
+            yield return instruction;
         }
     }
+}
 
-    public static class TradePatchHelper
+public static class TradePatchHelper
+{
+    public static bool AnyPowerd(Map map)
     {
-        public static bool AnyPowerd(Map map)
-        {
-            return AllPowered(map, true).Any();
-        }
+        return AllPowered(map, true).Any();
+    }
 
-        public static IEnumerable<ILinkableStorageParent> AllPowered(Map map, bool any = false)
+    public static IEnumerable<ILinkableStorageParent> AllPowered(Map map, bool any = false)
+    {
+        foreach (ILinkableStorageParent item in map.listerBuildings.AllBuildingsColonistOfClass<Building_MassStorageUnitPowered>())
         {
-            foreach (ILinkableStorageParent item in map.listerBuildings.AllBuildingsColonistOfClass<Building_MassStorageUnitPowered>())
-            {
-                if (item.Powered)
-                {
-                    yield return item;
-                    if (any) break;
-                }
-            }
-
-            var cs = PatchStorageUtil.GetPRFMapComponent(map).ColdStorageBuildings.Select(b => b as ILinkableStorageParent);
-            foreach (var item in cs)
+            if (item.Powered)
             {
                 yield return item;
+                if (any) break;
             }
+        }
+
+        var cs = PatchStorageUtil.GetPRFMapComponent(map).ColdStorageBuildings.Select(b => b as ILinkableStorageParent);
+        foreach (var item in cs)
+        {
+            yield return item;
         }
     }
 }

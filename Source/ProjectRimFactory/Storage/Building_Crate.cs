@@ -1,22 +1,20 @@
 ﻿using ProjectRimFactory.Storage.Editables;
-using System.Linq;
 using Verse;
 
-namespace ProjectRimFactory.Storage
+namespace ProjectRimFactory.Storage;
+
+public class Building_Crate : Building_MassStorageUnit
 {
-    public class Building_Crate : Building_MassStorageUnit
+    public override bool CanStoreMoreItems => Position.GetThingList(Map).Count(t => t.def.category == ThingCategory.Item) < MaxNumberItemsInternal;
+    public DefModExtension_Crate Extension => def.GetModExtension<DefModExtension_Crate>();
+
+    public override string GetITabString(int itemsSelected)
     {
-        public override bool CanStoreMoreItems => Position.GetThingList(Map).Count(t => t.def.category == ThingCategory.Item) < MaxNumberItemsInternal;
-        public DefModExtension_Crate Extension => def.GetModExtension<DefModExtension_Crate>();
+        return "PRFItemsTabLabel_Crate".Translate(StoredItemsCount, Extension.limit, itemsSelected);
+    }
 
-        public override string GetITabString(int itemsSelected)
-        {
-            return "PRFItemsTabLabel_Crate".Translate(StoredItemsCount, Extension.limit, itemsSelected);
-        }
-
-        public override string GetUIThingLabel()
-        {
-            return "PRFCrateUIThingLabel".Translate(StoredItemsCount, Extension.limit);
-        }
+    public override string GetUIThingLabel()
+    {
+        return "PRFCrateUIThingLabel".Translate(StoredItemsCount, Extension.limit);
     }
 }

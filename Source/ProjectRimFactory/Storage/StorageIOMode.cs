@@ -1,8 +1,7 @@
-﻿namespace ProjectRimFactory.Storage
+﻿namespace ProjectRimFactory.Storage;
+
+public enum StorageIOMode
 {
-    public enum StorageIOMode
-    {
-        Input,
-        Output
-    }
+    Input,
+    Output
 }

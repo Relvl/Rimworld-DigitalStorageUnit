@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Verse;
+﻿using Verse;
 
-namespace ProjectRimFactory.Common
+namespace ProjectRimFactory.Common;
+
+interface ILimitWatcher
 {
-    interface ILimitWatcher
-    {
-        public bool ItemIsLimit(ThingDef thing, bool CntStacks, int limit);
-    }
+    public bool ItemIsLimit(ThingDef thing, bool CntStacks, int limit);
 }

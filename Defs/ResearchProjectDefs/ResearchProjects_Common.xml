@@ -77,7 +77,6 @@
     </prerequisites>
     <requiredResearchFacilities>
       <li>MultiAnalyzer</li>
-      <li>PRF_ResearchTerminal</li>
     </requiredResearchFacilities>
     <researchViewX>8</researchViewX>
     <discoveredLetterTitle>Binary System</discoveredLetterTitle>
@@ -99,7 +98,6 @@
     </prerequisites>
     <requiredResearchFacilities>
       <li>MultiAnalyzer</li>
-      <li>PRF_ResearchTerminal</li>
     </requiredResearchFacilities>
     <researchViewX>11</researchViewX>
     <discoveredLetterTitle>Quantum Bit Technology: Tier 4 Unlocked</discoveredLetterTitle>

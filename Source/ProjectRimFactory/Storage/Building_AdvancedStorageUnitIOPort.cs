@@ -3,84 +3,83 @@ using System.Collections.Generic;
 using System.Linq;
 using Verse;
 
-namespace ProjectRimFactory.Storage
+namespace ProjectRimFactory.Storage;
+
+public class Building_AdvancedStorageUnitIOPort : Building_StorageUnitIOBase
 {
-    public class Building_AdvancedStorageUnitIOPort : Building_StorageUnitIOBase
+    public override bool ShowLimitGizmo => false;
+
+    private List<Thing> placementQueue = new();
+
+    public void AddItemToQueue(Thing thing)
     {
-        public override bool ShowLimitGizmo => false;
+        placementQueue.Add(thing);
+    }
 
-        private List<Thing> placementQueue = new List<Thing>();
+    public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+    {
+        Map.GetComponent<PRFMapComponent>().DeRegisteradvancedIOLocations(Position);
+        base.DeSpawn(mode);
+    }
 
-        public void AddItemToQueue(Thing thing)
+    public override void SpawnSetup(Map map, bool respawningAfterLoad)
+    {
+        base.SpawnSetup(map, respawningAfterLoad);
+        map.GetComponent<PRFMapComponent>().RegisteradvancedIOLocations(Position, this);
+    }
+
+    public override StorageIOMode IOMode
+    {
+        get => StorageIOMode.Output;
+        set { }
+    }
+
+    public override bool ForbidPawnInput => true;
+
+    private Thing GetstoredItem()
+    {
+        var map = Map;
+        if (map is null)
         {
-            placementQueue.Add(thing);
+            Log.Error($"PRF GetstoredItem @{Position} map is null");
+            return null;
         }
 
-        public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+        return WorkPosition.GetFirstItem(Map);
+    }
+
+    public bool CanGetNewItem => GetstoredItem() == null && (powerComp?.PowerOn ?? false);
+
+    public override bool IsAdvancedPort => true;
+
+    public void updateQueue()
+    {
+        if (CanGetNewItem && placementQueue.Count > 0)
         {
-            Map.GetComponent<PRFMapComponent>().DeRegisteradvancedIOLocations(Position);
-            base.DeSpawn(mode);
+            var nextItemInQueue = placementQueue[0];
+            PlaceThingNow(nextItemInQueue);
+            placementQueue.RemoveAt(0);
         }
+    }
 
-        public override void SpawnSetup(Map map, bool respawningAfterLoad)
+    public void PlaceThingNow(Thing thing)
+    {
+        if (thing != null)
         {
-            base.SpawnSetup(map, respawningAfterLoad);
-            map.GetComponent<PRFMapComponent>().RegisteradvancedIOLocations(Position, this);
+            thing.Position = Position;
         }
+    }
 
-        public override StorageIOMode IOMode
+    public override void Tick()
+    {
+        updateQueue();
+
+        if (this.IsHashIntervalTick(10))
         {
-            get => StorageIOMode.Output;
-            set { }
-        }
-
-        public override bool ForbidPawnInput => true;
-
-        private Thing GetstoredItem()
-        {
-            var map = Map;
-            if (map is null)
+            var thing = GetstoredItem();
+            if (thing != null && !Map.reservationManager.AllReservedThings().Contains(thing))
             {
-                Log.Error($"PRF GetstoredItem @{Position} map is null");
-                return null;
-            }
-
-            return WorkPosition.GetFirstItem(Map);
-        }
-
-        public bool CanGetNewItem => GetstoredItem() == null && (powerComp?.PowerOn ?? false);
-
-        public override bool IsAdvancedPort => true;
-
-        public void updateQueue()
-        {
-            if (CanGetNewItem && placementQueue.Count > 0)
-            {
-                var nextItemInQueue = placementQueue[0];
-                PlaceThingNow(nextItemInQueue);
-                placementQueue.RemoveAt(0);
-            }
-        }
-
-        public void PlaceThingNow(Thing thing)
-        {
-            if (thing != null)
-            {
-                thing.Position = Position;
-            }
-        }
-
-        public override void Tick()
-        {
-            updateQueue();
-
-            if (this.IsHashIntervalTick(10))
-            {
-                var thing = GetstoredItem();
-                if (thing != null && !Map.reservationManager.AllReservedThings().Contains(thing))
-                {
-                    RefreshInput();
-                }
+                RefreshInput();
             }
         }
     }

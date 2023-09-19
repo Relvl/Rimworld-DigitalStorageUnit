@@ -1,8 +1,7 @@
 ﻿using Verse;
 
-namespace ProjectRimFactory.Storage.Editables
+namespace ProjectRimFactory.Storage.Editables;
+
+public class DefModExtension_CanUseStorageIOPorts : DefModExtension
 {
-    public class DefModExtension_CanUseStorageIOPorts : DefModExtension
-    {
-    }
 }

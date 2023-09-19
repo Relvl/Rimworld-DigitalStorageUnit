@@ -1,25 +1,24 @@
 ﻿using Verse;
 
-namespace ProjectRimFactory.Common
+namespace ProjectRimFactory.Common;
+
+public static class GridsUtilityExt
 {
-    public static class GridsUtilityExt
+    public static T GetFirst<T>(this IntVec3 c, Map map) where T : class
     {
-        public static T GetFirst<T>(this IntVec3 c, Map map) where T : class
+        if (map == null || !c.InBounds(map))
         {
-            if (map == null || !c.InBounds(map))
-            {
-                return null;
-            }
-
-            foreach (var th in map.thingGrid.ThingsListAt(c))
-            {
-                if (th is T t)
-                {
-                    return t;
-                }
-            }
-
             return null;
         }
+
+        foreach (var th in map.thingGrid.ThingsListAt(c))
+        {
+            if (th is T t)
+            {
+                return t;
+            }
+        }
+
+        return null;
     }
 }

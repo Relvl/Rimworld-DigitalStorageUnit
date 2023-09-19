@@ -2,36 +2,35 @@
 using UnityEngine;
 using Verse;
 
-namespace ProjectRimFactory.Storage
+namespace ProjectRimFactory.Storage;
+
+public class Building_IOPusher : Building_StorageUnitIOBase
 {
-    public class Building_IOPusher : Building_StorageUnitIOBase
+    public override IntVec3 WorkPosition => Position + Rotation.FacingCell;
+
+    public override StorageIOMode IOMode
     {
-        public override IntVec3 WorkPosition => Position + Rotation.FacingCell;
-
-        public override StorageIOMode IOMode
-        {
-            get => StorageIOMode.Output;
-            set => _ = value;
-        }
-
-        public override bool IsAdvancedPort => false;
-
-        public override void SpawnSetup(Map map, bool respawningAfterLoad)
-        {
-            base.SpawnSetup(map, respawningAfterLoad);
-            mode = IOMode;
-        }
+        get => StorageIOMode.Output;
+        set => _ = value;
     }
 
-    class PlaceWorker_IOPusherHilight : PlaceWorker
+    public override bool IsAdvancedPort => false;
+
+    public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
-        public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing thing = null)
-        {
-            // base.DrawGhost(def, center, rot, ghostCol, thing);
+        base.SpawnSetup(map, respawningAfterLoad);
+        mode = IOMode;
+    }
+}
 
-            var outputCell = center + rot.FacingCell;
+class PlaceWorker_IOPusherHilight : PlaceWorker
+{
+    public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing thing = null)
+    {
+        // base.DrawGhost(def, center, rot, ghostCol, thing);
 
-            GenDraw.DrawFieldEdges(new List<IntVec3> { outputCell }, Common.CommonColors.outputCell);
-        }
+        var outputCell = center + rot.FacingCell;
+
+        GenDraw.DrawFieldEdges(new List<IntVec3> { outputCell }, Common.CommonColors.outputCell);
     }
 }
