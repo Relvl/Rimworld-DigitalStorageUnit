@@ -42,7 +42,7 @@ public class CompOutputAdjustable : ThingComp
         foreach (var g in base.CompGetGizmosExtra()) yield return g;
         if (Visible)
         {
-            yield return new Command_ActionRightLeft()
+            yield return new Command_ActionRightLeft
             {
                 defaultLabel = "AdjustDirection_Output".Translate(),
                 actionL = () => index++,

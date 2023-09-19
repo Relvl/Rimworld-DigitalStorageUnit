@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using DigitalStorageUnit.Common.HarmonyPatches;
+using DigitalStorageUnit.Common;
 using HarmonyLib;
 using Verse;
 
@@ -20,7 +20,7 @@ class Patch_Thing_Print
     {
         if (__instance.def.category == ThingCategory.Item)
         {
-            if (PatchStorageUtil.GetPRFMapComponent(__instance.Map)?.ShouldHideItemsAtPos(__instance.Position) ?? false)
+            if (__instance.Map.GetDsuComponent()?.HideItems.Contains(__instance.Position) ?? false)
             {
                 return false; // skip the original and next prefixes
             }

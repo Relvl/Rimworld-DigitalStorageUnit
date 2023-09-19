@@ -21,7 +21,7 @@ class Patch_FloatMenuMakerMap_ChoicesAtFor
 {
     static bool Prefix(Vector3 clickPos, Pawn pawn, out List<FloatMenuOption> __result)
     {
-        if (pawn.Map.GetComponent<PRFMapComponent>().iHideRightMenus.Contains(clickPos.ToIntVec3()))
+        if (pawn.Map.GetDsuComponent().HideRightMenus.Contains(clickPos.ToIntVec3()))
         {
             __result = new List<FloatMenuOption>();
             return false;

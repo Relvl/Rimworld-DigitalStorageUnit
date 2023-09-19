@@ -346,7 +346,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
     public override IEnumerable<Gizmo> GetGizmos()
     {
         foreach (var g in base.GetGizmos()) yield return g;
-        yield return new Command_Action()
+        yield return new Command_Action
         {
             defaultLabel = "PRFBoundStorageBuilding".Translate() + ": " + (boundStorageUnit?.LabelCap ?? "NoneBrackets".Translate()),
             action = () =>
@@ -376,7 +376,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
         };
         if (IOMode == StorageIOMode.Output && ShowLimitGizmo)
         {
-            yield return new Command_Action()
+            yield return new Command_Action
             {
                 icon = ContentFinder<Texture2D>.Get("UI/Commands/SetTargetFuelLevel"),
                 defaultLabel = "PRFIOOutputSettings".Translate(),
@@ -391,7 +391,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
 
         if (mode == StorageIOMode.Output)
         {
-            yield return new Command_Toggle()
+            yield return new Command_Toggle
             {
                 isActive = () => forbidOnPlacement,
                 toggleAction = () => forbidOnPlacement = !forbidOnPlacement,
@@ -621,14 +621,14 @@ public class Building_StorageUnitIOPort : Building_StorageUnitIOBase
     public override IEnumerable<Gizmo> GetGizmos()
     {
         foreach (var g in base.GetGizmos()) yield return g;
-        yield return new Command_Action()
+        yield return new Command_Action
         {
             defaultLabel = "PRFIOMode".Translate() + ": " + (IOMode == StorageIOMode.Input ? "PRFIOInput".Translate() : "PRFIOOutput".Translate()),
             action = () =>
             {
                 Find.WindowStack.Add(
                     new FloatMenu(
-                        new List<FloatMenuOption>()
+                        new List<FloatMenuOption>
                         {
                             new("PRFIOInput".Translate(), () => SelectedPorts().ToList().ForEach(p => p.IOMode = StorageIOMode.Input)),
                             new("PRFIOOutput".Translate(), () => SelectedPorts().ToList().ForEach(p => p.IOMode = StorageIOMode.Output))

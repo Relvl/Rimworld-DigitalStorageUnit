@@ -37,13 +37,13 @@ class Patch_Pawn_JobTracker_StartJob
     {
         if (isHaulJobType)
         {
-            TargetItems = new List<LocalTargetInfo>() { newJob.targetA };
+            TargetItems = new List<LocalTargetInfo> { newJob.targetA };
         }
         else
         {
             if (newJob.targetQueueB == null || newJob.targetQueueB.Count == 0)
             {
-                TargetItems = new List<LocalTargetInfo>() { newJob.targetB };
+                TargetItems = new List<LocalTargetInfo> { newJob.targetB };
             }
             else
             {
@@ -65,7 +65,7 @@ class Patch_Pawn_JobTracker_StartJob
     {
         //No random moths eating my cloths
         if (___pawn?.Faction == null || !___pawn.Faction.IsPlayer) return true;
-        var prfmapcomp = PatchStorageUtil.GetPRFMapComponent(___pawn.Map);
+        var prfmapcomp = ___pawn.Map.GetDsuComponent();
 
         //PickUpAndHaul "Compatibility" (by not messing with it)
         if (newJob.def.defName == "HaulToInventory") return true;
@@ -91,7 +91,7 @@ class Patch_Pawn_JobTracker_StartJob
             //Quick check if the Item could be in a DSU
             //Might have false Positives They are then filterd by AdvancedIO_PatchHelper.CanMoveItem
             //But should not have false Negatives
-            if (prfmapcomp.ShouldHideItemsAtPos(target.Cell))
+            if (prfmapcomp.HideItems.Contains(target.Cell))
             {
                 foreach (var port in Ports)
                 {

@@ -18,14 +18,14 @@ public class Building_AdvancedStorageUnitIOPort : Building_StorageUnitIOBase
 
     public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
     {
-        Map.GetComponent<PRFMapComponent>().DeRegisteradvancedIOLocations(Position);
+        Map.GetDsuComponent().AdvancedPortLocations.Remove(Position);
         base.DeSpawn(mode);
     }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
         base.SpawnSetup(map, respawningAfterLoad);
-        map.GetComponent<PRFMapComponent>().RegisteradvancedIOLocations(Position, this);
+        map.GetDsuComponent().AdvancedPortLocations.TryAdd(Position, this);
     }
 
     public override StorageIOMode IOMode

@@ -112,7 +112,7 @@ public static class TradePatchHelper
             }
         }
 
-        var cs = PatchStorageUtil.GetPRFMapComponent(map).ColdStorageBuildings.Select(b => b as ILinkableStorageParent);
+        var cs = map.GetDsuComponent().ColdStorageLocations.Values.Select(b => b as ILinkableStorageParent);
         foreach (var item in cs)
         {
             yield return item;

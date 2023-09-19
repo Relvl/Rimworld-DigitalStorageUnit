@@ -26,7 +26,7 @@ class Patch_RecipeWorkerCounter_CountProducts
             var targetDef = __instance.recipe.products[0].thingDef;
 
             //Add Items stored in ColdStorage
-            var units = PatchStorageUtil.GetPRFMapComponent(billmap).ColdStorageBuildings.Select(b => b as ILinkableStorageParent).ToList();
+            var units = billmap.GetDsuComponent().ColdStorageLocations.Values.Select(b => b as ILinkableStorageParent).ToList();
 
             foreach (var dsu in units)
             {

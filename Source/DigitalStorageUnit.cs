@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using System;
 using System.Reflection;
-using DigitalStorageUnit.Common;
 using DigitalStorageUnit.Common.HarmonyPatches;
 using Verse;
 
@@ -16,10 +15,7 @@ public class DigitalStorageUnit : Mod
         {
             HarmonyInstance = new Harmony("io.github.Relvl.Rimworld.DigitalStorageUnit");
             HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
-
             Log.Message($"DigitalStorageUnit {typeof(DigitalStorageUnit).Assembly.GetName().Version} - Harmony patches successful");
-
-            ConditionalPatchHelper.InitHarmony(HarmonyInstance);
         }
         catch (Exception ex)
         {

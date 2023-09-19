@@ -20,10 +20,6 @@ public class Building_ColdStoragePowered : Building_ColdStorage
     public override bool CanStoreMoreItems => (Powered) && Spawned && (ModExtension_Crate == null || StoredItemsCount < MaxNumberItemsInternal);
     public override bool CanReceiveIO => base.CanReceiveIO && (compPowerTrader?.PowerOn ?? false) && Spawned;
 
-    public override bool ForbidPawnInput => ForbidPawnAccess || !pawnAccess || !CanStoreMoreItems;
-
-    public override bool ForbidPawnOutput => ForbidPawnAccess || !pawnAccess;
-
     private bool pawnAccess = true;
 
     public void UpdatePowerConsumption()
@@ -37,11 +33,6 @@ public class Building_ColdStoragePowered : Building_ColdStorage
         base.ExposeData();
         Scribe_Values.Look(ref pawnAccess, "pawnAccess", true);
         compPowerTrader ??= GetComp<CompPowerTrader>();
-    }
-
-    protected override void ReceiveCompSignal(string signal)
-    {
-        base.ReceiveCompSignal(signal);
     }
 
     public override void Tick()
@@ -66,23 +57,20 @@ public class Building_ColdStoragePowered : Building_ColdStorage
         foreach (var g in base.GetGizmos()) yield return g;
         if (Prefs.DevMode)
         {
-            yield return new Command_Action()
+            yield return new Command_Action
             {
                 defaultLabel = "DEBUG: Debug actions", action = () => { Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>(DebugActions()))); }
             };
         }
 
-        if (!ForbidPawnAccess)
+        yield return new Command_Toggle
         {
-            yield return new Command_Toggle()
-            {
-                defaultLabel = "PRFPawnAccessLabel".Translate(),
-                isActive = () => pawnAccess,
-                toggleAction = () => pawnAccess = !pawnAccess,
-                defaultDesc = "PRFPawnAccessDesc".Translate(),
-                icon = StoragePawnAccessSwitchIcon
-            };
-        }
+            defaultLabel = "PRFPawnAccessLabel".Translate(),
+            isActive = () => pawnAccess,
+            toggleAction = () => pawnAccess = !pawnAccess,
+            defaultDesc = "PRFPawnAccessDesc".Translate(),
+            icon = StoragePawnAccessSwitchIcon
+        };
     }
 
     public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)

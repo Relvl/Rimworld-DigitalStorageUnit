@@ -21,9 +21,9 @@ public class Building_MassStorageUnitPowered : Building_MassStorageUnit
     public override bool CanStoreMoreItems => (Powered) && Spawned && (ModExtension_Crate == null || StoredItemsCount < MaxNumberItemsInternal);
     public override bool CanReceiveIO => base.CanReceiveIO && Powered && Spawned;
 
-    public override bool ForbidPawnInput => ForbidPawnAccess || !pawnAccess || !CanStoreMoreItems;
+    public override bool ForbidPawnInput => !pawnAccess || !CanStoreMoreItems;
 
-    public override bool ForbidPawnOutput => ForbidPawnAccess || !pawnAccess;
+    public override bool ForbidPawnOutput => !pawnAccess;
 
     public float ExtraPowerDraw => StoredItems.Count * 10f;
 
@@ -88,23 +88,20 @@ public class Building_MassStorageUnitPowered : Building_MassStorageUnit
         foreach (var g in base.GetGizmos()) yield return g;
         if (Prefs.DevMode)
         {
-            yield return new Command_Action()
+            yield return new Command_Action
             {
                 defaultLabel = "DEBUG: Debug actions", action = () => { Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>(DebugActions()))); }
             };
         }
 
-        if (!ForbidPawnAccess)
+        yield return new Command_Toggle
         {
-            yield return new Command_Toggle()
-            {
-                defaultLabel = "PRFPawnAccessLabel".Translate(),
-                isActive = () => pawnAccess,
-                toggleAction = () => pawnAccess = !pawnAccess,
-                defaultDesc = "PRFPawnAccessDesc".Translate(),
-                icon = StoragePawnAccessSwitchIcon
-            };
-        }
+            defaultLabel = "PRFPawnAccessLabel".Translate(),
+            isActive = () => pawnAccess,
+            toggleAction = () => pawnAccess = !pawnAccess,
+            defaultDesc = "PRFPawnAccessDesc".Translate(),
+            icon = StoragePawnAccessSwitchIcon
+        };
     }
 
     public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)

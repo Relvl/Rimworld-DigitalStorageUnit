@@ -98,7 +98,6 @@
         <modExtensions>
             <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>8</limit>
-                <hideItems>true</hideItems>
             </li>
         </modExtensions>
     </ThingDef>
@@ -153,7 +152,6 @@
         <modExtensions>
             <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>16</limit>
-                <hideItems>true</hideItems>
             </li>
         </modExtensions>
     </ThingDef>
@@ -208,7 +206,6 @@
         <modExtensions>
             <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>32</limit>
-                <hideItems>true</hideItems>
             </li>
         </modExtensions>
     </ThingDef>
@@ -261,7 +258,6 @@
         <modExtensions>
             <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>64</limit>
-                <hideItems>true</hideItems>
             </li>
         </modExtensions>
     </ThingDef>
@@ -347,9 +343,6 @@
             <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>768</limit>
                 <destroyContainsItems>true</destroyContainsItems>
-                <hideItems>true</hideItems>
-                <forbidPawnAccess>false</forbidPawnAccess>
-                <hideRightClickMenus>true</hideRightClickMenus>
             </li>
         </modExtensions>
     </ThingDef>
@@ -461,9 +454,6 @@
             <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>10000</limit>
                 <destroyContainsItems>true</destroyContainsItems>
-                <hideItems>true</hideItems>
-                <forbidPawnAccess>false</forbidPawnAccess>
-                <hideRightClickMenus>true</hideRightClickMenus>
             </li>
         </modExtensions>
     </ThingDef>

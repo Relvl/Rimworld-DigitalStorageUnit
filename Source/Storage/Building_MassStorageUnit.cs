@@ -12,8 +12,7 @@ using Verse;
 namespace DigitalStorageUnit.Storage;
 
 [StaticConstructorOnStartup]
-public abstract class Building_MassStorageUnit : Building_Storage, IHideItem, IHideRightClickMenu, IForbidPawnOutputItem, IForbidPawnInputItem, IRenameBuilding,
-    ILinkableStorageParent, ILimitWatcher
+public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnInputItem, IRenameBuilding, ILinkableStorageParent, ILimitWatcher
 {
     private static readonly Texture2D RenameTex = ContentFinder<Texture2D>.Get("UI/Buttons/Rename");
 
@@ -50,9 +49,7 @@ public abstract class Building_MassStorageUnit : Building_Storage, IHideItem, IH
     public virtual bool CanReceiveIO => true;
     public virtual bool Powered => true;
 
-    public bool ForbidPawnAccess => ModExtension_Crate?.forbidPawnAccess ?? false;
-
-    public virtual bool ForbidPawnInput => ForbidPawnAccess;
+    public virtual bool ForbidPawnInput => false;
 
     private StorageOutputUtil outputUtil;
 
@@ -71,11 +68,7 @@ public abstract class Building_MassStorageUnit : Building_Storage, IHideItem, IH
         RefreshStorage();
     }
 
-    public virtual bool ForbidPawnOutput => ForbidPawnAccess;
-
-    public virtual bool HideItems => ModExtension_Crate?.hideItems ?? false;
-
-    public virtual bool HideRightClickMenus => ModExtension_Crate?.hideRightClickMenus ?? false;
+    public virtual bool ForbidPawnOutput => false;
 
     public bool AdvancedIOAllowed => true;
 
@@ -178,27 +171,27 @@ public abstract class Building_MassStorageUnit : Building_Storage, IHideItem, IH
                 GenPlace.TryPlaceThing(thingsToSplurge[i], Position, Map, ThingPlaceMode.Near);
             }
 
-        Map.GetComponent<PRFMapComponent>().RemoveIHideRightClickMenu(this);
         foreach (var cell in this.OccupiedRect().Cells)
         {
-            Map.GetComponent<PRFMapComponent>().DeRegisterIHideItemPos(cell, this);
-            Map.GetComponent<PRFMapComponent>().DeRegisterIForbidPawnOutputItem(cell, this);
+            var component = Map.GetDsuComponent();
+            component.HideItems.Remove(cell);
+            component.ForbidItems.Remove(cell);
+            component.HideRightMenus.Remove(cell);
         }
 
         base.DeSpawn(mode);
-        ConditionalPatchHelper.Deregister(this);
     }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
-        ConditionalPatchHelper.Register(this);
         base.SpawnSetup(map, respawningAfterLoad);
-        Map.GetComponent<PRFMapComponent>().AddIHideRightClickMenu(this);
         outputUtil = new StorageOutputUtil(this);
         foreach (var cell in this.OccupiedRect().Cells)
         {
-            map.GetComponent<PRFMapComponent>().RegisterIHideItemPos(cell, this);
-            map.GetComponent<PRFMapComponent>().RegisterIForbidPawnOutputItem(cell, this);
+            var component = map.GetDsuComponent();
+            component.HideItems.Add(cell);
+            component.ForbidItems.Add(cell);
+            component.HideRightMenus.Add(cell);
         }
 
         ModExtension_Crate ??= def.GetModExtension<DefModExtension_Crate>();

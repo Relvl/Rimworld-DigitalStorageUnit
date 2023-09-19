@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DigitalStorageUnit.Common.HarmonyPatches;
+using DigitalStorageUnit.Common;
 using DigitalStorageUnit.Storage.Editables;
 using DigitalStorageUnit.Storage.UI;
 using UnityEngine;
@@ -46,16 +46,6 @@ public abstract class Building_ColdStorage : Building, IRenameBuilding, IHaulDes
     public override string LabelCap => uniqueName ?? base.LabelCap;
     public virtual bool CanReceiveIO => true;
     public virtual bool Powered => true;
-
-    public bool ForbidPawnAccess => ModExtension_Crate?.forbidPawnAccess ?? false;
-
-    public virtual bool ForbidPawnInput => ForbidPawnAccess;
-
-    public virtual bool ForbidPawnOutput => ForbidPawnAccess;
-
-    public virtual bool HideItems => ModExtension_Crate?.hideItems ?? false;
-
-    public virtual bool HideRightClickMenus => ModExtension_Crate?.hideRightClickMenus ?? false;
 
     IntVec3 IHaulDestination.Position => Position;
 
@@ -182,18 +172,17 @@ public abstract class Building_ColdStorage : Building, IRenameBuilding, IHaulDes
         for (var i = 0; i < thingsToSplurge.Count; i++)
             if (thingsToSplurge[i].def.category == ThingCategory.Item)
             {
-                //thingsToSplurge[i].DeSpawn();
                 GenPlace.TryPlaceThing(thingsToSplurge[i], Position, Map, ThingPlaceMode.Near);
             }
 
-        PatchStorageUtil.GetPRFMapComponent(Map).DeRegisterColdStorageBuilding(this);
+        Map.GetDsuComponent().ColdStorageLocations.Remove(Position);
         base.DeSpawn(mode);
     }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
         base.SpawnSetup(map, respawningAfterLoad);
-        PatchStorageUtil.GetPRFMapComponent(Map).RegisterColdStorageBuilding(this);
+        Map.GetDsuComponent().ColdStorageLocations.TryAdd(Position, this);
         ModExtension_Crate ??= def.GetModExtension<DefModExtension_Crate>();
         outputUtil = new StorageOutputUtil(this);
         foreach (var port in ports)

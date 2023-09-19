@@ -11,8 +11,7 @@ class Patch_TradeDeal_InSellablePosition
     {
         if (!t.Spawned && t.MapHeld != null)
         {
-            var buildings = PatchStorageUtil.GetPRFMapComponent(t.MapHeld).ColdStorageBuildings;
-            foreach (var building in buildings)
+            foreach (var (pos, building) in t.MapHeld.GetDsuComponent().ColdStorageLocations)
             {
                 if (building.StoredItems.Contains(t))
                 {

@@ -15,7 +15,7 @@ public static class AdvancedIO_PatchHelper
     /// <returns></returns>
     public static IEnumerable<KeyValuePair<IntVec3, Building_AdvancedStorageUnitIOPort>> GetAdvancedIOPorts(Map map)
     {
-        var Ports = PatchStorageUtil.GetPRFMapComponent(map).GetadvancedIOLocations.Where(l => (l.Value.boundStorageUnit?.Powered ?? false) && l.Value.CanGetNewItem);
+        var Ports = map.GetDsuComponent().AdvancedPortLocations.Where(l => (l.Value.boundStorageUnit?.Powered ?? false) && l.Value.CanGetNewItem);
         return Ports;
     }
 

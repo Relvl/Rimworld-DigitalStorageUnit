@@ -8,12 +8,9 @@ class Patch_WealthWatcher_CalculateWealthItems
 {
     public static void Postfix(Verse.Map ___map, ref float __result)
     {
-        var buildings = PatchStorageUtil.GetPRFMapComponent(___map).ColdStorageBuildings;
-        var cnt = buildings.Count;
-        for (var i = 0; i < cnt; i++)
+        foreach (var (pos, storage) in ___map.GetDsuComponent().ColdStorageLocations)
         {
-            var building = buildings[i];
-            __result += building.GetItemWealth();
+            __result += storage.GetItemWealth();
         }
     }
 }

@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using DigitalStorageUnit.Common.HarmonyPatches;
+using DigitalStorageUnit.Common;
 using HarmonyLib;
 using Verse;
 using Verse.AI;
@@ -42,19 +42,19 @@ public class Patch_Reachability_CanReach
         //Ignore everything that is not a Item
         if (dest.Thing?.def.category != ThingCategory.Item) return;
 
-        var mapComp = PatchStorageUtil.GetPRFMapComponent(___map);
+        var mapComp = ___map.GetDsuComponent();
         if (mapComp is null) return;
 
         // Quickly Check if the Item is in a Storage Unit
         // TODO: Rework that -> This includes items in PRF Crates & Excludes items from Cold Storage(Note they currently have bigger issues)
-        if (!mapComp.ShouldHideItemsAtPos(dest.Thing.Position)) return;
+        if (!mapComp.HideItems.Contains(dest.Thing.Position)) return;
 
         // Check Every Advanced IO Port
-        foreach (var (target, portBuilding) in mapComp.GetadvancedIOLocations)
+        foreach (var (target, port) in mapComp.AdvancedPortLocations)
         {
             // Check if that Port has access to the Item
             // TODO: Rework that -> Is the Use of the Position really best?
-            if (portBuilding.boundStorageUnit?.GetPosition != dest.Thing.Position) continue;
+            if (port.boundStorageUnit?.GetPosition != dest.Thing.Position) continue;
             if (!__instance.CanReach(start, target, PathEndMode.Touch, traverseParams)) continue;
 
             canReachThing = dest.Thing;
