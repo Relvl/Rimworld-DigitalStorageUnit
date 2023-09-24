@@ -11,7 +11,7 @@ namespace DigitalStorageUnit.Storage;
 [StaticConstructorOnStartup]
 public class Building_MassStorageUnitPowered : Building_MassStorageUnit
 {
-    private static Texture2D StoragePawnAccessSwitchIcon = ContentFinder<Texture2D>.Get("PRFUi/dsu", true);
+    private static Texture2D StoragePawnAccessSwitchIcon = ContentFinder<Texture2D>.Get("UI/dsu", true);
 
     //Initialized on spawn
     private CompPowerTrader compPowerTrader;
