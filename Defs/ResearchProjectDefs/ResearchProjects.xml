@@ -6,14 +6,10 @@
         <label>Digital Storage Unit</label>
         <description>TODO! add a description</description>
         <baseCost>10000</baseCost>
-        <researchViewY>3</researchViewY>
-        <researchViewX>1</researchViewX>
+        <researchViewX>15</researchViewX>
+        <researchViewY>1.60</researchViewY>
         <techLevel>Industrial</techLevel>
         <prerequisites>
-            <li>Smithing</li>
-            <li>Electricity</li>
-            <li>Machining</li>
-            <li>MicroelectronicsBasics</li>
             <li>Fabrication</li>
         </prerequisites>
         <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>

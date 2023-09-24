@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
-    <ThingDef Name="PRF_BuildingBase" Abstract="True">
-        <category>Building</category>    <!-- Designates a category to be used internally. -->
-        <altitudeLayer>Building</altitudeLayer>    <!-- The layer this thing is rendered on. Usually the same value as category. -->
+    <ThingDef Name="DSU_BuildingBase" Abstract="True">
+        <category>Building</category>
+        <altitudeLayer>Building</altitudeLayer>
         <soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
         <canOverlapZones>false</canOverlapZones>
         <constructEffect>ConstructMetal</constructEffect>
-        <selectable>true</selectable>    <!-- Specifies whether or not the item can be selected in the atlas. -->
+        <selectable>true</selectable>
         <drawerType>RealtimeOnly</drawerType>
-        <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>    <!-- Where the thing can be built.  -->
-        <repairEffect>Repair</repairEffect>    <!-- Effect when the building is being repaired. Any, Light, Heavy, GrowSoil, Diggable, SmoothHard, SmoothableStone -->
-        <leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>    <!-- 	Whether it leaves part of its resource cost when killed. -->
-        <filthLeaving>Filth_RubbleBuilding</filthLeaving>    <!-- What filth will be there when the thing gets destroyed. -->
+        <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+        <repairEffect>Repair</repairEffect>
+        <leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+        <filthLeaving>Filth_RubbleBuilding</filthLeaving>
         <statBases>
-            <SellPriceFactor>0.70</SellPriceFactor>      <!-- 	A factor denoting how much traders will pay you less for this weapon than they would sell it for (when negotiating at maximal social skill). default value on weaponry is 0.5 -->
-            <Beauty>-1</Beauty>      <!-- +is good -is bad ;) -->
-            <Mass>10</Mass>      <!-- mass in kg -->
-            <Flammability>0.9</Flammability>      <!-- 0.0=0%, 1=100% -->
+            <SellPriceFactor>0.70</SellPriceFactor>
+            <Beauty>0</Beauty>
+            <Mass>10</Mass>
+            <Flammability>0.9</Flammability>
         </statBases>
         <thingCategories>
-            <li>BuildingsAutomation</li>
+            <li>BuildingsFurniture</li>
         </thingCategories>
-        <designationCategory>Industrial</designationCategory>    <!--architect menu location-->
+        <designationCategory>Furniture</designationCategory>
         <designatorDropdown>PRF_StorageGroup</designatorDropdown>
         <uiIconScale>0.7</uiIconScale>
         <tradeTags>
@@ -62,230 +62,11 @@
         </building>
     </ThingDef>
 
-    <!--============================== I/O Port ==============================-->
-    <ThingDef ParentName="PRF_BuildingBase">
-        <defName>PRF_IOPort_I</defName>
-        <label>I/O port</label>
-        <description>An advanced connection port for the Digital Storage Unit. It can be set to input/output from any platform remotely within the map.</description>
-        <thingClass>DigitalStorageUnit.Storage.Building_StorageUnitIOPort</thingClass>
-        <graphicData>
-            <texPath>Storage/IO_Port</texPath>
-            <graphicClass>Graphic_Single</graphicClass>
-            <shaderType>CutoutComplex</shaderType>
-            <damageData>
-                <rect>(0.05,0.1,0.9,0.9)</rect>
-                <cornerTL>Damage/Corner</cornerTL>
-                <cornerTR>Damage/Corner</cornerTR>
-            </damageData>
-        </graphicData>
-        <building>
-            <isHopper>true</isHopper>
-            <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
-            <ignoreStoredThingsBeauty>true</ignoreStoredThingsBeauty>
-            <fixedStorageSettings>
-                <priority>Normal</priority>
-                <filter>
-                    <categories>
-                        <li>Root</li>
-                    </categories>
-                </filter>
-            </fixedStorageSettings>
-            <defaultStorageSettings>
-                <priority>Normal</priority>
-                <filter>
-                    <categories></categories>
-                </filter>
-            </defaultStorageSettings>
-        </building>
-        <statBases>
-            <WorkToBuild>750</WorkToBuild>
-            <MaxHitPoints>100</MaxHitPoints>
-            <MarketValue>1729</MarketValue>
-            <Flammability>1.0</Flammability>
-            <Mass>30</Mass>
-        </statBases>
-        <costList>
-            <ComponentSpacer>1</ComponentSpacer>
-            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
-            <PRF_ElectronicChip_I>1</PRF_ElectronicChip_I>
-        </costList>
-
-        <inspectorTabs>
-            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
-            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
-        </inspectorTabs>
-        <comps>
-            <li Class="CompProperties_Power">
-                <compClass>CompPowerTrader</compClass>
-                <basePowerConsumption>300</basePowerConsumption>
-            </li>
-            <li Class="CompProperties_Flickable"/>
-            <li Class="CompProperties_Glower">
-                <glowRadius>2</glowRadius>
-                <glowColor>(115,198,206,0)</glowColor>
-            </li>
-        </comps>
-        <modExtensions>
-            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
-                <inColor>(144, 222, 255, 255)</inColor>
-                <outColor>(215, 169, 72, 255)</outColor>
-            </li>
-        </modExtensions>
-    </ThingDef>
-
-    <!--============================== Advanced I/O Port ==============================-->
-    <ThingDef ParentName="PRF_BuildingBase">
-        <defName>PRF_IOPort_II</defName>
-        <label>Adv. I/O port</label>
-        <description>An interactive connection port for the Digital Storage Unit. Pawns may request any item from the conneted Digital Storage Unit.</description>
-        <thingClass>DigitalStorageUnit.Storage.Building_AdvancedStorageUnitIOPort</thingClass>
-        <graphicData>
-            <texPath>Storage/IO_Port</texPath>
-            <graphicClass>Graphic_Single</graphicClass>
-            <shaderType>CutoutComplex</shaderType>
-            <damageData>
-                <rect>(0.05,0.1,0.9,0.9)</rect>
-                <cornerTL>Damage/Corner</cornerTL>
-                <cornerTR>Damage/Corner</cornerTR>
-            </damageData>
-        </graphicData>
-        <building>
-            <isHopper>true</isHopper>
-            <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
-            <ignoreStoredThingsBeauty>true</ignoreStoredThingsBeauty>
-            <fixedStorageSettings>
-                <priority>Normal</priority>
-                <filter>
-                    <categories>
-                        <li>Root</li>
-                    </categories>
-                </filter>
-            </fixedStorageSettings>
-            <defaultStorageSettings>
-                <priority>Normal</priority>
-                <filter>
-                    <categories></categories>
-                </filter>
-            </defaultStorageSettings>
-        </building>
-        <statBases>
-            <WorkToBuild>750</WorkToBuild>
-            <MaxHitPoints>100</MaxHitPoints>
-            <MarketValue>1729</MarketValue>
-            <Flammability>1.0</Flammability>
-            <Mass>30</Mass>
-        </statBases>
-        <costList>
-            <ComponentSpacer>1</ComponentSpacer>
-            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
-            <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
-        </costList>
-
-        <inspectorTabs>
-            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
-            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
-        </inspectorTabs>
-        <comps>
-            <li Class="CompProperties_Power">
-                <compClass>CompPowerTrader</compClass>
-                <basePowerConsumption>300</basePowerConsumption>
-            </li>
-            <li Class="CompProperties_Flickable"/>
-            <li Class="CompProperties_Glower">
-                <glowRadius>2</glowRadius>
-                <glowColor>(115,198,206,0)</glowColor>
-            </li>
-        </comps>
-        <modExtensions>
-            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
-                <inColor>(144, 222, 255, 255)</inColor>
-                <outColor>(215, 169, 72, 255)</outColor>
-            </li>
-        </modExtensions>
-    </ThingDef>
-
-    <!--============================== I/O Pusher ==============================-->
-    <ThingDef ParentName="PRF_BuildingBase">
-        <defName>PRF_IOPPusher_I</defName>
-        <label>I/O pusher</label>
-        <description>This modified I/O port allows you to push items directly into next cell, onto a belt, or anywhere else, saving space instead of using a puller.\n More of an output port than input/output.</description>
-        <thingClass>DigitalStorageUnit.Storage.Building_IOPusher</thingClass>
-        <rotatable>true</rotatable>
-        <graphicData>
-            <texPath>Storage/IO_Pusher</texPath>
-            <graphicClass>Graphic_Multi</graphicClass>
-            <shaderType>CutoutComplex</shaderType>
-            <damageData>
-                <rect>(0.05,0.1,0.9,0.9)</rect>
-                <cornerTL>Damage/Corner</cornerTL>
-                <cornerTR>Damage/Corner</cornerTR>
-            </damageData>
-        </graphicData>
-        <building>
-            <isHopper>true</isHopper>
-            <fixedStorageSettings>
-                <priority>Normal</priority>
-                <filter>
-                    <categories>
-                        <li>Root</li>
-                    </categories>
-                </filter>
-            </fixedStorageSettings>
-            <defaultStorageSettings>
-                <priority>Normal</priority>
-                <filter>
-                    <categories></categories>
-                </filter>
-            </defaultStorageSettings>
-        </building>
-        <statBases>
-            <WorkToBuild>1000</WorkToBuild>
-            <MaxHitPoints>150</MaxHitPoints>
-            <MarketValue>1956</MarketValue>
-            <Flammability>1.0</Flammability>
-            <Mass>30</Mass>
-        </statBases>
-        <costList>
-            <ComponentSpacer>1</ComponentSpacer>
-            <PRF_RoboticArm>1</PRF_RoboticArm>
-            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
-            <PRF_ElectronicChip_I>1</PRF_ElectronicChip_I>
-        </costList>
-
-        <placeWorkers>
-            <li>DigitalStorageUnit.PlaceWorker_Arrow</li>
-            <li>DigitalStorageUnit.Storage.PlaceWorker_IOPusherHilight</li>
-        </placeWorkers>
-        <drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
-
-        <inspectorTabs>
-            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
-            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
-        </inspectorTabs>
-        <comps>
-            <li Class="CompProperties_Power">
-                <compClass>CompPowerTrader</compClass>
-                <basePowerConsumption>350</basePowerConsumption>
-            </li>
-            <li Class="CompProperties_Flickable"/>
-            <li Class="CompProperties_Glower">
-                <glowRadius>2</glowRadius>
-                <glowColor>(115,198,206,0)</glowColor>
-            </li>
-        </comps>
-        <modExtensions>
-            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
-                <inColor>(144, 222, 255, 255)</inColor>
-                <outColor>(215, 169, 72, 255)</outColor>
-            </li>
-        </modExtensions>
-    </ThingDef>
-
     <!--==================== Digital Storage Unit ====================-->
-    <ThingDef ParentName="PRF_BuildingBase">
-        <defName>PRF_DigitalStorageUnit_I</defName>
+    <ThingDef ParentName="DSU_BuildingBase">
+        <defName>DSU_DigitalStorageUnit_Building</defName>
         <label>Digital Storage Unit</label>
-        <description>A matter-energy conversion based storage unit which can hold up to 768 stacks, consuming 10 W of power per stack of items. In the event of a power outage, items already inside will be safe, but the DSU will not be able to store more. Don't break it.</description>
+        <description>A matter-energy conversion based storage unit which can hold a large number of stacks, consuming 10 W of power per stack of items.\nIn the event of a power outage, items already inside will be safe, but the DSU will not be able to store more.\nDon't break/deconstruct it - items inside will be destroyed!</description>
         <thingClass>DigitalStorageUnit.Storage.Building_MassStorageUnitPowered</thingClass>
         <uiIconScale>0.9</uiIconScale>
         <pathCost>150</pathCost>
@@ -367,6 +148,225 @@
             <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
                 <limit>768</limit>
                 <destroyContainsItems>true</destroyContainsItems>
+            </li>
+        </modExtensions>
+    </ThingDef>
+
+    <!--============================== Input Bus ==============================-->
+    <ThingDef ParentName="DSU_BuildingBase">
+        <defName>DSU_InputBus_Building</defName>
+        <label>DSU Input Bus</label>
+        <description>An input bus for the Digital Storage Unit. Pawns may store items into connected DSU through it.</description>
+        <thingClass>DigitalStorageUnit.Storage.Building_StorageUnitIOPort</thingClass>
+        <graphicData>
+            <texPath>Storage/IO_Port</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <shaderType>CutoutComplex</shaderType>
+            <damageData>
+                <rect>(0.05,0.1,0.9,0.9)</rect>
+                <cornerTL>Damage/Corner</cornerTL>
+                <cornerTR>Damage/Corner</cornerTR>
+            </damageData>
+        </graphicData>
+        <building>
+            <isHopper>true</isHopper>
+            <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
+            <ignoreStoredThingsBeauty>true</ignoreStoredThingsBeauty>
+            <fixedStorageSettings>
+                <priority>Normal</priority>
+                <filter>
+                    <categories>
+                        <li>Root</li>
+                    </categories>
+                </filter>
+            </fixedStorageSettings>
+            <defaultStorageSettings>
+                <priority>Normal</priority>
+                <filter>
+                    <categories></categories>
+                </filter>
+            </defaultStorageSettings>
+        </building>
+        <statBases>
+            <WorkToBuild>750</WorkToBuild>
+            <MaxHitPoints>100</MaxHitPoints>
+            <MarketValue>1729</MarketValue>
+            <Flammability>1.0</Flammability>
+            <Mass>30</Mass>
+        </statBases>
+        <costList>
+            <ComponentSpacer>1</ComponentSpacer>
+            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+            <PRF_ElectronicChip_I>1</PRF_ElectronicChip_I>
+        </costList>
+
+        <inspectorTabs>
+            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
+        </inspectorTabs>
+        <comps>
+            <li Class="CompProperties_Power">
+                <compClass>CompPowerTrader</compClass>
+                <basePowerConsumption>300</basePowerConsumption>
+            </li>
+            <li Class="CompProperties_Flickable"/>
+            <li Class="CompProperties_Glower">
+                <glowRadius>2</glowRadius>
+                <glowColor>(115,198,206,0)</glowColor>
+            </li>
+        </comps>
+        <modExtensions>
+            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
+                <inColor>(144, 222, 255, 255)</inColor>
+                <outColor>(215, 169, 72, 255)</outColor>
+            </li>
+        </modExtensions>
+    </ThingDef>
+
+    <!--============================== Access Point ==============================-->
+    <ThingDef ParentName="DSU_BuildingBase">
+        <defName>DSU_AccessPoint_Building</defName>
+        <label>DSU Access Point</label>
+        <description>An interactive connection bus for the Digital Storage Unit. Pawns may request any item from the conneted Digital Storage Unit.</description>
+        <thingClass>DigitalStorageUnit.Storage.Building_AdvancedStorageUnitIOPort</thingClass>
+        <graphicData>
+            <texPath>Storage/IO_Port</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <shaderType>CutoutComplex</shaderType>
+            <damageData>
+                <rect>(0.05,0.1,0.9,0.9)</rect>
+                <cornerTL>Damage/Corner</cornerTL>
+                <cornerTR>Damage/Corner</cornerTR>
+            </damageData>
+        </graphicData>
+        <building>
+            <isHopper>true</isHopper>
+            <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
+            <ignoreStoredThingsBeauty>true</ignoreStoredThingsBeauty>
+            <fixedStorageSettings>
+                <priority>Normal</priority>
+                <filter>
+                    <categories>
+                        <li>Root</li>
+                    </categories>
+                </filter>
+            </fixedStorageSettings>
+            <defaultStorageSettings>
+                <priority>Normal</priority>
+                <filter>
+                    <categories></categories>
+                </filter>
+            </defaultStorageSettings>
+        </building>
+        <statBases>
+            <WorkToBuild>750</WorkToBuild>
+            <MaxHitPoints>100</MaxHitPoints>
+            <MarketValue>1729</MarketValue>
+            <Flammability>1.0</Flammability>
+            <Mass>30</Mass>
+        </statBases>
+        <costList>
+            <ComponentSpacer>1</ComponentSpacer>
+            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+            <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
+        </costList>
+
+        <inspectorTabs>
+            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
+        </inspectorTabs>
+        <comps>
+            <li Class="CompProperties_Power">
+                <compClass>CompPowerTrader</compClass>
+                <basePowerConsumption>300</basePowerConsumption>
+            </li>
+            <li Class="CompProperties_Flickable"/>
+            <li Class="CompProperties_Glower">
+                <glowRadius>2</glowRadius>
+                <glowColor>(115,198,206,0)</glowColor>
+            </li>
+        </comps>
+        <modExtensions>
+            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
+                <inColor>(144, 222, 255, 255)</inColor>
+                <outColor>(215, 169, 72, 255)</outColor>
+            </li>
+        </modExtensions>
+    </ThingDef>
+
+    <!--============================== Pusher ==============================-->
+    <ThingDef ParentName="DSU_BuildingBase">
+        <defName>DSU_Pusher_Building</defName>
+        <label>DSU Pusher</label>
+        <description>This modified ouput bus allows you to push items directly into next cell, onto a belt, or anywhere else, saving space instead of using a puller.</description>
+        <thingClass>DigitalStorageUnit.Storage.Building_IOPusher</thingClass>
+        <rotatable>true</rotatable>
+        <graphicData>
+            <texPath>Storage/IO_Pusher</texPath>
+            <graphicClass>Graphic_Multi</graphicClass>
+            <shaderType>CutoutComplex</shaderType>
+            <damageData>
+                <rect>(0.05,0.1,0.9,0.9)</rect>
+                <cornerTL>Damage/Corner</cornerTL>
+                <cornerTR>Damage/Corner</cornerTR>
+            </damageData>
+        </graphicData>
+        <building>
+            <isHopper>true</isHopper>
+            <fixedStorageSettings>
+                <priority>Normal</priority>
+                <filter>
+                    <categories>
+                        <li>Root</li>
+                    </categories>
+                </filter>
+            </fixedStorageSettings>
+            <defaultStorageSettings>
+                <priority>Normal</priority>
+                <filter>
+                    <categories></categories>
+                </filter>
+            </defaultStorageSettings>
+        </building>
+        <statBases>
+            <WorkToBuild>1000</WorkToBuild>
+            <MaxHitPoints>150</MaxHitPoints>
+            <MarketValue>1956</MarketValue>
+            <Flammability>1.0</Flammability>
+            <Mass>30</Mass>
+        </statBases>
+        <costList>
+            <ComponentSpacer>1</ComponentSpacer>
+            <PRF_RoboticArm>1</PRF_RoboticArm>
+            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+            <PRF_ElectronicChip_I>1</PRF_ElectronicChip_I>
+        </costList>
+
+        <placeWorkers>
+            <li>DigitalStorageUnit.PlaceWorker_Arrow</li>
+            <li>DigitalStorageUnit.Storage.PlaceWorker_IOPusherHilight</li>
+        </placeWorkers>
+        <drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
+
+        <inspectorTabs>
+            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
+            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
+        </inspectorTabs>
+        <comps>
+            <li Class="CompProperties_Power">
+                <compClass>CompPowerTrader</compClass>
+                <basePowerConsumption>350</basePowerConsumption>
+            </li>
+            <li Class="CompProperties_Flickable"/>
+            <li Class="CompProperties_Glower">
+                <glowRadius>2</glowRadius>
+                <glowColor>(115,198,206,0)</glowColor>
+            </li>
+        </comps>
+        <modExtensions>
+            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
+                <inColor>(144, 222, 255, 255)</inColor>
+                <outColor>(215, 169, 72, 255)</outColor>
             </li>
         </modExtensions>
     </ThingDef>

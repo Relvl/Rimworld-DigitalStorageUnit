@@ -2,7 +2,7 @@
 <Patch>
 
     <Operation Class="PatchOperationAdd">
-        <xpath>Defs/ThingDef[defName="PRF_DigitalStorageUnit_I"]/comps</xpath>
+        <xpath>Defs/ThingDef[defName="DSU_DigitalStorageUnit_Building"]/comps</xpath>
         <value>
             <li Class="LWM.DeepStorage.Properties">
                 <maxNumberStacks>768</maxNumberStacks>
@@ -16,7 +16,7 @@
     </Operation>
 
     <Operation Class="PatchOperationAdd">
-        <xpath>Defs/ThingDef[defName="PRF_IOPort_I"]/comps</xpath>
+        <xpath>Defs/ThingDef[defName="DSU_InputBus_Building"]/comps</xpath>
         <value>
             <li Class="LWM.DeepStorage.Properties">
                 <maxNumberStacks>1</maxNumberStacks>
@@ -30,7 +30,7 @@
     </Operation>
 
     <Operation Class="PatchOperationAdd">
-        <xpath>Defs/ThingDef[defName="PRF_IOPort_II"]/comps</xpath>
+        <xpath>Defs/ThingDef[defName="DSU_AccessPoint_Building"]/comps</xpath>
         <value>
             <li Class="LWM.DeepStorage.Properties">
                 <maxNumberStacks>1</maxNumberStacks>

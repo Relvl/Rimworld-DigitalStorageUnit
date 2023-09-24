@@ -3,37 +3,73 @@
     <Operation Class="PatchOperationSequence">
         <operations>
 
-            <!-- recipe bases -->
-
-            <li Class="PatchOperationAdd">
-                <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Electronics"]</xpath>
-                <value>
-                    <workSpeedStat>ElectronicCraftingSpeed</workSpeedStat>
-                    <recipeUsers>
-                        <li>TableElectronics</li>
-                    </recipeUsers>
-                </value>
-            </li>
-            <li Class="PatchOperationAdd">
-                <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Mechanics"]</xpath>
-                <value>
-                    <workSpeedStat>SmithingSpeed</workSpeedStat>
-                    <recipeUsers>
-                        <li>FabricationBench</li>
-                        <li>AdvToolBench</li>
-                    </recipeUsers>
-                </value>
+            <!-- research -->
+            <li Class="PatchOperationSequence">
+                <operations>
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/prerequisites</xpath>
+                        <value>
+                            <prerequisites>
+                                <li>Storage_C2</li>
+                                <li>Electricity</li>
+                                <li>MicroelectronicsBasics</li>
+                            </prerequisites>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/researchViewX</xpath>
+                        <value>
+                            <researchViewX>11.00</researchViewX>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/researchViewY</xpath>
+                        <value>
+                            <researchViewY>13.00</researchViewY>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationFindMod">
+                        <mods>
+                            <li>Research Tree SK</li>
+                        </mods>
+                        <match Class="PatchOperationAddModExtension">
+                            <xpath>Defs/ResearchProjectDef[defName="DSU_Research" and not(modExtensions/li[@Class="ResearchTreeSK.ResearchTreeSKModExtension"])]</xpath>
+                            <value>
+                                <li Class="ResearchTreeSK.ResearchTreeSKModExtension"/>
+                            </value>
+                        </match>
+                    </li>
+                </operations>
             </li>
 
             <!-- recipes -->
-
             <li Class="PatchOperationSequence">
-                <success>Always</success>
                 <operations>
+                    <!-- recipe base -->
+                    <li Class="PatchOperationAdd">
+                        <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Electronics"]</xpath>
+                        <value>
+                            <workSpeedStat>ElectronicCraftingSpeed</workSpeedStat>
+                            <recipeUsers>
+                                <li>TableElectronics</li>
+                            </recipeUsers>
+                        </value>
+                    </li>
+
+                    <!-- recipe base -->
+                    <li Class="PatchOperationAdd">
+                        <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Mechanics"]</xpath>
+                        <value>
+                            <workSpeedStat>SmithingSpeed</workSpeedStat>
+                            <recipeUsers>
+                                <li>FabricationBench</li>
+                                <li>AdvToolBench</li>
+                            </recipeUsers>
+                        </value>
+                    </li>
 
                     <!-- chip i -> Make_DSU_ElectronicChip_I -->
                     <li Class="PatchOperationSequence">
-                        <success>Always</success>
                         <operations>
                             <li Class="PatchOperationReplace">
                                 <xpath>Defs/RecipeDef[defName="Make_DSU_ElectronicChip_I"]/ingredients</xpath>
@@ -74,7 +110,6 @@
 
                     <!-- chip ii -> Make_DSU_ElectronicChip_II -->
                     <li Class="PatchOperationSequence">
-                        <success>Always</success>
                         <operations>
                             <li Class="PatchOperationReplace">
                                 <xpath>Defs/RecipeDef[defName="Make_DSU_ElectronicChip_II"]/ingredients</xpath>
@@ -142,7 +177,6 @@
 
                     <!-- chip iii -> Make_DSU_ElectronicChip_III -->
                     <li Class="PatchOperationSequence">
-                        <success>Always</success>
                         <operations>
                             <li Class="PatchOperationReplace">
                                 <xpath>Defs/RecipeDef[defName="Make_DSU_ElectronicChip_III"]/ingredients</xpath>
@@ -210,7 +244,6 @@
 
                     <!-- robotic arm -> Make_DSU_RoboticArm -->
                     <li Class="PatchOperationSequence">
-                        <success>Always</success>
                         <operations>
                             <li Class="PatchOperationReplace">
                                 <xpath>Defs/RecipeDef[defName="Make_DSU_RoboticArm"]/ingredients</xpath>
@@ -282,7 +315,6 @@
 
                     <!-- small frame -> Make_DSU_SmallFrame -->
                     <li Class="PatchOperationSequence">
-                        <success>Always</success>
                         <operations>
                             <li Class="PatchOperationReplace">
                                 <xpath>Defs/RecipeDef[defName="Make_DSU_SmallFrame"]/ingredients</xpath>
@@ -336,7 +368,6 @@
 
                     <!-- medium frame -> Make_DSU_MediumFrame -->
                     <li Class="PatchOperationSequence">
-                        <success>Always</success>
                         <operations>
                             <li Class="PatchOperationReplace">
                                 <xpath>Defs/RecipeDef[defName="Make_DSU_MediumFrame"]/ingredients</xpath>
@@ -407,7 +438,6 @@
 
                     <!-- advanced frame -> Make_DSU_LargeFrame -->
                     <li Class="PatchOperationSequence">
-                        <success>Always</success>
                         <operations>
                             <li Class="PatchOperationReplace">
                                 <xpath>Defs/RecipeDef[defName="Make_DSU_LargeFrame"]/ingredients</xpath>
@@ -464,6 +494,73 @@
                                 </value>
                             </li>
                         </operations>
+                    </li>
+
+                </operations>
+            </li>
+
+            <!-- buildings -->
+            <li Class="PatchOperationSequence">
+                <operations>
+
+                    <!-- digital storage unit -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_DigitalStorageUnit_Building"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <AdvMechanism>5</AdvMechanism>
+                                <PRF_RoboticArm>4</PRF_RoboticArm>
+                                <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+                                <PRF_ElectronicChip_II>2</PRF_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+
+                    <!-- i/o port -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_InputBus_Building"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <Mechanism>6</Mechanism>
+                                <ComponentAdvanced>2</ComponentAdvanced>
+                                <PRF_RoboticArm>2</PRF_RoboticArm>
+                                <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+                                <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+
+                    <!-- advanced i/o port -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_AccessPoint_Building"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <AdvMechanism>6</AdvMechanism>
+                                <ComponentAdvanced>5</ComponentAdvanced>
+                                <PRF_RoboticArm>2</PRF_RoboticArm>
+                                <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+                                <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+
+                    <!-- i/o pusher -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_Pusher_Building"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <Mechanism>6</Mechanism>
+                                <ComponentAdvanced>2</ComponentAdvanced>
+                                <PRF_RoboticArm>2</PRF_RoboticArm>
+                                <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+                                <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+
+                    <!-- remove dropdown -->
+                    <li Class="PatchOperationRemove">
+                        <xpath>Defs/ThingDef[@Name="DSU_BuildingBase"]/designatorDropdown</xpath>
                     </li>
 
                 </operations>
