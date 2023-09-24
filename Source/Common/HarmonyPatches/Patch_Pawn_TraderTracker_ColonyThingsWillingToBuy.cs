@@ -5,7 +5,7 @@ using Verse;
 
 namespace DigitalStorageUnit.Common.HarmonyPatches;
 
-[HarmonyPatch(typeof(Pawn_TraderTracker), "ColonyThingsWillingToBuy")]
+[HarmonyPatch(typeof(Pawn_TraderTracker), nameof(Pawn_TraderTracker.ColonyThingsWillingToBuy), typeof(Pawn))]
 class Patch_Pawn_TraderTracker_ColonyThingsWillingToBuy
 {
     static void Postfix(Pawn playerNegotiator, ref IEnumerable<Thing> __result)
@@ -14,13 +14,13 @@ class Patch_Pawn_TraderTracker_ColonyThingsWillingToBuy
         if (map is null) return;
 
         var yieldedThings = new HashSet<Thing>();
-        yieldedThings.AddRange<Thing>(__result);
+        yieldedThings.AddRange(__result);
         foreach (var dsu in TradePatchHelper.AllPowered(map))
         {
             //Only for Cold Storage
             if (dsu.AdvancedIOAllowed) continue;
 
-            yieldedThings.AddRange<Thing>(dsu.StoredItems);
+            yieldedThings.AddRange(dsu.StoredItems);
         }
 
         __result = yieldedThings;

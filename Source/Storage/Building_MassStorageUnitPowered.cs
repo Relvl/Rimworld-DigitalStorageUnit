@@ -18,12 +18,10 @@ public class Building_MassStorageUnitPowered : Building_MassStorageUnit
 
     public override bool Powered => compPowerTrader?.PowerOn ?? false;
 
-    public override bool CanStoreMoreItems => (Powered) && Spawned && (ModExtension_Crate == null || StoredItemsCount < MaxNumberItemsInternal);
+    public override bool CanStoreMoreItems => (Powered) && Spawned && (ModExtensionCrate == null || StoredItemsCount < MaxNumberItemsInternal);
     public override bool CanReceiveIO => base.CanReceiveIO && Powered && Spawned;
 
     public override bool ForbidPawnInput => !pawnAccess || !CanStoreMoreItems;
-
-    public override bool ForbidPawnOutput => !pawnAccess;
 
     public float ExtraPowerDraw => StoredItems.Count * 10f;
 

@@ -2,5 +2,6 @@
   <v1.4>
     <li>/</li>
     <li IfModActive="skyarkhangel.HSK">Compat/Core_SK</li>
+    <li IfModActive="LWM.DeepStorage">Compat/LWM_DeepStorage</li>
   </v1.4>
 </loadFolders>

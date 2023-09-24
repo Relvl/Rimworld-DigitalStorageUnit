@@ -9,7 +9,6 @@ public class DsuMapComponent : MapComponent
 {
     public readonly HashSet<IntVec3> HideRightMenus = new();
     public readonly HashSet<IntVec3> HideItems = new();
-    public readonly HashSet<IntVec3> ForbidItems = new();
 
     public Dictionary<IntVec3, Storage.Building_AdvancedStorageUnitIOPort> AdvancedPortLocations { get; } = new();
     public Dictionary<IntVec3, Storage.Building_ColdStorage> ColdStorageLocations { get; } = new();

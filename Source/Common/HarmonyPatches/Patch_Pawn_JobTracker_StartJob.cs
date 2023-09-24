@@ -11,7 +11,7 @@ namespace DigitalStorageUnit.Common.HarmonyPatches;
 /// Pawns starting Jobs check the IO Port for Items
 /// This affects mostly Bills on Workbenches
 /// </summary>
-[HarmonyPatch(typeof(Pawn_JobTracker), "StartJob")]
+[HarmonyPatch(typeof(Pawn_JobTracker), nameof(Pawn_JobTracker.StartJob))]
 class Patch_Pawn_JobTracker_StartJob
 {
     private static bool TryGetTargetPos(ref IntVec3 targetPos, bool isHaulJobType, Job newJob, IntVec3 pawnPosition)
@@ -75,10 +75,10 @@ class Patch_Pawn_JobTracker_StartJob
         var usHaulJobType = newJob.targetA.Thing?.def?.category == ThingCategory.Item;
         if (!TryGetTargetPos(ref targetPos, usHaulJobType, newJob, ___pawn.Position)) return true;
 
-        var Ports = AdvancedIO_PatchHelper.GetOrderdAdvancedIOPorts(___pawn.Map, ___pawn.Position, targetPos);
-        List<LocalTargetInfo> TargetItems = null;
-        GetTargetItems(ref TargetItems, usHaulJobType, newJob);
-        foreach (var target in TargetItems)
+        var ports = AdvancedIO_PatchHelper.GetOrderdAdvancedIOPorts(___pawn.Map, ___pawn.Position, targetPos);
+        List<LocalTargetInfo> targetItems = null;
+        GetTargetItems(ref targetItems, usHaulJobType, newJob);
+        foreach (var target in targetItems)
         {
             if (target.Thing == null)
             {
@@ -86,17 +86,17 @@ class Patch_Pawn_JobTracker_StartJob
                 continue;
             }
 
-            var DistanceToTarget = AdvancedIO_PatchHelper.CalculatePath(___pawn.Position, target.Cell, targetPos);
+            var distanceToTarget = AdvancedIO_PatchHelper.CalculatePath(___pawn.Position, target.Cell, targetPos);
 
             //Quick check if the Item could be in a DSU
             //Might have false Positives They are then filterd by AdvancedIO_PatchHelper.CanMoveItem
             //But should not have false Negatives
             if (prfmapcomp.HideItems.Contains(target.Cell))
             {
-                foreach (var port in Ports)
+                foreach (var port in ports)
                 {
-                    var PortIsCloser = port.Key < DistanceToTarget;
-                    if (PortIsCloser ||
+                    var portIsCloser = port.Key < distanceToTarget;
+                    if (portIsCloser ||
                         ( /*Patch_Reachability_CanReach.Status -- todo check the config instead! &&*/
                             ___pawn.Map.reachability.CanReach(___pawn.Position, target.Thing, PathEndMode.Touch, TraverseParms.For(___pawn)) &&
                             Patch_Reachability_CanReach.CanReachThing(target.Thing)))

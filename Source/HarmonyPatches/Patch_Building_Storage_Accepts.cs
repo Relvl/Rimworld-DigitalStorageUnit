@@ -7,7 +7,7 @@ using Verse;
 namespace DigitalStorageUnit.HarmonyPatches;
 
 /// <summary>
-/// 
+/// Disables the item acceptance if DSU is overfilled or forbidden
 /// </summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
@@ -19,15 +19,10 @@ class Patch_Building_Storage_Accepts
     static bool Prefix(Building_Storage __instance, Thing t, out bool __result)
     {
         __result = false;
-        
-        // TODO! What actually this does??? 
-        // Check if pawn input is forbidden
-        if ((__instance as IForbidPawnInputItem)?.ForbidPawnInput ?? false)
+
+        if (__instance is IForbidPawnInputItem forbid)
         {
-            // This check is needed to support the use of the Limit function for the IO Ports
-            // https://github.com/zymex22/Project-RimFactory-Revived/issues/699
-            // https://github.com/zymex22/Project-RimFactory-Revived/issues/678
-            if (__instance.Position != t.Position)
+            if (forbid.ForbidPawnInput)
             {
                 return false; // skip the original and next prefixes
             }

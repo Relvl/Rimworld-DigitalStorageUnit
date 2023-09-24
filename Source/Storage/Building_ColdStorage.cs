@@ -11,7 +11,7 @@ using Verse;
 namespace DigitalStorageUnit.Storage;
 
 [StaticConstructorOnStartup]
-public abstract class Building_ColdStorage : Building, IRenameBuilding, IHaulDestination, IStoreSettingsParent, ILinkableStorageParent, IThingHolder
+public abstract class Building_ColdStorage : Building, IRenameBuilding, IHaulDestination, ILinkableStorageParent, IThingHolder
 {
     private static readonly Texture2D RenameTex = ContentFinder<Texture2D>.Get("UI/Buttons/Rename");
 
@@ -112,10 +112,10 @@ public abstract class Building_ColdStorage : Building, IRenameBuilding, IHaulDes
             return;
         }
 
-        var items_arr = items.ToArray();
-        for (var i = 0; i < items_arr.Length; i++)
+        var itemsArr = items.ToArray();
+        for (var i = 0; i < itemsArr.Length; i++)
         {
-            var item = items_arr[i];
+            var item = itemsArr[i];
             //CanStackWith is already called by TryAbsorbStack...
             //Is the Item Check really needed?
             if (item.def.category == ThingCategory.Item)
@@ -123,28 +123,23 @@ public abstract class Building_ColdStorage : Building, IRenameBuilding, IHaulDes
             if (newItem.Destroyed) break;
         }
 
+        if (newItem.Destroyed) return;
         //Add a new stack of a thing
-        if (!newItem.Destroyed)
+        //Remove current holdingOwner before adding the Item to the Storage
+        newItem.holdingOwner?.Remove(newItem);
+
+        //TryAdd Could also handle Merging this is disabled for the following reasons
+        //We already handle that above
+        //Our option should be faster
+        thingOwner.TryAdd(newItem, false);
+
+        //What appens if its full?
+        if (CanStoreMoreItems)
         {
-            //Remove current holdingOwner before adding the Item to the Storage
-            if (newItem.holdingOwner != null)
-            {
-                newItem.holdingOwner.Remove(newItem);
-            }
-
-            //TryAdd Could also handle Merging this is disabled for the following reasons
-            //We already handle that above
-            //Our option should be faster
-            thingOwner.TryAdd(newItem, false);
-
-            //What appens if its full?
-            if (CanStoreMoreItems)
-            {
-                newItem.Position = Position;
-            }
-
-            if (newItem.Spawned) newItem.DeSpawn();
+            newItem.Position = Position;
         }
+
+        if (newItem.Spawned) newItem.DeSpawn();
     }
 
     public override void ExposeData()

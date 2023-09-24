@@ -12,7 +12,6 @@ using Verse.AI.Group;
 namespace DigitalStorageUnit.Storage.UI;
 
 // Somebody toucha my spaghet code
-// TODO: Use harmony to make ITab_Items actually a ITab_DeepStorage_Inventory and add right click menu
 // Only do above if LWM is installed ofc - rider
 [StaticConstructorOnStartup]
 public class ITab_Items : ITab
@@ -238,7 +237,7 @@ public class ITab_Items : ITab
             dropThing(thing);
         }
 
-        var p = colonists?.Where(col => col.IsColonistPlayerControlled && !col.Dead && col.Spawned && !col.Downed).ToArray().FirstOrFallback<Pawn>(null) ?? null;
+        var p = colonists?.Where(col => col.IsColonistPlayerControlled && !col.Dead && col.Spawned && !col.Downed).ToArray().FirstOrFallback(null) ?? null;
         if (p != null && ChoicesForThing(thing, p, labelMoCount).Count > 0)
         {
             width -= 24f;

@@ -9,12 +9,6 @@ using Verse;
 
 namespace DigitalStorageUnit.Storage;
 
-public interface IRenameBuilding
-{
-    public string UniqueName { set; get; }
-    public Building Building { get; }
-}
-
 [StaticConstructorOnStartup]
 public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawnInputItem, IRenameBuilding
 {

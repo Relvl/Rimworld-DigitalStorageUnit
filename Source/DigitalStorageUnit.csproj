@@ -119,7 +119,8 @@
         <Compile Include="HarmonyPatches\Patch_ThingWithComps_DrawGUIOverlay.cs" />
         <Compile Include="HarmonyPatches\Patch_Thing_DrawGUIOverlay.cs" />
         <Compile Include="HarmonyPatches\Patch_Thing_Print.cs" />
-        <Compile Include="ModCompatibility\PickUpAndHaul.cs" />
+        <Compile Include="ModCompatibility\IHoldMultipleThings.cs" />
+        <Compile Include="ModCompatibility\PickUpAndHaul.cs.bak" />
         <Compile Include="Ops.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="ReflectionUtility.cs" />
@@ -135,6 +136,7 @@
         <Compile Include="Storage\Editables\DefModExtension_Crate.cs" />
         <Compile Include="Storage\FuzzySearch.cs" />
         <Compile Include="Storage\ILinkableStorageParent.cs" />
+        <Compile Include="Storage\IRenameBuilding.cs" />
         <Compile Include="Storage\OutputSettings.cs" />
         <Compile Include="Storage\StorageIOMode.cs" />
         <Compile Include="Storage\StorageOutputUtil.cs" />

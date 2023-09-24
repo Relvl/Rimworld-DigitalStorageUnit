@@ -20,14 +20,14 @@ class Patch_ForbidUtility_IsForbidden
     {
         __result = true;
 
-        // TODO! What actually this does???
+        /*
         if (t is not null && t.Map is not null && t.def.category == ThingCategory.Item)
         {
             if (t.Map.GetDsuComponent()?.ForbidItems.Contains(t.Position) ?? false)
             {
                 return false; // skip the original and next prefixes
             }
-        }
+        }*/
 
         return true; // continue the original
     }

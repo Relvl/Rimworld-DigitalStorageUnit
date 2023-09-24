@@ -17,10 +17,10 @@ class Patch_TradeUtility_AllLaunchableThingsForTrade
     static void Postfix(Map map, ref IEnumerable<Thing> __result)
     {
         var yieldedThings = new HashSet<Thing>();
-        yieldedThings.AddRange<Thing>(__result);
+        yieldedThings.AddRange(__result);
         foreach (var dsu in TradePatchHelper.AllPowered(map))
         {
-            yieldedThings.AddRange<Thing>(dsu.StoredItems);
+            yieldedThings.AddRange(dsu.StoredItems);
         }
 
         __result = yieldedThings;

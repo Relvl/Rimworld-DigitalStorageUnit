@@ -12,20 +12,20 @@ using Verse;
 namespace DigitalStorageUnit.Storage;
 
 [StaticConstructorOnStartup]
-public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnInputItem, IRenameBuilding, ILinkableStorageParent, ILimitWatcher
+public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnInputItem, IRenameBuilding, ILinkableStorageParent, ILimitWatcher, IHoldMultipleThings.IHoldMultipleThings
 {
     private static readonly Texture2D RenameTex = ContentFinder<Texture2D>.Get("UI/Buttons/Rename");
 
-    private readonly List<Thing> items = new();
-    private List<Building_StorageUnitIOBase> ports = new();
+    private readonly List<Thing> _items = new();
+    private List<Building_StorageUnitIOBase> _ports = new();
+    private string _uniqueName;
 
     public string UniqueName
     {
-        get => uniqueName;
-        set => uniqueName = value;
+        get => _uniqueName;
+        set => _uniqueName = value;
     }
 
-    private string uniqueName;
     public Building Building => this;
     public IntVec3 GetPosition => Position;
     public StorageSettings GetSettings => settings;
@@ -35,23 +35,24 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
     public LocalTargetInfo GetTargetInfo => this;
 
     //Initialized at spawn
-    public DefModExtension_Crate ModExtension_Crate;
+    public DefModExtension_Crate ModExtensionCrate;
 
     public abstract bool CanStoreMoreItems { get; }
 
     // The maximum number of item stacks at this.Position:
-    //   One item on each cell and the rest multi-stacked on Position?
-    public int MaxNumberItemsInternal => (ModExtension_Crate?.limit ?? int.MaxValue) - def.Size.Area + 1;
-    public List<Thing> StoredItems => items;
-    public int StoredItemsCount => items.Count;
-    public override string LabelNoCount => uniqueName ?? base.LabelNoCount;
-    public override string LabelCap => uniqueName ?? base.LabelCap;
+    //  One item on each cell and the rest multi-stacked on Position?
+    public int MaxNumberItemsInternal => (ModExtensionCrate?.limit ?? int.MaxValue) - def.Size.Area + 1;
+
+    public List<Thing> StoredItems => _items;
+    public int StoredItemsCount => _items.Count;
+    public override string LabelNoCount => UniqueName ?? base.LabelNoCount;
+    public override string LabelCap => UniqueName ?? base.LabelCap;
     public virtual bool CanReceiveIO => true;
     public virtual bool Powered => true;
 
     public virtual bool ForbidPawnInput => false;
 
-    private StorageOutputUtil outputUtil;
+    private StorageOutputUtil _outputUtil;
 
     public override void Notify_ReceivedThing(Thing newItem)
     {
@@ -63,24 +64,15 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
     public override void Notify_LostThing(Thing newItem)
     {
         base.Notify_LostThing(newItem);
-        items.Remove(newItem);
+        _items.Remove(newItem);
         ItemCountsRemoved(newItem.def, newItem.stackCount);
         RefreshStorage();
     }
 
-    public virtual bool ForbidPawnOutput => false;
-
     public bool AdvancedIOAllowed => true;
 
-    public void DeregisterPort(Building_StorageUnitIOBase port)
-    {
-        ports.Remove(port);
-    }
-
-    public void RegisterPort(Building_StorageUnitIOBase port)
-    {
-        ports.Add(port);
-    }
+    public void DeregisterPort(Building_StorageUnitIOBase port) => _ports.Remove(port);
+    public void RegisterPort(Building_StorageUnitIOBase port) => _ports.Add(port);
 
     public override IEnumerable<Gizmo> GetGizmos()
     {
@@ -107,15 +99,8 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
         };
     }
 
-    public virtual string GetUIThingLabel()
-    {
-        return "PRFMassStorageUIThingLabel".Translate(StoredItemsCount);
-    }
-
-    public virtual string GetITabString(int itemsSelected)
-    {
-        return "PRFItemsTabLabel".Translate(StoredItemsCount, itemsSelected);
-    }
+    public virtual string GetUIThingLabel() => "PRFMassStorageUIThingLabel".Translate(StoredItemsCount);
+    public virtual string GetITabString(int itemsSelected) => "PRFItemsTabLabel".Translate(StoredItemsCount, itemsSelected);
 
     public virtual void RegisterNewItem(Thing newItem)
     {
@@ -132,9 +117,9 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
         //Add a new stack of a thing
         if (!newItem.Destroyed)
         {
-            if (!items.Contains(newItem))
+            if (!_items.Contains(newItem))
             {
-                items.Add(newItem);
+                _items.Add(newItem);
                 ItemCountsAdded(newItem.def, newItem.stackCount);
             }
 
@@ -147,9 +132,9 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
     public override void ExposeData()
     {
         base.ExposeData();
-        Scribe_Collections.Look(ref ports, "ports", LookMode.Reference);
-        Scribe_Values.Look(ref uniqueName, "uniqueName");
-        ModExtension_Crate ??= def.GetModExtension<DefModExtension_Crate>();
+        Scribe_Collections.Look(ref _ports, "ports", LookMode.Reference);
+        Scribe_Values.Look(ref _uniqueName, "uniqueName");
+        ModExtensionCrate ??= def.GetModExtension<DefModExtension_Crate>();
     }
 
     public override string GetInspectString()
@@ -157,7 +142,7 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
         var original = base.GetInspectString();
         var stringBuilder = new StringBuilder();
         if (!string.IsNullOrEmpty(original)) stringBuilder.AppendLine(original);
-        stringBuilder.Append("PRF_TotalStacksNum".Translate(items.Count));
+        stringBuilder.Append("PRF_TotalStacksNum".Translate(_items.Count));
         return stringBuilder.ToString();
     }
 
@@ -175,7 +160,6 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
         {
             var component = Map.GetDsuComponent();
             component.HideItems.Remove(cell);
-            component.ForbidItems.Remove(cell);
             component.HideRightMenus.Remove(cell);
         }
 
@@ -185,18 +169,17 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
         base.SpawnSetup(map, respawningAfterLoad);
-        outputUtil = new StorageOutputUtil(this);
+        _outputUtil = new StorageOutputUtil(this);
         foreach (var cell in this.OccupiedRect().Cells)
         {
             var component = map.GetDsuComponent();
             component.HideItems.Add(cell);
-            component.ForbidItems.Add(cell);
             component.HideRightMenus.Add(cell);
         }
 
-        ModExtension_Crate ??= def.GetModExtension<DefModExtension_Crate>();
+        ModExtensionCrate ??= def.GetModExtension<DefModExtension_Crate>();
         RefreshStorage();
-        foreach (var port in ports)
+        foreach (var port in _ports)
         {
             if (port?.Spawned ?? false)
             {
@@ -215,16 +198,13 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
             GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + GetUIThingLabel());
     }
 
-    public bool OutputItem(Thing item)
-    {
-        return outputUtil.OutputItem(item);
-    }
+    public bool OutputItem(Thing item) => _outputUtil.OutputItem(item);
 
     //TODO Why do we need to clear Items here?
     public virtual void RefreshStorage()
     {
-        items.Clear();
-        ItemCounts.Clear();
+        _items.Clear();
+        _itemCounts.Clear();
 
         if (!Spawned) return; // don't want to try getting lists of things when not on a map (see 155)
         foreach (var cell in AllSlotCells())
@@ -241,30 +221,16 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
                     }
                     else
                     {
-                        if (!items.Contains(item))
+                        if (!_items.Contains(item))
                         {
-                            items.Add(item);
+                            _items.Add(item);
                             ItemCountsAdded(item.def, item.stackCount);
-                            deregisterDrawItem(item);
+                            DeregisterDrawItem(item);
                         }
                     }
                 }
             }
         }
-
-        // Even though notifying I/O ports that the contents inside the storage unit have changed seems like a good idea, it can cause recursion issues.
-        //for (int i = 0; i < ports.Count; i++)
-        //{
-        //    if (ports[i] == null)
-        //    {
-        //        ports.RemoveAt(i);
-        //        i--;
-        //    }
-        //    else
-        //    {
-        //        ports[i].Notify_NeedRefresh();
-        //    }
-        //}
     }
 
     //-----------    For compatibility with Pick Up And Haul:    -----------
@@ -279,6 +245,8 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
             Log.Error("PRF DSU CapacityAt Sanity Check Error");
             return false;
         }
+        
+        Log.Warning("--- CapacityAt called!");
 
         thing = thing.GetInnerIfMinified();
 
@@ -332,67 +300,54 @@ public abstract class Building_MassStorageUnit : Building_Storage, IForbidPawnIn
     public void HandleNewItem(Thing item)
     {
         RegisterNewItem(item);
-        deregisterDrawItem(item);
+        DeregisterDrawItem(item);
     }
 
-    private void deregisterDrawItem(Thing item)
-    {
-        Map.dynamicDrawManager.DeRegisterDrawable(item);
-    }
+    private void DeregisterDrawItem(Thing item) => Map.dynamicDrawManager.DeRegisterDrawable(item);
 
     public void HandleMoveItem(Thing item)
     {
         //throw new System.NotImplementedException();
     }
 
-    public bool CanReciveThing(Thing item)
-    {
-        return settings.AllowedToAccept(item) && CanReceiveIO && CanStoreMoreItems;
-    }
+    public bool CanReciveThing(Thing item) => settings.AllowedToAccept(item) && CanReceiveIO && CanStoreMoreItems;
 
-    public bool HoldsPos(IntVec3 pos)
-    {
-        return AllSlotCells()?.Contains(pos) ?? false;
-    }
+    public bool HoldsPos(IntVec3 pos) => AllSlotCells()?.Contains(pos) ?? false;
 
-    void ItemCountsRemoved(ThingDef def, int cnt)
+    private void ItemCountsRemoved(ThingDef thingDef, int cnt)
     {
-        if (ItemCounts.TryGetValue(def, out var count))
+        if (_itemCounts.TryGetValue(thingDef, out var count))
         {
             if (cnt > count)
             {
-                Log.Error($"ItemCountsRemoved attempted to remove {cnt}/{count} Items of {def}");
-                ItemCounts[def] = 0;
+                Log.Error($"ItemCountsRemoved attempted to remove {cnt}/{count} Items of {thingDef}");
+                _itemCounts[thingDef] = 0;
             }
 
-            ItemCounts[def] -= cnt;
+            _itemCounts[thingDef] -= cnt;
         }
         else
         {
-            Log.Error($"ItemCountsRemoved attempted to remove nonexistent def {def}");
+            Log.Error($"ItemCountsRemoved attempted to remove nonexistent def {thingDef}");
         }
     }
 
-    void ItemCountsAdded(ThingDef def, int cnt)
+    private void ItemCountsAdded(ThingDef thingDef, int cnt)
     {
-        if (!ItemCounts.TryAdd(def, cnt))
+        if (!_itemCounts.TryAdd(thingDef, cnt))
         {
-            ItemCounts[def] += cnt;
+            _itemCounts[thingDef] += cnt;
         }
     }
 
-    readonly Dictionary<ThingDef, int> ItemCounts = new();
+    private readonly Dictionary<ThingDef, int> _itemCounts = new();
 
-    public bool ItemIsLimit(ThingDef thing, bool CntStacks, int limit)
+    public bool ItemIsLimit(ThingDef thing, bool cntStacks, int limit)
     {
-        if (limit < 0)
-        {
-            return true;
-        }
+        if (limit < 0) return true;
 
-        var cnt = 0;
-        ItemCounts.TryGetValue(thing, out cnt);
-        if (CntStacks)
+        _itemCounts.TryGetValue(thing, out var cnt);
+        if (cntStacks)
         {
             cnt = Mathf.CeilToInt(((float)cnt) / thing.stackLimit);
         }

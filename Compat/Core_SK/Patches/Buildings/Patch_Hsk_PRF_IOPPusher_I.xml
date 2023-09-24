@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+    <Operation Class="PatchOperationReplace">
+        <xpath>Defs/ThingDef[defName="PRF_IOPPusher_I"]/costList</xpath>
+        <value>
+            <costList>
+                <Mechanism>6</Mechanism>
+                <ComponentAdvanced>2</ComponentAdvanced>
+                <PRF_RoboticArm>2</PRF_RoboticArm>
+                <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+                <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
+            </costList>
+        </value>
+    </Operation>
+</Patch>

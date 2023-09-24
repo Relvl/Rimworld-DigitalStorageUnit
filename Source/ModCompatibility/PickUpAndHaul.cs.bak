@@ -1,0 +1,54 @@
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using Verse;
+
+namespace DigitalStorageUnit;
+
+/// <summary>
+///
+/// https://github.com/Mehni/PickUpAndHaul/tree/master/Source/IHoldMultipleThings
+/// </summary>
+[StaticConstructorOnStartup]
+public class PickUpAndHaulCompatiblity
+{
+    static PickUpAndHaulCompatiblity()
+    {
+        if (!LoadedModManager.RunningModsListForReading.Any(mcp => mcp.PackageId == "Mehni.PickUpAndHaul")) return;
+
+        Log.Message("Trying to patch PUAH...");
+
+        var assemblyName = new AssemblyName("PRF_PUAH_Compatiblity_Assembly");
+        var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave);
+        var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
+        var mehniIHoldMultipleThings = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(a => a.GetTypes())
+            .FirstOrDefault(t => t.FullName == "IHoldMultipleThings.IHoldMultipleThings");
+        if (mehniIHoldMultipleThings == null)
+        {
+            Log.Error("PRF detected Pick Up And Haul loaded, but could not find IHoldMultipleThings\nHauling is likely to fail.");
+            return;
+        }
+
+        foreach (var storageType in AppDomain.CurrentDomain.GetAssemblies()
+                     .SelectMany(a => a.GetExportedTypes())
+                     .Where(t => typeof(Storage.Building_MassStorageUnit).IsAssignableFrom(t))
+                     .Where(t => !t.IsAbstract))
+        {
+            // Build a magic derived class that also implements Mehni's interface
+            var typeBuilder = moduleBuilder.DefineType("PRF_PUAH_" + storageType.Name, TypeAttributes.Public, storageType, new[] { mehniIHoldMultipleThings });
+            // Make sure the new type has a default constructor (not sure this is needed, but I bet it is)
+            typeBuilder.DefineDefaultConstructor(MethodAttributes.Public);
+            // 
+            var newBuildingType = typeBuilder.CreateType();
+            // Replacing all the Building_MassStorageUnit to new one with the IHoldMultipleThings interface
+            foreach (var def in DefDatabase<ThingDef>.AllDefsListForReading)
+            {
+                if (def.thingClass != storageType) continue;
+                Log.Message($"-- PUAH replacing '{def.thingClass.FullName}' to '{newBuildingType.FullName}'");
+                def.thingClass = newBuildingType;
+            }
+        }
+    }
+}

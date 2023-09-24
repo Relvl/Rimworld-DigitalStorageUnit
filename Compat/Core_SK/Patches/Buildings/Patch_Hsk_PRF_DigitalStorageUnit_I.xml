@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+    <Operation Class="PatchOperationReplace">
+        <xpath>Defs/ThingDef[defName="PRF_DigitalStorageUnit_I"]/costList</xpath>
+        <value>
+            <costList>
+                <AdvMechanism>5</AdvMechanism>
+                <PRF_RoboticArm>4</PRF_RoboticArm>
+                <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+                <PRF_ElectronicChip_II>2</PRF_ElectronicChip_II>
+            </costList>
+        </value>
+    </Operation>
+</Patch>
