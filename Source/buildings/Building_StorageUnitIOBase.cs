@@ -24,7 +24,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
 
     public virtual IntVec3 WorkPosition => Position;
 
-    protected CompPowerTrader powerComp;
+    public CompPowerTrader PowerTrader;
 
     public virtual bool ShowLimitGizmo => true;
 
@@ -100,14 +100,14 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
     public override void PostMake()
     {
         base.PostMake();
-        powerComp = GetComp<CompPowerTrader>();
+        PowerTrader = GetComp<CompPowerTrader>();
         outputStoreSettings = new StorageSettings(this);
     }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
         base.SpawnSetup(map, respawningAfterLoad);
-        powerComp = GetComp<CompPowerTrader>();
+        PowerTrader = GetComp<CompPowerTrader>();
 
         //Issues occurs if the boundStorageUnit spawns after this... Needs a check form the other way
         if (boundStorageUnit?.Map != map && (linkedStorageParentBuilding?.Spawned ?? false))
@@ -195,7 +195,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
 
     public virtual void RefreshInput()
     {
-        if (powerComp.PowerOn)
+        if (PowerTrader.PowerOn)
         {
             var item = WorkPosition.GetFirstItem(Map);
             if (ioMode == StorageIOMode.Input && item != null && (boundStorageUnit?.CanReciveThing(item) ?? false))
@@ -228,7 +228,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
 
     protected virtual void RefreshOutput() //
     {
-        if (powerComp.PowerOn)
+        if (PowerTrader.PowerOn)
         {
             var currentItem = WorkPosition.GetFirstItem(Map);
             var storageSlotAvailable = currentItem == null ||
@@ -372,4 +372,6 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
 
         return false;
     }
+
+    public bool NoConnectionAlert => PowerTrader.PowerOn && BoundStorageUnit is null;
 }

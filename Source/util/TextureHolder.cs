@@ -15,4 +15,9 @@ public static class TextureHolder
     public static readonly Texture2D Arrow = ContentFinder<Texture2D>.Get("UI/Overlays/Arrow");
     public static readonly Texture2D Rename = ContentFinder<Texture2D>.Get("UI/Buttons/Rename");
     public static readonly Texture2D SetTargetFuelLevel = ContentFinder<Texture2D>.Get("UI/Commands/SetTargetFuelLevel");
+
+    // public static readonly Material MatLostLink = MaterialPool.MatFrom("UI/danger", ShaderDatabase.MetaOverlay);
+    public static readonly Material MatLostLink = MaterialPool.MatFrom("UI/too-far-from-roboport-icon", ShaderDatabase.MetaOverlay);
+
+    public static readonly Color Yellow25 = Color.yellow.WithAlpha(0.25f);
 }

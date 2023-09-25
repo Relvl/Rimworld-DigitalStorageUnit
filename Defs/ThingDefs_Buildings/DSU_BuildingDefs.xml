@@ -213,6 +213,7 @@
                 <glowRadius>2</glowRadius>
                 <glowColor>(115,198,206,0)</glowColor>
             </li>
+            <li Class="DigitalStorageUnit.LostLinkCompProperties"/>
         </comps>
         <modExtensions>
             <li Class="DigitalStorageUnit.ModExtensionPortColor">
@@ -284,6 +285,7 @@
                 <glowRadius>2</glowRadius>
                 <glowColor>(115,198,206,0)</glowColor>
             </li>
+            <li Class="DigitalStorageUnit.LostLinkCompProperties"/>
         </comps>
         <modExtensions>
             <li Class="DigitalStorageUnit.ModExtensionPortColor">
@@ -360,6 +362,7 @@
                 <glowRadius>2</glowRadius>
                 <glowColor>(115,198,206,0)</glowColor>
             </li>
+            <li Class="DigitalStorageUnit.LostLinkCompProperties"/>
         </comps>
         <modExtensions>
             <li Class="DigitalStorageUnit.ModExtensionPortColor">

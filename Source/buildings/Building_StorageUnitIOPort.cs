@@ -30,7 +30,7 @@ public class Building_StorageUnitIOPort : Building_StorageUnitIOBase
 
     public override void RefreshInput()
     {
-        if (!powerComp.PowerOn) return;
+        if (!PowerTrader.PowerOn) return;
         var item = Position.GetFirstItem(Map);
         if (ioMode == StorageIOMode.Input && item != null && (boundStorageUnit?.CanReciveThing(item) ?? false))
         {
@@ -86,7 +86,7 @@ public class Building_StorageUnitIOPort : Building_StorageUnitIOBase
 
     protected override void RefreshOutput()
     {
-        if (powerComp.PowerOn)
+        if (PowerTrader.PowerOn)
         {
             var currentItem = Position.GetFirstItem(Map);
             var storageSlotAvailable = currentItem == null ||

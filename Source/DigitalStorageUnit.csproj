@@ -35,16 +35,13 @@
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="0Harmony">
-          <HintPath>..\..\Harmony\Current\Assemblies\0Harmony.dll</HintPath>
+        <Reference Include="0Harmony, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+          <HintPath>..\packages\Lib.Harmony.2.3.0-prerelease.2\lib\net48\0Harmony.dll</HintPath>
           <Private>False</Private>
         </Reference>
         <Reference Include="Assembly-CSharp">
           <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
           <Private>False</Private>
-        </Reference>
-        <Reference Include="IHoldMultipleThings">
-          <HintPath>..\Assemblies\IHoldMultipleThings.dll</HintPath>
         </Reference>
         <Reference Include="mscorlib">
           <HintPath>..\..\..\RimWorldWin64_Data\Managed\mscorlib.dll</HintPath>
@@ -82,6 +79,8 @@
     <ItemGroup>
         <Compile Include="def\CompOutputAdjustable.cs" />
         <Compile Include="def\CompProperties_CompOutputAdjustable.cs" />
+        <Compile Include="def\LostLinkComp.cs" />
+        <Compile Include="def\LostLinkCompProperties.cs" />
         <Compile Include="def\ITab_IOPortStorage.cs" />
         <Compile Include="def\ITab_Items.cs" />
         <Compile Include="def\ModExtensionPortColor.cs" />
@@ -95,8 +94,11 @@
         <Compile Include="obsolete\PlaceThingUtility.cs" />
         <Compile Include="ui\ActionRightLeftCommand.cs" />
         <Compile Include="ui\ITab_Filter.cs" />
+        <Compile Include="ui\LostLinkAlert.cs" />
         <Compile Include="util\AdvancedIOPatchHelper.cs" />
+        <Compile Include="util\ColorExtensions.cs" />
         <Compile Include="util\IForbidPawnInputItem.cs" />
+        <Compile Include="util\IHoldMultipleThings.cs" />
         <Compile Include="util\IntVec3Extensions.cs" />
         <Compile Include="_harmony\Patch_Building_Storage_Accepts.cs" />
         <Compile Include="_harmony\Patch_Building_Storage_GetGizmos.cs" />

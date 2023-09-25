@@ -29,4 +29,6 @@
     <DSU.ItemSource>Item source</DSU.ItemSource>
     <DSU.PawnAccess>Pawn access</DSU.PawnAccess>
     <DSU.PawnAccess.Desc>Pawn access</DSU.PawnAccess.Desc>
+    <DSU.Alert.LostLink.Label>DSU: port lost link</DSU.Alert.LostLink.Label>
+    <DSU.Alert.LostLink.Desc>Port lost link. You sould connect it to on if Digital Storage Unit.</DSU.Alert.LostLink.Desc>
 </LanguageData>

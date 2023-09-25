@@ -50,7 +50,7 @@ public class Building_AdvancedStorageUnitIOPort : Building_StorageUnitIOBase
         return WorkPosition.GetFirstItem(Map);
     }
 
-    public bool CanGetNewItem => GetstoredItem() == null && (powerComp?.PowerOn ?? false);
+    public bool CanGetNewItem => GetstoredItem() == null && (PowerTrader?.PowerOn ?? false);
 
     public void updateQueue()
     {
