@@ -84,6 +84,8 @@
         <Compile Include="def\ITab_IOPortStorage.cs" />
         <Compile Include="def\ITab_Items.cs" />
         <Compile Include="def\ModExtensionPortColor.cs" />
+        <Compile Include="def\RenderLinkComp.cs" />
+        <Compile Include="def\RenderLinkCompProperties.cs" />
         <Compile Include="DigitalStorageUnit.cs" />
         <Compile Include="def\ModExtensionDsu.cs" />
         <Compile Include="def\PlaceWorkerIOPusherHilight.cs" />
