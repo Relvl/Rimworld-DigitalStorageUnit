@@ -113,6 +113,11 @@
                     </specialFiltersToDisallow>
                 </filter>
             </defaultStorageSettings>
+            <relatedBuildCommands>
+                <li>DSU_InputBus_Building</li>
+                <li>DSU_AccessPoint_Building</li>
+                <li>DSU_Pusher_Building</li>
+            </relatedBuildCommands>
         </building>
         <size>(3,3)</size>
         <costList>
@@ -140,8 +145,8 @@
                 <shortCircuitInRain>true</shortCircuitInRain>
                 <basePowerConsumption>0</basePowerConsumption>
             </li>
-            <li Class="DigitalStorageUnit.CompProperties_CompOutputAdjustable"/>
             <li Class="CompProperties_Flickable"/>
+            <li Class="DigitalStorageUnit.CompProperties_CompOutputAdjustable"/>
             <li Class="DigitalStorageUnit.RenderLinkCompProperties"/>
         </comps>
         <modExtensions>
