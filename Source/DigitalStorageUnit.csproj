@@ -43,6 +43,9 @@
           <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
           <Private>False</Private>
         </Reference>
+        <Reference Include="IHoldMultipleThings">
+          <HintPath>..\Assemblies\IHoldMultipleThings.dll</HintPath>
+        </Reference>
         <Reference Include="mscorlib">
           <HintPath>..\..\..\RimWorldWin64_Data\Managed\mscorlib.dll</HintPath>
           <Private>False</Private>
@@ -77,73 +80,52 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Common\Command_ActionRightLeft.cs" />
-        <Compile Include="Common\CommonColors.cs" />
-        <Compile Include="Common\CommonGUIFunctions.cs" />
-        <Compile Include="Common\CompOutputAdjustable.cs" />
-        <Compile Include="Common\Debug.cs" />
-        <Compile Include="Common\GridsUtilityExt.cs" />
-        <Compile Include="Common\HarmonyPatches\AdvancedIO_PatchHelper.cs" />
-        <Compile Include="Common\HarmonyPatches\FridgePowerPatchUtil.cs" />
-        <Compile Include="Common\HarmonyPatches\PatchIOReservation.cs" />
-        <Compile Include="Common\HarmonyPatches\IForbidPawnInputItem.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_Building_Storage_GetGizmos.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_CompRefrigerator_CompTickRare.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_DSU_OrbitalTrade.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_FoodUtility_SpawnedFoodSearchInnerScan.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_JobDriver_HaulToTransporter_Notify_Starting.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_Patch_GameComponentTick_Postfix.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_Pawn_JobTracker_StartJob.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_Pawn_TraderTracker_ColonyThingsWillingToBuy.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_RecipeWorkerCounter_CountProducts.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_TradeDeal_InSellablePosition.cs" />
-        <Compile Include="Common\HarmonyPatches\Patch_WealthWatcher_CalculateWealthItems.cs" />
-        <Compile Include="Common\HarmonyPatches\SaveCompressiblePatch.cs" />
-        <Compile Include="Common\HarmonyPatches\SetPositionPatch.cs" />
-        <Compile Include="Common\ILimitWatcher.cs" />
-        <Compile Include="Common\IPRF_Building.cs" />
-        <Compile Include="Common\ITab_Filter.cs" />
-        <Compile Include="Common\ITab_PowerSupply.cs" />
-        <Compile Include="Common\ModExtension_Graphic.cs" />
-        <Compile Include="Common\PlaceThingUtility.cs" />
-        <Compile Include="Common\PlaceWorker_Arrow.cs" />
-        <Compile Include="Common\PlaceWorker_GrowZonePuller.cs" />
-        <Compile Include="Common\DsuMapComponent.cs" />
-        <Compile Include="Common\RS.cs" />
+        <Compile Include="def\CompOutputAdjustable.cs" />
+        <Compile Include="def\CompProperties_CompOutputAdjustable.cs" />
+        <Compile Include="def\ITab_IOPortStorage.cs" />
+        <Compile Include="def\ITab_Items.cs" />
+        <Compile Include="def\ModExtensionPortColor.cs" />
         <Compile Include="DigitalStorageUnit.cs" />
-        <Compile Include="HarmonyPatches\Patch_Building_Storage_Accepts.cs" />
-        <Compile Include="HarmonyPatches\Patch_FloatMenuMakerMap_ChoicesAtFor.cs" />
-        <Compile Include="HarmonyPatches\Patch_ForbidUtility_IsForbidden.cs" />
-        <Compile Include="HarmonyPatches\Patch_MinifiedThing_Print.cs" />
-        <Compile Include="HarmonyPatches\Patch_Reachability_CanReach.cs" />
-        <Compile Include="HarmonyPatches\Patch_ThingWithComps_DrawGUIOverlay.cs" />
-        <Compile Include="HarmonyPatches\Patch_Thing_DrawGUIOverlay.cs" />
-        <Compile Include="HarmonyPatches\Patch_Thing_Print.cs" />
-        <Compile Include="ModCompatibility\IHoldMultipleThings.cs" />
-        <Compile Include="ModCompatibility\PickUpAndHaul.cs.bak" />
-        <Compile Include="Ops.cs" />
+        <Compile Include="def\ModExtensionDsu.cs" />
+        <Compile Include="def\PlaceWorkerIOPusherHilight.cs" />
+        <Compile Include="map\DsuMapComponent.cs" />
+        <Compile Include="map\OutputSettings.cs" />
+        <Compile Include="obsolete\Debug.cs" />
+        <Compile Include="obsolete\IPRF_Building.cs" />
+        <Compile Include="obsolete\PlaceThingUtility.cs" />
+        <Compile Include="ui\ActionRightLeftCommand.cs" />
+        <Compile Include="ui\ITab_Filter.cs" />
+        <Compile Include="util\AdvancedIOPatchHelper.cs" />
+        <Compile Include="util\IForbidPawnInputItem.cs" />
+        <Compile Include="util\IntVec3Extensions.cs" />
+        <Compile Include="_harmony\Patch_Building_Storage_Accepts.cs" />
+        <Compile Include="_harmony\Patch_Building_Storage_GetGizmos.cs" />
+        <Compile Include="_harmony\Patch_CompressibilityDeciderUtility_IsSaveCompressible.cs" />
+        <Compile Include="_harmony\Patch_FloatMenuMakerMap_ChoicesAtFor.cs" />
+        <Compile Include="_harmony\Patch_FoodUtility_SpawnedFoodSearchInnerScan.cs" />
+        <Compile Include="_harmony\Patch_ForbidUtility_IsForbidden.cs" />
+        <Compile Include="_harmony\Patch_JobDriver_HaulToTransporter_Notify_Starting.cs" />
+        <Compile Include="_harmony\Patch_MinifiedThing_Print.cs" />
+        <Compile Include="_harmony\Patch_PassingShip_c__DisplayClass24_0.cs" />
+        <Compile Include="_harmony\Patch_Pawn_JobTracker_StartJob.cs" />
+        <Compile Include="_harmony\Patch_Reachability_CanReach.cs" />
+        <Compile Include="_harmony\Patch_Reservation_Reserve.cs" />
+        <Compile Include="_harmony\Patch_ThingWithComps_DrawGUIOverlay.cs" />
+        <Compile Include="_harmony\Patch_Thing_DrawGUIOverlay.cs" />
+        <Compile Include="_harmony\Patch_Thing_Print.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="ReflectionUtility.cs" />
-        <Compile Include="Storage\Building_AdvancedStorageUnitIOPort.cs" />
-        <Compile Include="Storage\Building_ColdStorage.cs" />
-        <Compile Include="Storage\Building_ColdStoragePowerd.cs" />
-        <Compile Include="Storage\Building_Crate.cs" />
-        <Compile Include="Storage\Building_IOPusher.cs" />
-        <Compile Include="Storage\Building_MassStorageUnit.cs" />
-        <Compile Include="Storage\Building_MassStorageUnitPowered.cs" />
-        <Compile Include="Storage\Building_StorageUnitIOPort.cs" />
-        <Compile Include="Storage\Editables\DefModExtension_CanUseStorageIOPorts.cs" />
-        <Compile Include="Storage\Editables\DefModExtension_Crate.cs" />
-        <Compile Include="Storage\FuzzySearch.cs" />
-        <Compile Include="Storage\ILinkableStorageParent.cs" />
-        <Compile Include="Storage\IRenameBuilding.cs" />
-        <Compile Include="Storage\OutputSettings.cs" />
-        <Compile Include="Storage\StorageIOMode.cs" />
-        <Compile Include="Storage\StorageOutputUtil.cs" />
-        <Compile Include="Storage\UI\Dialog_OutputMinMax.cs" />
-        <Compile Include="Storage\UI\Dialog_RenameMassStorageUnit.cs" />
-        <Compile Include="Storage\UI\ITab_IOPortStorage.cs" />
-        <Compile Include="Storage\UI\ITab_Items.cs" />
+        <Compile Include="ui\OutputMinMaxDialog.cs" />
+        <Compile Include="ui\RenameDsuDialog.cs" />
+        <Compile Include="util\FuzzySearch.cs" />
+        <Compile Include="util\StorageIOMode.cs" />
+        <Compile Include="util\TextureHolder.cs" />
+        <Compile Include="buildings\Building_AdvancedStorageUnitIOPort.cs" />
+        <Compile Include="buildings\Building_IOPusher.cs" />
+        <Compile Include="buildings\DigitalStorageUnitBuilding.cs" />
+        <Compile Include="buildings\Building_StorageUnitIOBase.cs" />
+        <Compile Include="buildings\Building_StorageUnitIOPort.cs" />
+        <Compile Include="_harmony\Patch_Thing_SetPosition.cs" />
+        <Compile Include="_harmony\Patch_TradeUtility_AllLaunchableThingsForTrade.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="App.config" />

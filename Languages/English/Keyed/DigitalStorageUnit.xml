@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+    <DSU.AdjustOutputDirection>Adjust output direction</DSU.AdjustOutputDirection>
+    <DSU.MinMaxAmounts>Set min/max amounts</DSU.MinMaxAmounts>
+    <DSU.UseMin>Use Min?</DSU.UseMin>
+    <DSU.UseMax>Use Max?</DSU.UseMax>
+    <DSU.Max>Maximum</DSU.Max>
+    <DSU.Max.Current>Current maximum: {0}</DSU.Max.Current>
+    <DSU.Max.Desc>When this is enabled, the I/O port will stop taking items if either the stack is full, or the stack size is greater than or equal to X.</DSU.Max.Desc>
+    <DSU.Min>Minimum</DSU.Min>
+    <DSU.Min.Current>Current minimum: {0}</DSU.Min.Current>
+    <DSU.Min.Desc>When this is enabled, the I/O port will return the outputted item to the cargo platform if the item has less than X stack size. It will also only take items if there are enough items in storage to exceed the minimum.</DSU.Min.Desc>
+    <DSU.Drop>Drop {0}</DSU.Drop>
+    <DSU.TotalStackNum>Total number of stacks: {0}</DSU.TotalStackNum>
+    <DSU.IItemsTab>Items</DSU.IItemsTab>
+    <DSU.IItemsTab.Label>{0} stacks total, showing {1} result(s)</DSU.IItemsTab.Label>
+    <DSU.IItemsTab.Label.Crate>{0} stacks, max {1}, showing {2} result(s)</DSU.IItemsTab.Label.Crate>
+    <DSU.IItemsTab.Label.Empty>There are currently no items stored</DSU.IItemsTab.Label.Empty>
+    <DSU.Rename>Rename</DSU.Rename>
+    <DSU.Rename.Desc>Rename this building</DSU.Rename.Desc>
+    <DSU.StacksCount>{0} stacks</DSU.StacksCount>
+    <DSU.StacksCount.Detailed>{0}/{1} stacks</DSU.StacksCount.Detailed>
+    <DSU.Reorganize>Reorganize</DSU.Reorganize>
+    <DSU.Reorganize.Desc>Re-register I/O ports, reorganize and re-stack items</DSU.Reorganize.Desc>
+    <DSU.Output.Settings>Output settings...</DSU.Output.Settings>
+    <DSU.IOMode>I/O mode</DSU.IOMode>
+    <DSU.IOMode.Input>Input</DSU.IOMode.Input>
+    <DSU.IOMode.Output>Output</DSU.IOMode.Output>
+    <DSU.ItemSource>Item source</DSU.ItemSource>
+    <DSU.PawnAccess>Pawn access</DSU.PawnAccess>
+    <DSU.PawnAccess.Desc>Pawn access</DSU.PawnAccess.Desc>
+</LanguageData>

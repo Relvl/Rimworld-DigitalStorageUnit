@@ -3,7 +3,7 @@
     <Operation Class="PatchOperationSequence">
         <operations>
             <li Class="PatchOperationRemove">
-                <xpath>Defs/ThingDef[@ParentName="DSU_BuildingBase"]/inspectorTabs/li[text()="DigitalStorageUnit.Storage.UI.ITab_Items"]</xpath>
+                <xpath>Defs/ThingDef[@ParentName="DSU_BuildingBase"]/inspectorTabs/li[text()="DigitalStorageUnit.ITab_Items"]</xpath>
             </li>
         </operations>
     </Operation>

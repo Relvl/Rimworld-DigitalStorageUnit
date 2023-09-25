@@ -67,7 +67,7 @@
         <defName>DSU_DigitalStorageUnit_Building</defName>
         <label>Digital Storage Unit</label>
         <description>A matter-energy conversion based storage unit which can hold a large number of stacks, consuming 10 W of power per stack of items.\nIn the event of a power outage, items already inside will be safe, but the DSU will not be able to store more.\nDon't break/deconstruct it - items inside will be destroyed!</description>
-        <thingClass>DigitalStorageUnit.Storage.Building_MassStorageUnitPowered</thingClass>
+        <thingClass>DigitalStorageUnit.DigitalStorageUnitBuilding</thingClass>
         <uiIconScale>0.9</uiIconScale>
         <pathCost>150</pathCost>
         <blockWind>true</blockWind>
@@ -128,7 +128,7 @@
 
         <inspectorTabs>
             <li>ITab_Storage</li>
-            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
+            <li>DigitalStorageUnit.ITab_Items</li>
         </inspectorTabs>
         <comps>
             <li Class="CompProperties_Glower">
@@ -140,12 +140,11 @@
                 <shortCircuitInRain>true</shortCircuitInRain>
                 <basePowerConsumption>0</basePowerConsumption>
             </li>
-            <li Class="DigitalStorageUnit.Common.CompProperties_CompOutputAdjustable"/>
+            <li Class="DigitalStorageUnit.CompProperties_CompOutputAdjustable"/>
             <li Class="CompProperties_Flickable"/>
         </comps>
         <modExtensions>
-            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_CanUseStorageIOPorts"/>
-            <li Class="DigitalStorageUnit.Storage.Editables.DefModExtension_Crate">
+            <li Class="DigitalStorageUnit.ModExtensionDsu">
                 <limit>768</limit>
                 <destroyContainsItems>true</destroyContainsItems>
             </li>
@@ -157,7 +156,7 @@
         <defName>DSU_InputBus_Building</defName>
         <label>DSU Input Bus</label>
         <description>An input bus for the Digital Storage Unit. Pawns may store items into connected DSU through it.</description>
-        <thingClass>DigitalStorageUnit.Storage.Building_StorageUnitIOPort</thingClass>
+        <thingClass>DigitalStorageUnit.Building_StorageUnitIOPort</thingClass>
         <graphicData>
             <texPath>Storage/IO_Port</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -201,8 +200,8 @@
         </costList>
 
         <inspectorTabs>
-            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
-            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
+            <li>DigitalStorageUnit.ITab_IOPortStorage</li>
+            <li>DigitalStorageUnit.ITab_Items</li>
         </inspectorTabs>
         <comps>
             <li Class="CompProperties_Power">
@@ -216,7 +215,7 @@
             </li>
         </comps>
         <modExtensions>
-            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
+            <li Class="DigitalStorageUnit.ModExtensionPortColor">
                 <inColor>(144, 222, 255, 255)</inColor>
                 <outColor>(215, 169, 72, 255)</outColor>
             </li>
@@ -228,7 +227,7 @@
         <defName>DSU_AccessPoint_Building</defName>
         <label>DSU Access Point</label>
         <description>An interactive connection bus for the Digital Storage Unit. Pawns may request any item from the conneted Digital Storage Unit.</description>
-        <thingClass>DigitalStorageUnit.Storage.Building_AdvancedStorageUnitIOPort</thingClass>
+        <thingClass>DigitalStorageUnit.Building_AdvancedStorageUnitIOPort</thingClass>
         <graphicData>
             <texPath>Storage/IO_Port</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -272,8 +271,8 @@
         </costList>
 
         <inspectorTabs>
-            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
-            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
+            <li>DigitalStorageUnit.ITab_IOPortStorage</li>
+            <li>DigitalStorageUnit.ITab_Items</li>
         </inspectorTabs>
         <comps>
             <li Class="CompProperties_Power">
@@ -287,7 +286,7 @@
             </li>
         </comps>
         <modExtensions>
-            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
+            <li Class="DigitalStorageUnit.ModExtensionPortColor">
                 <inColor>(144, 222, 255, 255)</inColor>
                 <outColor>(215, 169, 72, 255)</outColor>
             </li>
@@ -299,7 +298,7 @@
         <defName>DSU_Pusher_Building</defName>
         <label>DSU Pusher</label>
         <description>This modified ouput bus allows you to push items directly into next cell, onto a belt, or anywhere else, saving space instead of using a puller.</description>
-        <thingClass>DigitalStorageUnit.Storage.Building_IOPusher</thingClass>
+        <thingClass>DigitalStorageUnit.Building_IOPusher</thingClass>
         <rotatable>true</rotatable>
         <graphicData>
             <texPath>Storage/IO_Pusher</texPath>
@@ -343,14 +342,13 @@
         </costList>
 
         <placeWorkers>
-            <li>DigitalStorageUnit.PlaceWorker_Arrow</li>
-            <li>DigitalStorageUnit.Storage.PlaceWorker_IOPusherHilight</li>
+            <li>DigitalStorageUnit.PlaceWorkerIOPusherHilight</li>
         </placeWorkers>
         <drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
 
         <inspectorTabs>
-            <li>DigitalStorageUnit.Storage.UI.ITab_IOPortStorage</li>
-            <li>DigitalStorageUnit.Storage.UI.ITab_Items</li>
+            <li>DigitalStorageUnit.ITab_IOPortStorage</li>
+            <li>DigitalStorageUnit.ITab_Items</li>
         </inspectorTabs>
         <comps>
             <li Class="CompProperties_Power">
@@ -364,7 +362,7 @@
             </li>
         </comps>
         <modExtensions>
-            <li Class="DigitalStorageUnit.Storage.DefModExtension_StorageUnitIOPortColor">
+            <li Class="DigitalStorageUnit.ModExtensionPortColor">
                 <inColor>(144, 222, 255, 255)</inColor>
                 <outColor>(215, 169, 72, 255)</outColor>
             </li>
