@@ -35,64 +35,54 @@ public class Patch_Pawn_JobTracker_StartJob
         // PickUpAndHaul "Compatibility" (by not messing with it)
         if (newJob.def.defName == "HaulToInventory") return true;
 
-        // This is the Position where we need the Item to be at
-        IntVec3 targetPos;
+        // Determines this is haul job (there is TargetA item) or not (otherwise this is possibly bill job)
         var isHaulJobType = newJob.targetA.Thing?.def?.category == ThingCategory.Item;
 
-        // GetTargetPos
+        // This is the Position where we need the Item to be at
+        IntVec3 destinationPos;
         if (isHaulJobType)
         {
             // Haul Type Job
-            targetPos = newJob.targetB.Thing?.Position ?? newJob.targetB.Cell;
-            if (targetPos == IntVec3.Invalid) targetPos = ___pawn.Position;
+            destinationPos = newJob.targetB.Thing?.Position ?? newJob.targetB.Cell;
+            if (destinationPos == IntVec3.Invalid) destinationPos = ___pawn.Position;
             if (newJob.targetA == null) return true; // as is
         }
         else
         {
-            // Bill Type Jon
-            targetPos = newJob.targetA.Thing?.Position ?? newJob.targetA.Cell;
+            // Bill Type Job
+            destinationPos = newJob.targetA.Thing?.Position ?? newJob.targetA.Cell;
             if (newJob.targetB == IntVec3.Invalid && (newJob.targetQueueB == null || newJob.targetQueueB.Count == 0)) return true; // as is
         }
 
-        var ports = AdvancedIOPatchHelper.GetOrderdAdvancedIOPorts(___pawn.Map, ___pawn.Position, targetPos);
-
         List<LocalTargetInfo> targetItems;
         if (isHaulJobType)
+        {
+            // Haul Type Job
             targetItems = new List<LocalTargetInfo> { newJob.targetA };
+        }
         else
         {
+            // Bill Type Job
             if (newJob.targetQueueB == null || newJob.targetQueueB.Count == 0)
                 targetItems = new List<LocalTargetInfo> { newJob.targetB };
             else
                 targetItems = newJob.targetQueueB;
         }
 
+        var component = ___pawn.Map.GetDsuComponent();
+        if (component is null) return true; // as is
+
+        // So, go over every job's targets
         foreach (var target in targetItems)
         {
-            if (target.Thing == null) continue;
+            if (!target.HasThing) continue; // Do nothig, let the game do it's things.
 
-            var distanceToTarget = AdvancedIOPatchHelper.GetTotalDistance(___pawn.Position, target.Cell, targetPos);
-
-            // Quick check if the Item could be in a DSU
-            // Might have false Positives They are then filterd by AdvancedIO_PatchHelper.CanMoveItem
-            // But should not have false Negatives
-            if (!___pawn.Map.GetDsuComponent().HideItems.Contains(target.Cell)) continue;
-
-            foreach (var (distance, port) in ports)
-            {
-                if (distance < distanceToTarget ||
-                    ( /*Patch_Reachability_CanReach.Status -- todo check the config instead! &&*/
-                        ___pawn.Map.reachability.CanReach(___pawn.Position, target.Thing, PathEndMode.Touch, TraverseParms.For(___pawn)) &&
-                        Patch_Reachability_CanReach.CanReachThing(target.Thing)))
-                {
-                    if (!AdvancedIOPatchHelper.CanMoveItem(port, target.Cell)) continue;
-                    port.AddItemToQueue(target.Thing);
-                    port.updateQueue();
-                }
-
-                // Since we use a orderd List we know if one ins further, the same is true for the rest
-                break;
-            }
+            // Dirty contracted hack o-0, where we do a dirty things. See summary.
+            var (dsu, accessPoint) = Patch_Reachability_CanReach.CanReachAndFindAccessPoint(___pawn, target.Thing, destinationPos);
+            // If there are no DSU/point - let the game alone.
+            if (dsu is null || accessPoint is null) continue; // Do nothig, let the game do it's things.
+            // Add to queue and try to push item to the access point
+            accessPoint.AddItemToQueue(target.Thing);
         }
 
         return true;

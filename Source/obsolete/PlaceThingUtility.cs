@@ -40,7 +40,7 @@ public static class PlaceThingUtility
             Debug.Warning(Debug.Flag.PlaceThing, "Placing " + t + " in slotGroup: " + slotGroup.parent + " at " + cell);
             if (slotGroup.parent is IPRF_Building)
             {
-                if (placer.PlaceThingNextBuilding((slotGroup.parent as IPRF_Building), t, cell, map))
+                if (placer.PlaceThingNextBuilding(slotGroup.parent as IPRF_Building, t, cell, map))
                 {
                     Debug.Message(Debug.Flag.PlaceThing, "  which is owned by PRF " + slotGroup.parent);
                     return true;
@@ -77,7 +77,7 @@ public static class PlaceThingUtility
                 cellIsImpassible = true;
             if (otherThing is IPRF_Building)
             {
-                if (placer.PlaceThingNextBuilding((otherThing as IPRF_Building), t, cell, map))
+                if (placer.PlaceThingNextBuilding(otherThing as IPRF_Building, t, cell, map))
                 {
                     Debug.Message(Debug.Flag.PlaceThing, placer + " gave " + t + " to " + otherThing);
                     placer.EffectOnPlaceThing(t);
@@ -186,7 +186,7 @@ public static class PlaceThingUtility
         var map = placer.Map;
         // Go through slotGroup, starting with cell if given
         // TODO: go thru slotgroup in order of increasing distance from cell?
-        foreach (var c in (cell != null ? ((new[] { (IntVec3)cell }).Concat(slotGroup.CellsList.Where(x => x != cell))) : slotGroup.CellsList))
+        foreach (var c in cell != null ? new[] { (IntVec3)cell }.Concat(slotGroup.CellsList.Where(x => x != cell)) : slotGroup.CellsList)
         {
             if (CallNoStorageBlockersIn(c, map, t))
             {

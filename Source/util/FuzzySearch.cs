@@ -67,7 +67,7 @@ public static class FuzzySearch
         {
             for (var j = 1; j <= targetLength; j++)
             {
-                var cost = (target[j - 1] == source[i - 1]) ? 0 : 1;
+                var cost = target[j - 1] == source[i - 1] ? 0 : 1;
                 matrix[i, j] = Math.Min(Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1), matrix[i - 1, j - 1] + cost);
             }
         }

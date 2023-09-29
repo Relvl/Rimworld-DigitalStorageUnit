@@ -11,7 +11,7 @@ public class RenderLinkComp : ThingComp
 
     public override void PostDrawExtraSelectionOverlays()
     {
-        if (parent is Building_StorageUnitIOBase { NoConnectionAlert: false } iobase)
+        if (parent is Building_StorageUnitIOBase iobase && iobase.PowerTrader.PowerOn && !iobase.NoConnectionAlert)
         {
             GenDraw.DrawCircleOutline(iobase.TrueCenter(), CircleRadius, SimpleColor.Yellow);
             GenDraw.DrawCircleOutline(iobase.boundStorageUnit.TrueCenter(), CircleRadius, SimpleColor.Yellow);

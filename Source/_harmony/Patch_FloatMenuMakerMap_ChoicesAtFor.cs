@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using DigitalStorageUnit.map;
+using DigitalStorageUnit.util;
 using HarmonyLib;
 using RimWorld;
 using UnityEngine;
@@ -21,7 +22,7 @@ class Patch_FloatMenuMakerMap_ChoicesAtFor
 {
     static bool Prefix(Vector3 clickPos, Pawn pawn, out List<FloatMenuOption> __result)
     {
-        if (pawn.Map.GetDsuComponent().HideRightMenus.Contains(clickPos.ToIntVec3()))
+        if (pawn?.Map?.GetDsuComponent()?.DsuOccupiedPoints.ContainsKey(clickPos.ToIntVec3()) ?? false)
         {
             __result = new List<FloatMenuOption>();
             return false;

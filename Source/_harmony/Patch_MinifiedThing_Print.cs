@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using DigitalStorageUnit.map;
+using DigitalStorageUnit.util;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -19,12 +20,9 @@ public class Patch_MinifiedThing_Print
 {
     static bool Prefix(Thing __instance, SectionLayer layer)
     {
-        if (__instance.def.category == ThingCategory.Item)
+        if (__instance.def.category == ThingCategory.Item && (__instance?.Map?.GetDsuComponent()?.DsuOccupiedPoints.ContainsKey(__instance.Position) ?? false))
         {
-            if (__instance.Map.GetDsuComponent()?.HideItems.Contains(__instance.Position) ?? false)
-            {
-                return false; // skip the original and next prefixes
-            }
+            return false; // skip the original and next prefixes
         }
 
         return true; // continue the original

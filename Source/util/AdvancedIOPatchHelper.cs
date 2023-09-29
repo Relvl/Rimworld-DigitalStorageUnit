@@ -12,7 +12,7 @@ public static class AdvancedIOPatchHelper
     /// They are Powerd, connected and the connected DSU is also powerd
     /// </summary>
     private static IEnumerable<KeyValuePair<IntVec3, Building_AdvancedStorageUnitIOPort>> GetAdvancedIOPorts(Map map) =>
-        map.GetDsuComponent().AdvancedPortLocations.Where(l => (l.Value.boundStorageUnit?.Powered ?? false) && l.Value.CanGetNewItem);
+        map.GetDsuComponent().AdvancedPortLocations.Where(l => (l.Value.boundStorageUnit?.Powered ?? false) && l.Value.CanReceiveNewItem);
 
     /// <summary>
     /// Orders IO Ports by Distance to an referencePos
@@ -33,7 +33,7 @@ public static class AdvancedIOPatchHelper
     /// <summary>
     /// Orders IO Ports by Distance to an referencePos (pathfinding)
     /// </summary>
-    public static List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>> GetOrderdAdvancedIOPorts(Map map, IntVec3 pawnPos, IntVec3 targetPos)
+    private static List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>> GetOrderdAdvancedIOPorts(Map map, IntVec3 pawnPos, IntVec3 targetPos)
     {
         var dictIOports = GetAdvancedIOPorts(map);
         var ports = new List<KeyValuePair<float, Building_AdvancedStorageUnitIOPort>>();

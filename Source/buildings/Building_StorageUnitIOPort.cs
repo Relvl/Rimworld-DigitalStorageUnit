@@ -17,6 +17,18 @@ public class Building_StorageUnitIOPort : Building_StorageUnitIOBase
             ? base.Graphic.GetColoredVersion(base.Graphic.Shader, def.GetModExtension<ModExtensionPortColor>().inColor, Color.white)
             : base.Graphic.GetColoredVersion(base.Graphic.Shader, def.GetModExtension<ModExtensionPortColor>().outColor, Color.white);
 
+    public override void SpawnSetup(Map map, bool respawningAfterLoad)
+    {
+        base.SpawnSetup(map, respawningAfterLoad);
+        map.GetDsuComponent().RegisterBuilding(this);
+    }
+
+    public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+    {
+        Map.GetDsuComponent().DeregisterBuilding(this);
+        base.DeSpawn(mode);
+    }
+
     public override StorageIOMode IOMode
     {
         get => ioMode;
@@ -150,7 +162,8 @@ public class Building_StorageUnitIOPort : Building_StorageUnitIOBase
 
                 //Transfer the diffrence back if it is too much
                 if (currentItem != null &&
-                    (!OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) && boundStorageUnit.settings.AllowedToAccept(currentItem)))
+                    !OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) &&
+                    boundStorageUnit.settings.AllowedToAccept(currentItem))
                 {
                     var splitCount = -OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit);
                     if (splitCount > 0)

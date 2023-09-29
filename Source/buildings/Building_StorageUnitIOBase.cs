@@ -286,7 +286,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
 
                 //Transfer the diffrence back if it is too much
                 if (currentItem != null &&
-                    (!OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) && boundStorageUnit.settings.AllowedToAccept(currentItem)))
+                    !OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) && boundStorageUnit.settings.AllowedToAccept(currentItem))
                 {
                     var splitCount = -OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit);
                     if (splitCount > 0)
@@ -310,7 +310,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
             {
                 var options = Map.listerBuildings.allBuildingsColonist //
                     .Where(b => b is DigitalStorageUnitBuilding)
-                    .Select(b => new FloatMenuOption(b.LabelCap, () => SelectedPorts().ToList().ForEach(p => p.BoundStorageUnit = (b as DigitalStorageUnitBuilding))))
+                    .Select(b => new FloatMenuOption(b.LabelCap, () => SelectedPorts().ToList().ForEach(p => p.BoundStorageUnit = b as DigitalStorageUnitBuilding)))
                     .ToList();
                 if (options.Count == 0)
                     options.Add(new FloatMenuOption("NoneBrackets".Translate(), null));

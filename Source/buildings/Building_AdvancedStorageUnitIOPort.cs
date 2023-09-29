@@ -16,18 +16,19 @@ public class Building_AdvancedStorageUnitIOPort : Building_StorageUnitIOBase
     public void AddItemToQueue(Thing thing)
     {
         _placementQueue.Add(thing);
-    }
-
-    public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
-    {
-        Map.GetDsuComponent().AdvancedPortLocations.Remove(Position);
-        base.DeSpawn(mode);
+        UpdateQueue();
     }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
         base.SpawnSetup(map, respawningAfterLoad);
-        map.GetDsuComponent().AdvancedPortLocations.TryAdd(Position, this);
+        map.GetDsuComponent().RegisterBuilding(this);
+    }
+
+    public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+    {
+        Map.GetDsuComponent().DeregisterBuilding(this);
+        base.DeSpawn(mode);
     }
 
     public override StorageIOMode IOMode
@@ -50,37 +51,30 @@ public class Building_AdvancedStorageUnitIOPort : Building_StorageUnitIOBase
         return WorkPosition.GetFirstItem(Map);
     }
 
-    public bool CanGetNewItem => GetstoredItem() == null && (PowerTrader?.PowerOn ?? false);
+    public bool CanReceiveNewItem => GetstoredItem() == null && (PowerTrader?.PowerOn ?? false);
 
-    public void updateQueue()
+    public void UpdateQueue()
     {
-        if (CanGetNewItem && _placementQueue.Count > 0)
-        {
-            var nextItemInQueue = _placementQueue[0];
-            PlaceThingNow(nextItemInQueue);
-            _placementQueue.RemoveAt(0);
-        }
+        if (!CanReceiveNewItem || _placementQueue.Count <= 0) return;
+        var nextItemInQueue = _placementQueue[0];
+        PlaceThingNow(nextItemInQueue);
+        _placementQueue.RemoveAt(0);
     }
 
     public void PlaceThingNow(Thing thing)
     {
         if (thing != null)
-        {
             thing.Position = Position;
-        }
     }
 
     public override void Tick()
     {
-        updateQueue();
+        UpdateQueue();
 
-        if (this.IsHashIntervalTick(10))
-        {
-            var thing = GetstoredItem();
-            if (thing != null && !Map.reservationManager.AllReservedThings().Contains(thing))
-            {
-                RefreshInput();
-            }
-        }
+        if (!this.IsHashIntervalTick(10)) return;
+        // If thing not reserved - draw item back to the DSU
+        var thing = GetstoredItem();
+        if (thing != null && !Map.reservationManager.AllReservedThings().Contains(thing))
+            RefreshInput();
     }
 }

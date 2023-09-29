@@ -77,13 +77,13 @@ public class ITab_Items : ITab
     private static bool itemIsVisible(float curY, float ViewRecthight, float scrollY, float rowHight = 28f)
     {
         //The item is above the view (including a safty margin of one item)
-        if ((curY + rowHight - scrollY) < 0)
+        if (curY + rowHight - scrollY < 0)
         {
             return false;
         }
 
         // the item is above the lower limit (including a safty margin of one item)
-        if ((curY - rowHight - scrollY - ViewRecthight) < 0)
+        if (curY - rowHight - scrollY - ViewRecthight < 0)
         {
             return true;
         }

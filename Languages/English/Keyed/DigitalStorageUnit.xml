@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
+    <DSU>Digital Storage Unit</DSU>
     <DSU.AdjustOutputDirection>Adjust output direction</DSU.AdjustOutputDirection>
     <DSU.MinMaxAmounts>Set min/max amounts</DSU.MinMaxAmounts>
     <DSU.UseMin>Use Min?</DSU.UseMin>
@@ -31,4 +32,11 @@
     <DSU.PawnAccess.Desc>Pawn access</DSU.PawnAccess.Desc>
     <DSU.Alert.LostLink.Label>DSU: port lost link</DSU.Alert.LostLink.Label>
     <DSU.Alert.LostLink.Desc>Port lost link. You sould connect it to on if Digital Storage Unit.</DSU.Alert.LostLink.Desc>
+
+    <DSU.Config.UseCheapPathfinding>Cheap Access Point pathfinding</DSU.Config.UseCheapPathfinding>
+    <DSU.Config.UseCheapPathfinding.Desc>Enables a simplified search for the "nearest" Access Point.\n\nWith this option enabled, the geographically closest DIRECT distance between the pawn, the Access Point, and the target location is using.\n\nWhen the option is disabled, this search will involve the pathfinding for the cheapest path.\n\n</DSU.Config.UseCheapPathfinding.Desc>
+    <DSU.Config.UseCheapPathfinding.Desc.Caution>CAUTION! Disabling this option can seriously hit the TPS and performance! This will be especially noticeable if there are a lot of pawns in the colony.</DSU.Config.UseCheapPathfinding.Desc.Caution>
+    <DSU.Config.DsuPathingMultiplier>DSU simple pathfinding factor: {0}</DSU.Config.DsuPathingMultiplier>
+    <DSU.Config.DsuPathingMultiplier.Desc>This factor multiplies calculated range from pawn to DSU and target. This enforced a pawns to use access ports instead DSU.</DSU.Config.DsuPathingMultiplier.Desc>
+
 </LanguageData>

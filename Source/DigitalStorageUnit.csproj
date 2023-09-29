@@ -89,6 +89,7 @@
         <Compile Include="DigitalStorageUnit.cs" />
         <Compile Include="def\ModExtensionDsu.cs" />
         <Compile Include="def\PlaceWorkerIOPusherHilight.cs" />
+        <Compile Include="DigitalStorageUnitConfig.cs" />
         <Compile Include="map\DsuMapComponent.cs" />
         <Compile Include="map\OutputSettings.cs" />
         <Compile Include="obsolete\Debug.cs" />
@@ -102,6 +103,7 @@
         <Compile Include="util\IForbidPawnInputItem.cs" />
         <Compile Include="util\IHoldMultipleThings.cs" />
         <Compile Include="util\IntVec3Extensions.cs" />
+        <Compile Include="util\MapExtension.cs" />
         <Compile Include="_harmony\Patch_Building_Storage_Accepts.cs" />
         <Compile Include="_harmony\Patch_Building_Storage_GetGizmos.cs" />
         <Compile Include="_harmony\Patch_CompressibilityDeciderUtility_IsSaveCompressible.cs" />

@@ -25,7 +25,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
     public ModExtensionDsu Mod;
 
-    private bool CanStoreMoreItems => (Powered) && Spawned && (Mod == null || StoredItems.Count < MaxNumberItemsInternal);
+    private bool CanStoreMoreItems => Powered && Spawned && (Mod == null || StoredItems.Count < MaxNumberItemsInternal);
 
     private int MaxNumberItemsInternal => (Mod?.limit ?? int.MaxValue) - def.Size.Area + 1;
 
@@ -67,12 +67,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         _compPowerTrader ??= GetComp<CompPowerTrader>();
         Mod ??= def.GetModExtension<ModExtensionDsu>();
 
-        foreach (var cell in this.OccupiedRect().Cells)
-        {
-            var component = map.GetDsuComponent();
-            component.HideItems.Add(cell);
-            component.HideRightMenus.Add(cell);
-        }
+        map.GetDsuComponent().RegisterBuilding(this);
 
         RefreshStorage();
 
@@ -105,12 +100,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
             GenPlace.TryPlaceThing(thing, Position, Map, ThingPlaceMode.Near);
         }
 
-        foreach (var cell in this.OccupiedRect().Cells)
-        {
-            var component = Map.GetDsuComponent();
-            component.HideItems.Remove(cell);
-            component.HideRightMenus.Remove(cell);
-        }
+        Map.GetDsuComponent().DeregisterBuilding(this);
 
         base.DeSpawn(mode);
     }
@@ -183,7 +173,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
             var maybeThing = Map.thingGrid.ThingAt(cell, ThingCategory.Item);
             if (maybeThing != null)
             {
-                if (maybeThing.def == thing.def) capacity += (thing.def.stackLimit - maybeThing.stackCount);
+                if (maybeThing.def == thing.def) capacity += thing.def.stackLimit - maybeThing.stackCount;
             }
             else
             {

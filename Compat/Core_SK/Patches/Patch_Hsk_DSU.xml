@@ -45,26 +45,31 @@
             <!-- recipes -->
             <li Class="PatchOperationSequence">
                 <operations>
-                    <!-- recipe base -->
+                    <!-- recipe base: electronics -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Electronics"]/recipeUsers/li[text()="FabricationBench"]</xpath>
+                        <value>
+                            <li>TableElectronics</li>
+                        </value>
+                    </li>
                     <li Class="PatchOperationAdd">
                         <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Electronics"]</xpath>
                         <value>
                             <workSpeedStat>ElectronicCraftingSpeed</workSpeedStat>
-                            <recipeUsers>
-                                <li>TableElectronics</li>
-                            </recipeUsers>
                         </value>
                     </li>
 
-                    <!-- recipe base -->
+                    <!-- recipe base: mechanics -->
                     <li Class="PatchOperationAdd">
                         <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Mechanics"]</xpath>
                         <value>
                             <workSpeedStat>SmithingSpeed</workSpeedStat>
-                            <recipeUsers>
-                                <li>FabricationBench</li>
-                                <li>AdvToolBench</li>
-                            </recipeUsers>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationAdd">
+                        <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Mechanics"]/recipeUsers</xpath>
+                        <value>
+                            <li>AdvToolBench</li>
                         </value>
                     </li>
 
@@ -168,73 +173,6 @@
                                             <li>ElectronicComponents</li>
                                             <li>Plastic</li>
                                             <li>PRF_ElectronicChip_I</li>
-                                        </thingDefs>
-                                    </fixedIngredientFilter>
-                                </value>
-                            </li>
-                        </operations>
-                    </li>
-
-                    <!-- chip iii -> Make_DSU_ElectronicChip_III -->
-                    <li Class="PatchOperationSequence">
-                        <operations>
-                            <li Class="PatchOperationReplace">
-                                <xpath>Defs/RecipeDef[defName="Make_DSU_ElectronicChip_III"]/ingredients</xpath>
-                                <value>
-                                    <ingredients>
-                                        <li>
-                                            <filter>
-                                                <thingDefs>
-                                                    <li>PRF_ElectronicChip_II</li>
-                                                </thingDefs>
-                                            </filter>
-                                            <count>4</count>
-                                        </li>
-                                        <li>
-                                            <filter>
-                                                <thingDefs>
-                                                    <li>Plastic</li>
-                                                </thingDefs>
-                                            </filter>
-                                            <count>5</count>
-                                        </li>
-                                        <li>
-                                            <filter>
-                                                <thingDefs>
-                                                    <li>Microchips</li>
-                                                </thingDefs>
-                                            </filter>
-                                            <count>10</count>
-                                        </li>
-                                        <li>
-                                            <filter>
-                                                <thingDefs>
-                                                    <li>BioMicrochips</li>
-                                                </thingDefs>
-                                            </filter>
-                                            <count>1</count>
-                                        </li>
-                                        <li>
-                                            <filter>
-                                                <thingDefs>
-                                                    <li>GoldBar</li>
-                                                </thingDefs>
-                                            </filter>
-                                            <count>5</count>
-                                        </li>
-                                    </ingredients>
-                                </value>
-                            </li>
-                            <li Class="PatchOperationReplace">
-                                <xpath>Defs/RecipeDef[defName="Make_DSU_ElectronicChip_III"]/fixedIngredientFilter</xpath>
-                                <value>
-                                    <fixedIngredientFilter>
-                                        <thingDefs>
-                                            <li>PRF_ElectronicChip_II</li>
-                                            <li>Plastic</li>
-                                            <li>Microchips</li>
-                                            <li>BioMicrochips</li>
-                                            <li>GoldBar</li>
                                         </thingDefs>
                                     </fixedIngredientFilter>
                                 </value>
