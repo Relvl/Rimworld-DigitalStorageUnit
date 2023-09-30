@@ -14,7 +14,6 @@ This mod is created, maintained and updated by many great people.
 It has grown to a huge collection of talented people that have contributed to make this mod great.
 
 Zymex - updater of revived version [see here](https://github.com/zymex22/Project-RimFactory-Revived)
-
 Spdskatr - Rimfactory original! [see here](https://github.com/spdskatr/ProjectRimFactory)
 
 Nobo / Nullre - For porting thing from NR_AutoMachineTools to prf and genral C#
