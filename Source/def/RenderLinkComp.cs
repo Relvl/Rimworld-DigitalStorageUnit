@@ -20,7 +20,7 @@ public class RenderLinkComp : ThingComp
 
         if (parent is DigitalStorageUnitBuilding { Powered: true } dsu)
         {
-            var linkedPorts = dsu.Ports.Where(p => p.NoConnectionAlert).ToList();
+            var linkedPorts = dsu.Ports.Where(p => !p.NoConnectionAlert).ToList();
             if (linkedPorts.Any())
             {
                 GenDraw.DrawCircleOutline(dsu.TrueCenter(), CircleRadius, SimpleColor.Yellow);

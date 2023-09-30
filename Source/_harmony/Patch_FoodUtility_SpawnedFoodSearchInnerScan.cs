@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Emit;
 using DigitalStorageUnit.util;
 using HarmonyLib;
 using RimWorld;
 using Verse;
+using Verse.AI;
 
 namespace DigitalStorageUnit._harmony;
 
 /// <summary>
-/// TODO! Description! Need more researches...
-/// Something about find better Port for hungry pawn? 
+/// Allows the pawn to take food from the Access Point.
+/// Stack:
+///     RimWorld.FoodUtility.SpawnedFoodSearchInnerScan
+///     RimWorld.FoodUtility.BestFoodSourceOnMap_NewTemp
+///     RimWorld.FoodUtility.BestFoodSourceOnMap | RimWorld.JobGiver_GetFood.TryGiveJob | RimWorld.WorkGiver_InteractAnimal.TakeFoodForAnimalInteractJob | RimWorld.WorkGiver_Tame.JobOnThing
 /// </summary>
 [HarmonyPatch(typeof(FoodUtility), "SpawnedFoodSearchInnerScan")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
@@ -18,120 +22,72 @@ namespace DigitalStorageUnit._harmony;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class Patch_FoodUtility_SpawnedFoodSearchInnerScan
 {
-    private static object _thingarg;
-    private static bool _afterflaotMin;
-    private static float mindist = float.MaxValue;
-    private static Building_AdvancedStorageUnitIOPort closestPort;
-    private static bool ioPortSelected;
-    private static Thing ioPortSelectedFor;
-
-    public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+    /// <summary>
+    /// Looks like we need totally rewrite this method...
+    /// Okay. It searches the food with shortest path and better optimality within provided list.
+    /// We need to determine whats better - let the pawn take it, or provide it via Access Point.
+    /// </summary>
+    /// <param name="eater">The pawn that will eat</param>
+    /// <param name="root">Position of hauler pawn</param>
+    /// <param name="searchSet">Allowed food items</param>
+    /// <param name="peMode">Always PathEndMode.ClosestTouch</param>
+    /// <param name="traverseParams">Traverse params of the pawn that will haul/eat</param>
+    /// <param name="maxDistance"></param>
+    /// <param name="validator"></param>
+    /// <param name="__result">The food</param>
+    /// <returns>Continue the original method or not</returns>
+    public static bool Prefix(Pawn eater,
+        IntVec3 root,
+        IReadOnlyList<Thing> searchSet,
+        PathEndMode peMode,
+        TraverseParms traverseParams,
+        float maxDistance,
+        Predicate<Thing> validator,
+        out Thing __result)
     {
-        _thingarg = null;
-        _afterflaotMin = false;
+        __result = null;
+        if (searchSet is null) return true;
+        var haulerPawn = traverseParams.pawn ?? eater;
+        var bestOptimality = float.MinValue;
+        var component = haulerPawn.Map.GetDsuComponent();
+        if (component is null) return true;
 
-        foreach (var instruction in instructions)
+        // Prevent same pathfinding multiple times - eater and hauler immutible over the loop
+        var pathfindingCache = new Dictionary<IntVec3, ReachabilityPatchResult>();
+
+        foreach (var foodSource in searchSet)
         {
-            if (instruction.opcode == OpCodes.Ldc_R4 && instruction.operand.ToString() == "-3.402823E+38")
+            if (!foodSource.Spawned) continue;
+            if (validator is not null && !validator(foodSource)) continue;
+
+            var result = pathfindingCache.ContainsKey(foodSource.Position)
+                ? pathfindingCache.TryGetValue(foodSource.Position)
+                : Patch_Reachability_CanReach.CanReachAndFindAccessPoint(haulerPawn, foodSource.Position, eater.Position, peMode, traverseParams);
+            pathfindingCache[foodSource.Position] = result;
+
+            // If the food inside a DSU
+            if (result.Dsu is not null && result.AccessPoint is not null)
             {
-                yield return instruction;
-                _afterflaotMin = true;
-                continue;
+                if (result.DirectDistanceToAccessPoint > maxDistance) continue;
+                var currentOptimality = FoodUtility.FoodOptimality(eater, foodSource, FoodUtility.GetFinalIngestibleDef(foodSource), result.DirectDistanceToAccessPoint);
+                if (currentOptimality < bestOptimality) continue;
+                if (validator is not null && !validator(foodSource)) continue;
+                bestOptimality = currentOptimality;
             }
 
-            if (_afterflaotMin && instruction.opcode == OpCodes.Stloc_S)
+            // If the food NOT inside a DSU -> part of orogonal code, same algorythm
+            else
             {
-                _afterflaotMin = false;
-                yield return instruction;
-                yield return new CodeInstruction(OpCodes.Ldarg_0);
-                yield return new CodeInstruction(OpCodes.Ldarg_1);
-                yield return new CodeInstruction(
-                    OpCodes.Call,
-                    AccessTools.Method(typeof(Patch_FoodUtility_SpawnedFoodSearchInnerScan), nameof(findClosestPort), new[] { typeof(Pawn), typeof(IntVec3) })
-                );
-
-                continue;
+                if (result.DirectDistanceToTarget > maxDistance) continue; // There where always a DirectDistanceToTarget calculated
+                var currentOptimality = FoodUtility.FoodOptimality(eater, foodSource, FoodUtility.GetFinalIngestibleDef(foodSource), result.DirectDistanceToTarget);
+                if (currentOptimality < bestOptimality) continue;
+                if (!result.OriginalCanReach) continue;
+                bestOptimality = currentOptimality;
             }
 
-            // TODO! Very ugly comparsion with op name...
-            if (instruction.opcode == OpCodes.Stloc_S && instruction.operand.ToString() == "Verse.Thing (7)" && _thingarg == null)
-            {
-                _thingarg = instruction.operand;
-            }
-
-            // TODO! Very ugly comparsion with op name...
-            if (instruction.opcode == OpCodes.Stloc_S && instruction.operand.ToString() == "System.Single (8)")
-            {
-                yield return instruction;
-
-                yield return new CodeInstruction(OpCodes.Ldloca_S, instruction.operand);
-                yield return new CodeInstruction(OpCodes.Ldloc_S, _thingarg);
-                yield return new CodeInstruction(OpCodes.Ldarg_0);
-                yield return new CodeInstruction(OpCodes.Ldarg_1);
-                yield return new CodeInstruction(
-                    OpCodes.Call,
-                    AccessTools.Method(
-                        typeof(Patch_FoodUtility_SpawnedFoodSearchInnerScan),
-                        nameof(isIOPortBetter),
-                        new[] { typeof(float).MakeByRefType(), typeof(Thing), typeof(Pawn), typeof(IntVec3) }
-                    )
-                );
-                continue;
-            }
-
-            // TODO! Why not Postfix?
-            if (instruction.opcode == OpCodes.Ret && _thingarg != null)
-            {
-                yield return new CodeInstruction(
-                    OpCodes.Call,
-                    AccessTools.Method(typeof(Patch_FoodUtility_SpawnedFoodSearchInnerScan), nameof(moveItemIfNeeded), new[] { typeof(Thing) })
-                );
-                yield return new CodeInstruction(OpCodes.Ldloc_3);
-            }
-
-            yield return instruction;
+            __result = foodSource;
         }
-    }
 
-    public static void findClosestPort(Pawn pawn, IntVec3 root)
-    {
-        mindist = float.MaxValue;
-        closestPort = null;
-
-        if (pawn.Faction is not { IsPlayer: true }) return;
-
-        //TODO: Not Optimal for the search. might need update
-        var closest = AdvancedIOPatchHelper.GetClosestPort(pawn.Map, pawn.Position);
-        mindist = closest.Key;
-        closestPort = closest.Value;
-    }
-
-    public static void isIOPortBetter(ref float Distance, Thing thing, Pawn pawn, IntVec3 start)
-    {
-        ioPortSelected = false;
-
-        // If the Port is Closer then it is a better choice
-        // If the Port is the only Option it must be used
-        if (mindist < Distance ||
-            (pawn.Map.reachability.CanReach(start, thing, Verse.AI.PathEndMode.Touch, TraverseParms.For(pawn)) && Patch_Reachability_CanReach.CanReachThingViaAccessPonit(thing)))
-        {
-            //Check if the Port can be used
-            //TODO: Check TODO in Line 93
-            if (closestPort != null && AdvancedIOPatchHelper.CanMoveItem(closestPort, thing))
-            {
-                Distance = mindist;
-                ioPortSelected = true;
-                ioPortSelectedFor = thing;
-            }
-        }
-    }
-
-    public static void moveItemIfNeeded(Thing thing)
-    {
-        // When using replimat it might replace thing  
-        if (thing != ioPortSelectedFor || !ioPortSelected || thing == null) return;
-
-        ioPortSelected = false;
-        closestPort.PlaceThingNow(thing);
+        return false;
     }
 }

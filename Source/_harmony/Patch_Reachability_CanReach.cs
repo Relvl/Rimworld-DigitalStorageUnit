@@ -1,7 +1,4 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using DigitalStorageUnit.map;
 using DigitalStorageUnit.util;
 using HarmonyLib;
 using Verse;
@@ -22,40 +19,7 @@ namespace DigitalStorageUnit._harmony;
 [HarmonyPatch(typeof(Reachability), nameof(Reachability.CanReach), typeof(IntVec3), typeof(LocalTargetInfo), typeof(PathEndMode), typeof(TraverseParms))]
 public class Patch_Reachability_CanReach
 {
-    [Obsolete] private static Thing LastCanReachThing;
-
-    /// <summary>
-    /// Holds the Last item that was checked and Required the use of a Advanced IO Port
-    /// This is used in other patches to force the use of an IO Port
-    /// TODO! Looks like a crutch actually =(
-    /// </summary>
-    [Obsolete]
-    public static bool CanReachThingViaAccessPonit(Thing thing)
-    {
-        var ret = thing == LastCanReachThing;
-        LastCanReachThing = null;
-        return ret;
-    }
-
-    /// <summary>
-    /// Oof... Dirty thing, we need to determine best access point here, but we can't do it without job destination position.
-    /// </summary>
-    private static IntVec3 _jobDestination = IntVec3.Invalid;
-
-    /// <summary>
-    /// The pawn that initiate this job
-    /// </summary>
-    private static Pawn _jobPawn;
-
-    /// <summary>
-    /// The DSU that we checking for.
-    /// </summary>
-    private static DigitalStorageUnitBuilding _cachedDsu;
-
-    /// <summary>
-    /// Best Access Point that we found here.
-    /// </summary>
-    private static Building_AdvancedStorageUnitIOPort _cachedAccessPoint;
+    private static ReachabilityPatchResult _cachedResult;
 
     /// <summary>
     /// Dirty hack to return extra info from the patched method.
@@ -63,31 +27,33 @@ public class Patch_Reachability_CanReach
     /// I thing something may went wrong only if multithreading.
     /// </summary>
     /// <returns>Method result, found DSU, and better Access Point to move item.</returns>
-    public static (DigitalStorageUnitBuilding, Building_AdvancedStorageUnitIOPort) CanReachAndFindAccessPoint(Pawn pawn, LocalTargetInfo middlePoint, IntVec3 jobDestination)
+    public static ReachabilityPatchResult CanReachAndFindAccessPoint(Pawn pawn,
+        LocalTargetInfo middlePoint,
+        IntVec3 jobDestination,
+        PathEndMode peMode,
+        TraverseParms traverseParms)
     {
-        _jobDestination = jobDestination;
-        _jobPawn = pawn;
-
-        pawn.Map.reachability.CanReach(pawn.Position, middlePoint, PathEndMode.Touch, TraverseParms.For(pawn));
+        _cachedResult = new ReachabilityPatchResult { JobDestination = jobDestination, JobPawn = pawn };
+        _cachedResult.DirectDistanceToTarget = (_cachedResult.JobPawn.Position - middlePoint.Cell).LengthManhattan;
+        pawn.Map.reachability.CanReach(pawn.Position, middlePoint, peMode, traverseParms);
         try
         {
-            return (_cachedDsu, _cachedAccessPoint);
+            return _cachedResult;
         }
         finally
         {
-            _cachedDsu = null;
-            _cachedAccessPoint = null;
-            _jobPawn = null;
-            _jobDestination = IntVec3.Invalid;
+            _cachedResult = null;
         }
     }
 
     public static void Postfix(IntVec3 start, LocalTargetInfo dest, PathEndMode peMode, TraverseParms traverseParams, ref bool __result, Map ___map, Reachability __instance)
     {
+        if (_cachedResult is null) return; // as is
+        _cachedResult.OriginalCanReach = __result;
         // Cannot be done without destination request
-        if (_jobDestination == IntVec3.Invalid) return; // as is
+        if (_cachedResult.JobDestination == IntVec3.Invalid) return; // as is
         // We can't continue without the pawn
-        if (_jobPawn is null) return; // as is
+        if (_cachedResult.JobPawn is null) return; // as is
         //Ignore everything that is not a Item
         if (dest.Thing?.def.category != ThingCategory.Item) return; // as is
 
@@ -96,7 +62,9 @@ public class Patch_Reachability_CanReach
         if (dsu is null || !dsu.Powered /* todo! if forbidden for pawn access directly */) return; // as is
 
         // Initial best distance - is Distance(pawn -> item -> destionation) multiplied on "avoid DSU factor" if needed
-        var bestDistance = __result ? component.GetTotalDistance(_jobPawn, dest.Cell, _jobDestination, true) : float.MaxValue;
+        var bestWeight = __result ? component.GetTotalDistance(_cachedResult.JobPawn, dest.Cell, _cachedResult.JobDestination, true) : float.MaxValue;
+        _cachedResult.DirectPathingWeight = bestWeight;
+
         Building_AdvancedStorageUnitIOPort bestAccessPoint = null;
         foreach (var accessPoint in component.AccessPointSet)
         {
@@ -104,23 +72,70 @@ public class Patch_Reachability_CanReach
             if (accessPoint.boundStorageUnit != dsu) continue;
             // Access Point is occupied by another item // todo! hmmmm... so pawn will go to another, or DSU. not good actually.
             if (!accessPoint.CanReceiveNewItem) continue;
-            // Distance (pawn -> access point -> job destination)
-            var distance = component.GetTotalDistance(_jobPawn, accessPoint.Position, _jobDestination);
+
+            var weight = component.GetTotalDistance(_cachedResult.JobPawn, accessPoint.Position, _cachedResult.JobDestination);
+
             // If distance to DSU/previous is shorter - skip
-            if (bestDistance < distance) continue;
+            if (bestWeight < weight) continue;
+
             // We dont care about recursion - now we check not an item.
             // If the pawn can't reach the Access Point - skip
             if (!__instance.CanReach(start, accessPoint.Position, PathEndMode.Touch, traverseParams)) continue;
 
-            bestDistance = distance;
+            bestWeight = weight;
             bestAccessPoint = accessPoint;
-
-            // TODO! OBSOLETE
-            LastCanReachThing = dest.Thing;
         }
 
-        _cachedDsu = dsu;
-        _cachedAccessPoint = bestAccessPoint;
-        __result = __result || _cachedAccessPoint is not null;
+        _cachedResult.Dsu = dsu;
+        _cachedResult.AccessPoint = bestAccessPoint;
+        _cachedResult.BestPathingWeight = bestWeight;
+        _cachedResult.DirectDistanceToAccessPoint = bestAccessPoint is null ? default : (_cachedResult.JobPawn.Position - bestAccessPoint.Position).LengthManhattan;
+
+        __result = __result || _cachedResult.AccessPoint is not null;
     }
+}
+
+public class ReachabilityPatchResult
+{
+    /// <summary>
+    /// Oof... Dirty thing, we need to determine best access point here, but we can't do it without job destination position.
+    /// </summary>
+    public IntVec3 JobDestination;
+
+    /// <summary>
+    /// The pawn that initiate this job
+    /// </summary>
+    public Pawn JobPawn;
+
+    /// <summary>
+    /// The DSU that we checking for.
+    /// </summary>
+    public DigitalStorageUnitBuilding Dsu;
+
+    /// <summary>
+    /// Best Access Point that we found here.
+    /// </summary>
+    public Building_AdvancedStorageUnitIOPort AccessPoint;
+
+    /// <summary>
+    /// Distance (pawn -> item -> destination)
+    /// </summary>
+    public float BestPathingWeight;
+
+    /// <summary>
+    /// Distance (pawn -> item -> destination) without access point
+    /// </summary>
+    public float DirectPathingWeight;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public float DirectDistanceToTarget;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public float DirectDistanceToAccessPoint;
+
+    public bool OriginalCanReach;
 }

@@ -86,7 +86,7 @@
                                                     <li>ElectronicComponents</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>8</count>
+                                            <count>3</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -134,7 +134,7 @@
                                                     <li>Plastic</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>5</count>
+                                            <count>2</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -142,7 +142,7 @@
                                                     <li>ElectronicComponents</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>10</count>
+                                            <count>6</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -150,7 +150,7 @@
                                                     <li>Microchips</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>5</count>
+                                            <count>2</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -158,7 +158,7 @@
                                                     <li>GoldBar</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>5</count>
+                                            <count>2</count>
                                         </li>
                                     </ingredients>
                                 </value>
@@ -194,7 +194,7 @@
                                                     <li>USLDBar</li>
                                                 </categories>
                                             </filter>
-                                            <count>20</count>
+                                            <count>10</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -202,7 +202,7 @@
                                                     <li>Plastic</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>10</count>
+                                            <count>5</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -210,7 +210,7 @@
                                                     <li>Mechanism</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>5</count>
+                                            <count>2</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -218,7 +218,7 @@
                                                     <li>ComponentIndustrial</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>5</count>
+                                            <count>2</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -226,7 +226,7 @@
                                                     <li>ElectronicComponents</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>2</count>
+                                            <count>4</count>
                                         </li>
                                     </ingredients>
                                 </value>
@@ -265,7 +265,7 @@
                                                     <li>USLDBar</li>
                                                 </categories>
                                             </filter>
-                                            <count>20</count>
+                                            <count>10</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -273,7 +273,7 @@
                                                     <li>ComponentIndustrial</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>5</count>
+                                            <count>2</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -325,7 +325,7 @@
                                                     <li>ComponentAdvanced</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>5</count>
+                                            <count>2</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -333,7 +333,7 @@
                                                     <li>Plastic</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>5</count>
+                                            <count>6</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -341,7 +341,7 @@
                                                     <li>HCMBar</li>
                                                 </categories>
                                             </filter>
-                                            <count>20</count>
+                                            <count>10</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -349,7 +349,7 @@
                                                     <li>ElectronicComponents</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>5</count>
+                                            <count>2</count>
                                         </li>
                                     </ingredients>
                                 </value>
@@ -395,7 +395,7 @@
                                                     <li>ComponentAdvanced</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>10</count>
+                                            <count>2</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -403,7 +403,7 @@
                                                     <li>USLDBar</li>
                                                 </categories>
                                             </filter>
-                                            <count>20</count>
+                                            <count>10</count>
                                         </li>
                                         <li>
                                             <filter>
@@ -411,7 +411,7 @@
                                                     <li>Rubber</li>
                                                 </thingDefs>
                                             </filter>
-                                            <count>10</count>
+                                            <count>6</count>
                                         </li>
                                     </ingredients>
                                 </value>

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using DigitalStorageUnit.map;
 using DigitalStorageUnit.util;
 using HarmonyLib;
 using Verse;
@@ -78,11 +77,11 @@ public class Patch_Pawn_JobTracker_StartJob
             if (!target.HasThing) continue; // Do nothig, let the game do it's things.
 
             // Dirty contracted hack o-0, where we do a dirty things. See summary.
-            var (dsu, accessPoint) = Patch_Reachability_CanReach.CanReachAndFindAccessPoint(___pawn, target.Thing, destinationPos);
+            var result = Patch_Reachability_CanReach.CanReachAndFindAccessPoint(___pawn, target.Thing, destinationPos, PathEndMode.Touch, TraverseParms.For(___pawn));
             // If there are no DSU/point - let the game alone.
-            if (dsu is null || accessPoint is null) continue; // Do nothig, let the game do it's things.
+            if (result.Dsu is null || result.AccessPoint is null) continue; // Do nothig, let the game do it's things.
             // Add to queue and try to push item to the access point
-            accessPoint.AddItemToQueue(target.Thing);
+            result.AccessPoint.AddItemToQueue(target.Thing);
         }
 
         return true;
