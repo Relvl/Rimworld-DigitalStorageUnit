@@ -10,7 +10,7 @@ namespace DigitalStorageUnit;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class ITab_IOPortStorage : ITab_Storage
 {
-    public override bool IsVisible => SelThing is Building_StorageUnitIOBase { ioMode: StorageIOMode.Output };
+    public override bool IsVisible => SelThing is Building_StorageUnitIOBase { IOMode: StorageIOMode.Output };
 
     public ITab_IOPortStorage()
     {

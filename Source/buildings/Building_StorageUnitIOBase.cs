@@ -13,16 +13,12 @@ namespace DigitalStorageUnit;
 [StaticConstructorOnStartup]
 public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawnInputItem
 {
-    public StorageIOMode ioMode;
+    private StorageIOMode _ioMode;
+    private DigitalStorageUnitBuilding _linkedStorageParentBuilding;
+    private StorageSettings _outputStoreSettings;
+    private OutputSettings _outputSettings;
 
-    private Building linkedStorageParentBuilding;
-
-    public DigitalStorageUnitBuilding boundStorageUnit => linkedStorageParentBuilding as DigitalStorageUnitBuilding;
-
-    protected StorageSettings outputStoreSettings;
-    private OutputSettings outputSettings;
-
-    public virtual IntVec3 WorkPosition => Position;
+    protected virtual IntVec3 WorkPosition => Position; // todo all positions to work position
 
     public CompPowerTrader PowerTrader;
 
@@ -35,28 +31,29 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
 
     public virtual StorageIOMode IOMode
     {
-        get => ioMode;
-        set
+        get => _ioMode;
+        protected set
         {
-            if (ioMode == value) return;
-            ioMode = value;
+            if (_ioMode == value) return;
+            _ioMode = value;
             Notify_NeedRefresh();
         }
     }
 
     public DigitalStorageUnitBuilding BoundStorageUnit
     {
-        get => boundStorageUnit;
+        get => _linkedStorageParentBuilding;
         set
         {
-            boundStorageUnit?.Ports.Remove(this);
-            linkedStorageParentBuilding = value;
+            // TODO! looks weird.
+            _linkedStorageParentBuilding?.Ports.Remove(this);
+            _linkedStorageParentBuilding = value;
             value?.Ports.Add(this);
             Notify_NeedRefresh();
         }
     }
 
-    protected OutputSettings OutputSettings => outputSettings ??= new OutputSettings("DSU.Min.Desc", "DSU.Max.Desc");
+    protected OutputSettings OutputSettings => _outputSettings ??= new OutputSettings("DSU.Min.Desc", "DSU.Max.Desc");
 
     //
     public virtual bool ForbidPawnInput
@@ -65,7 +62,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
         {
             if (IOMode == StorageIOMode.Output && OutputSettings.UseMax)
             {
-                //Only get currentItem if needed
+                // Only get currentItem if needed
                 var currentItem = WorkPosition.GetFirstItem(Map);
                 if (currentItem != null)
                 {
@@ -77,15 +74,13 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
         }
     }
 
-    public Thing NPDI_Item => WorkPosition.GetFirstItem(Map);
-
     public override void ExposeData()
     {
         base.ExposeData();
-        Scribe_Values.Look(ref ioMode, "mode");
-        Scribe_References.Look(ref linkedStorageParentBuilding, "boundStorageUnit");
-        Scribe_Deep.Look(ref outputStoreSettings, "outputStoreSettings", this);
-        Scribe_Deep.Look(ref outputSettings, "outputSettings", "DSU.Min.Desc", "DSU.Max.Desc");
+        Scribe_Values.Look(ref _ioMode, "mode");
+        Scribe_References.Look(ref _linkedStorageParentBuilding, "boundStorageUnit");
+        Scribe_Deep.Look(ref _outputStoreSettings, "outputStoreSettings", this);
+        Scribe_Deep.Look(ref _outputSettings, "outputSettings", "DSU.Min.Desc", "DSU.Max.Desc");
     }
 
     public override string GetInspectString()
@@ -101,7 +96,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
     {
         base.PostMake();
         PowerTrader = GetComp<CompPowerTrader>();
-        outputStoreSettings = new StorageSettings(this);
+        _outputStoreSettings = new StorageSettings(this);
     }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
@@ -109,31 +104,49 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
         base.SpawnSetup(map, respawningAfterLoad);
         PowerTrader = GetComp<CompPowerTrader>();
 
-        //Issues occurs if the boundStorageUnit spawns after this... Needs a check form the other way
-        if (boundStorageUnit?.Map != map && (linkedStorageParentBuilding?.Spawned ?? false))
+        //TODO Issues occurs if the boundStorageUnit spawns after this... Needs a check form the other way
+        if (BoundStorageUnit?.Map != map && (BoundStorageUnit?.Spawned ?? false))
         {
             BoundStorageUnit = null;
         }
+
+        map.GetDsuComponent().RegisterBuilding(this);
+    }
+
+    public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+    {
+        BoundStorageUnit?.Ports.Remove(this);
+        Map.GetDsuComponent().DeregisterBuilding(this);
+        base.DeSpawn(mode);
     }
 
     protected override void ReceiveCompSignal(string signal)
     {
         base.ReceiveCompSignal(signal);
-        if (signal == CompPowerTrader.PowerTurnedOnSignal)
-        {
-            Notify_NeedRefresh();
-        }
-    }
-
-    public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
-    {
-        base.DeSpawn(mode);
-        boundStorageUnit?.Ports.Remove(this);
+        if (signal == CompPowerTrader.PowerTurnedOnSignal) Notify_NeedRefresh();
     }
 
     public void Notify_NeedRefresh()
     {
-        RefreshStoreSettings();
+        // RefreshStoreSettings
+        if (_ioMode == StorageIOMode.Output)
+        {
+            settings = _outputStoreSettings;
+            if (BoundStorageUnit != null && settings.Priority != BoundStorageUnit.settings.Priority)
+            {
+                //the setter of settings.Priority is expensive
+                settings.Priority = BoundStorageUnit.settings.Priority;
+            }
+        }
+        else if (BoundStorageUnit != null)
+        {
+            settings = BoundStorageUnit.settings;
+        }
+        else
+        {
+            settings = new StorageSettings(this);
+        }
+
         switch (IOMode)
         {
             case StorageIOMode.Input:
@@ -148,49 +161,19 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
     public override void Notify_ReceivedThing(Thing newItem)
     {
         base.Notify_ReceivedThing(newItem);
-        if (ioMode == StorageIOMode.Input)
-        {
-            RefreshInput();
-        }
+        if (_ioMode == StorageIOMode.Input) RefreshInput();
     }
 
     public override void Notify_LostThing(Thing newItem)
     {
         base.Notify_LostThing(newItem);
-        if (ioMode == StorageIOMode.Output)
-        {
-            RefreshOutput();
-        }
+        if (_ioMode == StorageIOMode.Output) RefreshOutput();
     }
 
     public override void Tick()
     {
         base.Tick();
-        if (this.IsHashIntervalTick(10))
-        {
-            Notify_NeedRefresh();
-        }
-    }
-
-    public void RefreshStoreSettings()
-    {
-        if (ioMode == StorageIOMode.Output)
-        {
-            settings = outputStoreSettings;
-            if (boundStorageUnit != null && settings.Priority != boundStorageUnit.settings.Priority)
-            {
-                //the setter of settings.Priority is expensive
-                settings.Priority = boundStorageUnit.settings.Priority;
-            }
-        }
-        else if (boundStorageUnit != null)
-        {
-            settings = boundStorageUnit.settings;
-        }
-        else
-        {
-            settings = new StorageSettings(this);
-        }
+        if (this.IsHashIntervalTick(10)) Notify_NeedRefresh(); // TODO! Oh my...
     }
 
     public virtual void RefreshInput()
@@ -198,9 +181,9 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
         if (PowerTrader.PowerOn)
         {
             var item = WorkPosition.GetFirstItem(Map);
-            if (ioMode == StorageIOMode.Input && item != null && (boundStorageUnit?.CanReciveThing(item) ?? false))
+            if (_ioMode == StorageIOMode.Input && item != null && (BoundStorageUnit?.CanReciveThing(item) ?? false))
             {
-                boundStorageUnit.HandleNewItem(item);
+                BoundStorageUnit.HandleNewItem(item);
             }
         }
     }
@@ -210,7 +193,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
         if (currentItem != null)
         {
             itemCandidates = itemCandidates.Where(currentItem.CanStackWith).ToList();
-            var minReqierd = OutputSettings.UseMin ? outputSettings.Min : 0;
+            var minReqierd = OutputSettings.UseMin ? _outputSettings.Min : 0;
             var count = currentItem.stackCount;
             var i = 0;
             while (i < itemCandidates.Count && count < minReqierd)
@@ -233,12 +216,12 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
             var currentItem = WorkPosition.GetFirstItem(Map);
             var storageSlotAvailable = currentItem == null ||
                                        (settings.AllowedToAccept(currentItem) && OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit));
-            if (boundStorageUnit != null && boundStorageUnit.CanReceiveIO)
+            if (BoundStorageUnit != null && BoundStorageUnit.CanReceiveIO)
             {
                 if (storageSlotAvailable)
                 {
                     var itemCandidates =
-                        new List<Thing>(from Thing t in boundStorageUnit.StoredItems where settings.AllowedToAccept(t) select t); // ToList very important - evaluates enumerable
+                        new List<Thing>(from Thing t in BoundStorageUnit.StoredItems where settings.AllowedToAccept(t) select t); // ToList very important - evaluates enumerable
                     if (ItemsThatSatisfyMin(ref itemCandidates, currentItem))
                     {
                         foreach (var item in itemCandidates)
@@ -250,9 +233,9 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
                                     var count = Math.Min(item.stackCount, OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit));
                                     if (count > 0)
                                     {
-                                        var ThingToRemove = item.SplitOff(count);
-                                        if (item.stackCount <= 0) boundStorageUnit.HandleMoveItem(item);
-                                        currentItem.TryAbsorbStack(ThingToRemove, true);
+                                        var thingToRemove = item.SplitOff(count);
+                                        if (item.stackCount <= 0) BoundStorageUnit.HandleMoveItem(item);
+                                        currentItem.TryAbsorbStack(thingToRemove, true);
                                     }
                                 }
                             }
@@ -261,9 +244,9 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
                                 var count = OutputSettings.CountNeededToReachMax(0, item.stackCount);
                                 if (count > 0)
                                 {
-                                    var ThingToRemove = item.SplitOff(count);
-                                    if (item.stackCount <= 0) boundStorageUnit.HandleMoveItem(item);
-                                    currentItem = GenSpawn.Spawn(ThingToRemove, WorkPosition, Map);
+                                    var thingToRemove = item.SplitOff(count);
+                                    if (item.stackCount <= 0) BoundStorageUnit.HandleMoveItem(item);
+                                    currentItem = GenSpawn.Spawn(thingToRemove, WorkPosition, Map);
                                 }
                             }
 
@@ -278,22 +261,23 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
                 //Transfre a item back if it is either too few or disallowed
                 if (currentItem != null &&
                     (!settings.AllowedToAccept(currentItem) || !OutputSettings.SatisfiesMin(currentItem.stackCount)) &&
-                    boundStorageUnit.settings.AllowedToAccept(currentItem))
+                    BoundStorageUnit.settings.AllowedToAccept(currentItem))
                 {
                     currentItem.SetForbidden(false, false);
-                    boundStorageUnit.HandleNewItem(currentItem);
+                    BoundStorageUnit.HandleNewItem(currentItem);
                 }
 
                 //Transfer the diffrence back if it is too much
                 if (currentItem != null &&
-                    !OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) && boundStorageUnit.settings.AllowedToAccept(currentItem))
+                    !OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit) &&
+                    BoundStorageUnit.settings.AllowedToAccept(currentItem))
                 {
                     var splitCount = -OutputSettings.CountNeededToReachMax(currentItem.stackCount, currentItem.def.stackLimit);
                     if (splitCount > 0)
                     {
                         var returnThing = currentItem.SplitOff(splitCount);
                         returnThing.SetForbidden(false, false);
-                        boundStorageUnit.HandleNewItem(returnThing);
+                        BoundStorageUnit.HandleNewItem(returnThing);
                     }
                 }
             }
@@ -303,9 +287,10 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
     public override IEnumerable<Gizmo> GetGizmos()
     {
         foreach (var g in base.GetGizmos()) yield return g;
+
         yield return new Command_Action
         {
-            defaultLabel = "DSU.ItemSource".Translate() + ": " + (boundStorageUnit?.LabelCap ?? "NoneBrackets".Translate()),
+            defaultLabel = "DSU.ItemSource".Translate() + ": " + (BoundStorageUnit?.LabelCap ?? "NoneBrackets".Translate()),
             action = () =>
             {
                 var options = Map.listerBuildings.allBuildingsColonist //
@@ -318,6 +303,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
             },
             icon = TextureHolder.CargoPlatform
         };
+
         if (IOMode == StorageIOMode.Output && ShowLimitGizmo)
         {
             yield return new Command_Action
@@ -336,18 +322,14 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
 
     private IEnumerable<Building_StorageUnitIOBase> SelectedPorts()
     {
-        var l = Find.Selector.SelectedObjects.Where(o => o is Building_StorageUnitIOBase).Select(o => (Building_StorageUnitIOBase)o).ToList();
-        if (!l.Contains(this))
-        {
-            l.Add(this);
-        }
-
-        return l;
+        var selectedPorts = Find.Selector.SelectedObjects.OfType<Building_StorageUnitIOBase>().ToList();
+        if (!selectedPorts.Contains(this)) selectedPorts.Add(this);
+        return selectedPorts;
     }
 
     public virtual bool OutputItem(Thing thing)
     {
-        if (boundStorageUnit?.CanReceiveIO ?? false)
+        if (BoundStorageUnit?.CanReceiveIO ?? false)
         {
             return GenPlace.TryPlaceThing(
                 thing.SplitOff(thing.stackCount),

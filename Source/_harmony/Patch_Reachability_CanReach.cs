@@ -69,10 +69,12 @@ public class Patch_Reachability_CanReach
         foreach (var accessPoint in component.AccessPointSet)
         {
             // Bound DSU is not the same - skip
-            if (accessPoint.boundStorageUnit != dsu) continue;
-            // Access Point is occupied by another item // todo! hmmmm... so pawn will go to another, or DSU. not good actually.
-            if (!accessPoint.CanReceiveNewItem) continue;
+            if (accessPoint.BoundStorageUnit != dsu) continue;
 
+            // Access Point is powered. Let it provide all the requested items. Todo! Let's take a look what happens when we provide all the items...
+            if (!accessPoint.PowerTrader.PowerOn) continue;
+
+            // Total path weight (pawn -> item -> destination), this might be simplied by the settings
             var weight = component.GetTotalDistance(_cachedResult.JobPawn, accessPoint.Position, _cachedResult.JobDestination);
 
             // If distance to DSU/previous is shorter - skip

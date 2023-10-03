@@ -21,7 +21,7 @@ public class Patch_Reservation_Reserve
     {
         if (target.HasThing || ___map == null || !target.Cell.InBounds(___map)) return true;
         var dsu = target.Cell.GetThingList(___map).FirstOrDefault(t => t is Building_StorageUnitIOBase);
-        if (dsu is Building_StorageUnitIOBase { ioMode: StorageIOMode.Input })
+        if (dsu is Building_StorageUnitIOBase { IOMode: StorageIOMode.Input })
         {
             __result = true;
             return false; // stop the method

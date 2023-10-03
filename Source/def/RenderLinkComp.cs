@@ -14,8 +14,8 @@ public class RenderLinkComp : ThingComp
         if (parent is Building_StorageUnitIOBase iobase && iobase.PowerTrader.PowerOn && !iobase.NoConnectionAlert)
         {
             GenDraw.DrawCircleOutline(iobase.TrueCenter(), CircleRadius, SimpleColor.Yellow);
-            GenDraw.DrawCircleOutline(iobase.boundStorageUnit.TrueCenter(), CircleRadius, SimpleColor.Yellow);
-            GenDraw.DrawLineBetween(iobase.TrueCenter(), iobase.boundStorageUnit.TrueCenter(), SimpleColor.Yellow, LineWidth);
+            GenDraw.DrawCircleOutline(iobase.BoundStorageUnit.TrueCenter(), CircleRadius, SimpleColor.Yellow);
+            GenDraw.DrawLineBetween(iobase.TrueCenter(), iobase.BoundStorageUnit.TrueCenter(), SimpleColor.Yellow, LineWidth);
         }
 
         if (parent is DigitalStorageUnitBuilding { Powered: true } dsu)

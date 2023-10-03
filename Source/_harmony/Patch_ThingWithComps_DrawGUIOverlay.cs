@@ -8,17 +8,15 @@ namespace DigitalStorageUnit._harmony;
 /// <summary>
 /// Hides things' labels (etc) below the DigitalStorageUnitBuilding
 /// </summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+[HarmonyPatch(typeof(ThingWithComps), nameof(ThingWithComps.DrawGUIOverlay))]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
-[SuppressMessage("ReSharper", "ArrangeTypeMemberModifiers")]
-[HarmonyPatch(typeof(ThingWithComps))]
-[HarmonyPatch(nameof(ThingWithComps.DrawGUIOverlay))]
-class Patch_ThingWithComps_DrawGUIOverlay
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+public class Patch_ThingWithComps_DrawGUIOverlay
 {
-    static bool Prefix(Thing __instance)
+    public static bool Prefix(Thing __instance)
     {
-        if (__instance.def.category == ThingCategory.Item && (__instance?.Map?.GetDsuComponent()?.DsuOccupiedPoints.ContainsKey(__instance.Position) ?? false))
+        if (__instance.def.category == ThingCategory.Item && (__instance.Map?.GetDsuComponent()?.DsuOccupiedPoints.ContainsKey(__instance.Position) ?? false))
         {
             return false; // skip the original and next prefixes
         }

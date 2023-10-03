@@ -16,8 +16,6 @@ public class DsuMapComponent : MapComponent
 
     public Dictionary<IntVec3, DigitalStorageUnitBuilding> DsuOccupiedPoints { get; } = new();
 
-    public Dictionary<IntVec3, Building_AdvancedStorageUnitIOPort> AdvancedPortLocations { get; } = new();
-
     public DsuMapComponent(Map map) : base(map)
     {
     }
@@ -30,12 +28,11 @@ public class DsuMapComponent : MapComponent
                 DsuSet.Add(dsu);
                 foreach (var point in dsu.OccupiedRect()) DsuOccupiedPoints[point] = dsu;
                 break;
-            case Building_StorageUnitIOPort ioport:
-                IoPortSet.Add(ioport);
-                break;
             case Building_AdvancedStorageUnitIOPort accessPoint:
                 AccessPointSet.Add(accessPoint);
-                AdvancedPortLocations[accessPoint.Position] = accessPoint;
+                break;
+            case Building_StorageUnitIOPort ioport:
+                IoPortSet.Add(ioport);
                 break;
         }
     }
@@ -48,12 +45,11 @@ public class DsuMapComponent : MapComponent
                 DsuSet.Remove(dsu);
                 foreach (var point in dsu.OccupiedRect()) DsuOccupiedPoints.Remove(point);
                 break;
-            case Building_StorageUnitIOPort ioport:
-                IoPortSet.Remove(ioport);
-                break;
             case Building_AdvancedStorageUnitIOPort accessPoint:
                 AccessPointSet.Remove(accessPoint);
-                AdvancedPortLocations.Remove(accessPoint.Position);
+                break;
+            case Building_StorageUnitIOPort ioport:
+                IoPortSet.Remove(ioport);
                 break;
         }
     }
@@ -73,6 +69,8 @@ public class DsuMapComponent : MapComponent
         // TODO maybe a manual calculation without the extra stepps included?
         return pawn.Map.pathFinder.FindPath(pawn.Position, middlePos, pawn).TotalCost + pawn.Map.pathFinder.FindPath(middlePos, destinationPos, pawn).TotalCost;
     }
+
+    public DigitalStorageUnitBuilding GetDsuHoldingItem(Thing item) => DsuOccupiedPoints.TryGetValue(item.Position);
 
     public override void MapRemoved() => MapExtension.OnMapRemoved(map);
 }

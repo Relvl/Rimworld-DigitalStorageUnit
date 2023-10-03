@@ -185,14 +185,20 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
     public bool StackableAt(Thing thing, IntVec3 cell, Map map) => CapacityAt(thing, cell, map, out _);
 
-    public void HandleNewItem(Thing item)
+    /// <summary>
+    /// TODO! Why without PowerTrader check?
+    /// </summary>
+    public void HandleNewItem(Thing item, bool tryAbsorb = true)
     {
         if (item.Destroyed) return;
-        foreach (var storedThing in Position.GetThingList(Map))
+        if (tryAbsorb)
         {
-            if (storedThing == item) continue;
-            storedThing.TryAbsorbStack(item, true);
-            if (item.Destroyed) return;
+            foreach (var storedThing in Position.GetThingList(Map))
+            {
+                if (storedThing == item) continue;
+                storedThing.TryAbsorbStack(item, true);
+                if (item.Destroyed) return;
+            }
         }
 
         if (!StoredItems.Contains(item))

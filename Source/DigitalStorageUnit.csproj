@@ -41,7 +41,6 @@
         </Reference>
         <Reference Include="Assembly-CSharp">
           <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
-          <Private>False</Private>
         </Reference>
         <Reference Include="mscorlib">
           <HintPath>..\..\..\RimWorldWin64_Data\Managed\mscorlib.dll</HintPath>
@@ -98,7 +97,6 @@
         <Compile Include="ui\ActionRightLeftCommand.cs" />
         <Compile Include="ui\ITab_Filter.cs" />
         <Compile Include="ui\LostLinkAlert.cs" />
-        <Compile Include="util\AdvancedIOPatchHelper.cs" />
         <Compile Include="util\ColorExtensions.cs" />
         <Compile Include="util\IForbidPawnInputItem.cs" />
         <Compile Include="util\IHoldMultipleThings.cs" />
@@ -132,10 +130,14 @@
         <Compile Include="buildings\Building_StorageUnitIOPort.cs" />
         <Compile Include="_harmony\Patch_Thing_SetPosition.cs" />
         <Compile Include="_harmony\Patch_TradeUtility_AllLaunchableThingsForTrade.cs" />
+        <Compile Include="_harmony\Patch_WorkGiver_DoBill_TryStartNewDoBillJob.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="App.config" />
       <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="obsolete\readme.md" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

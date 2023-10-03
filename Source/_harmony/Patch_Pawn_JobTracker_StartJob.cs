@@ -71,17 +71,19 @@ public class Patch_Pawn_JobTracker_StartJob
         var component = ___pawn.Map.GetDsuComponent();
         if (component is null) return true; // as is
 
-        // So, go over every job's targets
+        // So, go over every job's targets. For a bill job - there is all the ingredients. Also
         foreach (var target in targetItems)
         {
             if (!target.HasThing) continue; // Do nothig, let the game do it's things.
 
             // Dirty contracted hack o-0, where we do a dirty things. See summary.
             var result = Patch_Reachability_CanReach.CanReachAndFindAccessPoint(___pawn, target.Thing, destinationPos, PathEndMode.Touch, TraverseParms.For(___pawn));
+
             // If there are no DSU/point - let the game alone.
             if (result.Dsu is null || result.AccessPoint is null) continue; // Do nothig, let the game do it's things.
+
             // Add to queue and try to push item to the access point
-            result.AccessPoint.AddItemToQueue(target.Thing);
+            result.AccessPoint.MoveItem(target.Thing);
         }
 
         return true;

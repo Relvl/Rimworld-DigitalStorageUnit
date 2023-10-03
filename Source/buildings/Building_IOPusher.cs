@@ -9,17 +9,11 @@ namespace DigitalStorageUnit;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class Building_IOPusher : Building_StorageUnitIOBase
 {
-    public override IntVec3 WorkPosition => Position + Rotation.FacingCell;
+    protected override IntVec3 WorkPosition => Position + Rotation.FacingCell;
 
     public override StorageIOMode IOMode
     {
         get => StorageIOMode.Output;
-        set => _ = value;
-    }
-
-    public override void SpawnSetup(Map map, bool respawningAfterLoad)
-    {
-        base.SpawnSetup(map, respawningAfterLoad);
-        ioMode = IOMode;
+        protected set => _ = value;
     }
 }
