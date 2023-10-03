@@ -12,6 +12,8 @@ public class DigitalStorageUnitConfig : ModSettings
 
     public float DsuPathingMultiplier = 1;
     public bool CheapPathfinding = true;
+    public bool HalfPathfinding = true;
+    public float EnergyPerStack = 10;
 
     public override void ExposeData()
     {
@@ -20,11 +22,16 @@ public class DigitalStorageUnitConfig : ModSettings
         if (version == Version || Scribe.mode == LoadSaveMode.LoadingVars)
         {
             Scribe_Values.Look(ref DsuPathingMultiplier, "DsuPathingMultiplier", 1, true);
+            Scribe_Values.Look(ref CheapPathfinding, "CheapPathfinding", true, true);
+            Scribe_Values.Look(ref HalfPathfinding, "HalfPathfinding", true, true);
+            Scribe_Values.Look(ref EnergyPerStack, "EnergyPerStack", 10, true);
         }
         else
         {
             Log.Warning("DSU: version changed, config reset");
         }
+
+        EnergyPerStack = Mathf.Clamp(EnergyPerStack, 0, 100000);
     }
 
     public void DoSettingsWindowContents(Rect inRect)
@@ -51,6 +58,15 @@ public class DigitalStorageUnitConfig : ModSettings
                 1
             );
         }
+        else
+        {
+            list.CheckboxLabeled("DSU.Config.HalfPathfinding".Translate(), ref HalfPathfinding, tooltip: "DSU.Config.HalfPathfinding.Desc".Translate());
+        }
+
+        EnergyPerStack = (float)Math.Round(
+            list.SliderLabeled("DSU.Config.EnergyPerStack".Translate(EnergyPerStack.ToString("0")), EnergyPerStack, 1, 50, tooltip: "DSU.Config.EnergyPerStack.Desc".Translate()),
+            0
+        );
 
         list.End();
     }

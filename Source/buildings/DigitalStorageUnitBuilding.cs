@@ -224,7 +224,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
     public bool HoldsPos(IntVec3 pos) => AllSlotCells()?.Contains(pos) ?? false;
 
-    private void UpdatePowerConsumption() => _compPowerTrader.powerOutputInt = -1 * StoredItems.Count * /* todo! config! */ 10f;
+    private void UpdatePowerConsumption() => _compPowerTrader.powerOutputInt = -1 * StoredItems.Count * DigitalStorageUnit.Config.EnergyPerStack;
 
     // TODO! I'm sure we can remove this refresh function...
     protected override void ReceiveCompSignal(string signal)

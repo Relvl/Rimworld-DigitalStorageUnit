@@ -38,5 +38,9 @@
     <DSU.Config.UseCheapPathfinding.Desc.Caution>CAUTION! Disabling this option can seriously hit the TPS and performance! This will be especially noticeable if there are a lot of pawns in the colony.</DSU.Config.UseCheapPathfinding.Desc.Caution>
     <DSU.Config.DsuPathingMultiplier>DSU simple pathfinding factor: {0}</DSU.Config.DsuPathingMultiplier>
     <DSU.Config.DsuPathingMultiplier.Desc>This factor multiplies calculated range from pawn to DSU and target. This enforced a pawns to use access ports instead DSU.</DSU.Config.DsuPathingMultiplier.Desc>
+    <DSU.Config.EnergyPerStack>DSU energy consume per holded item stack: {0}</DSU.Config.EnergyPerStack>
+    <DSU.Config.EnergyPerStack.Desc>The changes will be applied within 60 ticks</DSU.Config.EnergyPerStack.Desc>
+    <DSU.Config.HalfPathfinding>Pathfinding only from item to bill giver</DSU.Config.HalfPathfinding>
+    <DSU.Config.HalfPathfinding.Desc>As it seemed to me, this is a good compromise between the accuracy of choosing an access point and a decrease in performance from pathfinding.</DSU.Config.HalfPathfinding.Desc>
 
 </LanguageData>

@@ -63,11 +63,14 @@ public class DsuMapComponent : MapComponent
             return pawn.Position.DistanceTo(middlePos) + middlePos.DistanceTo(destinationPos) * (isDsu ? DigitalStorageUnit.Config.DsuPathingMultiplier : 1);
         }
 
+        var secondPathCost = pawn.Map.pathFinder.FindPath(middlePos, destinationPos, pawn).TotalCost;
+        if (DigitalStorageUnit.Config.HalfPathfinding) return secondPathCost;
+
         // TODO The issue with this is that it is extramly expencive.
         // TODO 1 Call ~ 0.4ms
         // TODO I Hope there is a better way to make this kind of a check
         // TODO maybe a manual calculation without the extra stepps included?
-        return pawn.Map.pathFinder.FindPath(pawn.Position, middlePos, pawn).TotalCost + pawn.Map.pathFinder.FindPath(middlePos, destinationPos, pawn).TotalCost;
+        return pawn.Map.pathFinder.FindPath(pawn.Position, middlePos, pawn).TotalCost + secondPathCost;
     }
 
     public DigitalStorageUnitBuilding GetDsuHoldingItem(Thing item) => DsuOccupiedPoints.TryGetValue(item.Position);
