@@ -41,6 +41,11 @@
         </Reference>
         <Reference Include="Assembly-CSharp">
           <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="LWM.DeepStorage">
+          <HintPath>..\..\Core_SK_DeepStorage\Assemblies\LWM.DeepStorage.dll</HintPath>
+          <Private>False</Private>
         </Reference>
         <Reference Include="mscorlib">
           <HintPath>..\..\..\RimWorldWin64_Data\Managed\mscorlib.dll</HintPath>
@@ -91,6 +96,7 @@
         <Compile Include="DigitalStorageUnitConfig.cs" />
         <Compile Include="map\DsuMapComponent.cs" />
         <Compile Include="map\OutputSettings.cs" />
+        <Compile Include="ModInit.cs" />
         <Compile Include="obsolete\Debug.cs" />
         <Compile Include="obsolete\IPRF_Building.cs" />
         <Compile Include="obsolete\PlaceThingUtility.cs" />
@@ -100,6 +106,7 @@
         <Compile Include="util\ColorExtensions.cs" />
         <Compile Include="util\IForbidPawnInputItem.cs" />
         <Compile Include="util\IHoldMultipleThings.cs" />
+        <Compile Include="util\ILwmDsLeaveMeAlonePlease.cs" />
         <Compile Include="util\IntVec3Extensions.cs" />
         <Compile Include="util\MapExtension.cs" />
         <Compile Include="_harmony\Patch_Building_Storage_Accepts.cs" />
@@ -110,6 +117,7 @@
         <Compile Include="_harmony\Patch_ForbidUtility_IsForbidden.cs" />
         <Compile Include="_harmony\Patch_JobDriver_HaulToTransporter_Notify_Starting.cs" />
         <Compile Include="_harmony\Patch_MinifiedThing_Print.cs" />
+        <Compile Include="_harmony\Patch_Open_DS_Tab_On_Select_Postfix.cs" />
         <Compile Include="_harmony\Patch_PassingShip_c__DisplayClass24_0.cs" />
         <Compile Include="_harmony\Patch_Pawn_JobTracker_StartJob.cs" />
         <Compile Include="_harmony\Patch_Reachability_CanReach.cs" />

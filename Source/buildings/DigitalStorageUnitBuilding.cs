@@ -12,7 +12,7 @@ namespace DigitalStorageUnit;
 
 [StaticConstructorOnStartup]
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")] // def-reflected
-public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem, IHoldMultipleThings.IHoldMultipleThings
+public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem, IHoldMultipleThings.IHoldMultipleThings, ILwmDsLeaveMeAlonePlease
 {
     private CompPowerTrader _compPowerTrader;
     private bool _pawnAccess = true;

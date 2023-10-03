@@ -1,11 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
     <name>Digital Storage Unit</name>
+    <packageId>Relvl.DigitalStorageUnit</packageId>
+    <modVersion IgnoreIfNoMatchingField="True">1.0</modVersion>
+    <url>https://github.com/Relvl/Rimworld-DigitalStorageUnit</url>
     <author>Johnson1893</author>
+    <description>This mod adds a special storage that can contain a large number of items, as well as ports and access points "connected" to the storage through which pawns can place and pick up items. This storage consumes energy for each stored stack of items. In the lack of energy, items can still be removed, but it will not be possible to place new ones.\n\nThe mod is based on Project Ramfactory Revived, but most of the code concerning the DSU has been redesigned.\nBut in any case, let's say a huge thank you to those guys for their hard work and amazing mod!</description>
+
     <supportedVersions>
         <li>1.4</li>
     </supportedVersions>
-    <packageId>io.github.Relvl.Rimworld.DigitalStorageUnit</packageId>
+
     <modDependencies>
         <li>
             <packageId>brrainz.harmony</packageId>
@@ -14,9 +19,21 @@
             <downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
         </li>
     </modDependencies>
-    <loadAfter>
+
+    <forceLoadAfter>
         <li>brrainz.harmony</li>
         <li>UnlimitedHugs.HugsLib</li>
-    </loadAfter>
+        <li>skyarkhangel.HSK</li>
+        <li>Mehni.PickUpAndHaul</li>
+        <li>LWM.DeepStorage</li>
+    </forceLoadAfter>
+    <forceLoadBefore>
+        <li>Krkr.RocketMan</li>
+        <li>trinity.RuntimeGCupdated</li>
+    </forceLoadBefore>
+    
+    <incompatibleWith>
+        <li>spdskatr.projectrimfactory</li>
+    </incompatibleWith>
 
 </ModMetaData>

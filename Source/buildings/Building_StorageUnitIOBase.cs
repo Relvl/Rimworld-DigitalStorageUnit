@@ -11,7 +11,7 @@ using Verse;
 namespace DigitalStorageUnit;
 
 [StaticConstructorOnStartup]
-public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawnInputItem
+public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawnInputItem, ILwmDsLeaveMeAlonePlease
 {
     private StorageIOMode _ioMode;
     private DigitalStorageUnitBuilding _linkedStorageParentBuilding;

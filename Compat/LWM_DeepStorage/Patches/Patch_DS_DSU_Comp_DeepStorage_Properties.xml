@@ -19,12 +19,12 @@
         <xpath>Defs/ThingDef[defName="DSU_InputBus_Building"]/comps</xpath>
         <value>
             <li Class="LWM.DeepStorage.Properties">
-                <maxNumberStacks>1</maxNumberStacks>
-                <timeStoringTakes>10</timeStoringTakes>
+                <maxNumberStacks>10</maxNumberStacks>
+                <timeStoringTakes>60</timeStoringTakes>
                 <additionalTimeEachStack>0</additionalTimeEachStack>
                 <additionalTimeEachDef>0</additionalTimeEachDef>
                 <overlayType>None</overlayType>
-                <showContents>false</showContents>
+                <showContents>true</showContents>
             </li>
         </value>
     </Operation>
@@ -33,12 +33,12 @@
         <xpath>Defs/ThingDef[defName="DSU_AccessPoint_Building"]/comps</xpath>
         <value>
             <li Class="LWM.DeepStorage.Properties">
-                <maxNumberStacks>1</maxNumberStacks>
-                <timeStoringTakes>10</timeStoringTakes>
+                <maxNumberStacks>10</maxNumberStacks>
+                <timeStoringTakes>60</timeStoringTakes>
                 <additionalTimeEachStack>0</additionalTimeEachStack>
                 <additionalTimeEachDef>0</additionalTimeEachDef>
                 <overlayType>None</overlayType>
-                <showContents>false</showContents>
+                <showContents>true</showContents>
             </li>
         </value>
     </Operation>
