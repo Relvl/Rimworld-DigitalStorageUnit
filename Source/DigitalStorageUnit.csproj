@@ -113,6 +113,7 @@
         <Compile Include="util\ThingIconTextureData.cs" />
         <Compile Include="_harmony\Patch_Building_Storage_Accepts.cs" />
         <Compile Include="_harmony\Patch_Building_Storage_GetGizmos.cs" />
+        <Compile Include="_harmony\Patch_Buildin_Storage_GetInspectString.cs" />
         <Compile Include="_harmony\Patch_CompressibilityDeciderUtility_IsSaveCompressible.cs" />
         <Compile Include="_harmony\Patch_FloatMenuMakerMap_ChoicesAtFor.cs" />
         <Compile Include="_harmony\Patch_FoodUtility_SpawnedFoodSearchInnerScan.cs" />

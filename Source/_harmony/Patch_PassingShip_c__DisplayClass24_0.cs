@@ -67,7 +67,7 @@ public static class Patch_PassingShip_c__DisplayClass24_0
                 //this.Map
                 yield return new CodeInstruction(OpCodes.Ldarg_0);
                 yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(hiddenClass, "<>4__this"));
-                yield return new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(PassingShip), "Map"));
+                yield return new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(PassingShip), "Map")); // PassingShip::Map
                 //Call --> DigitalStorageUnitBuilding.AnyPowerd with the above as an argument
                 yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_PassingShip_c__DisplayClass24_0), nameof(AnyPowerd), new[] { typeof(Map) }));
                 yield return new CodeInstruction(OpCodes.Brtrue_S, instruction.operand);

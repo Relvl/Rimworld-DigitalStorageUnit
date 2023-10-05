@@ -298,6 +298,4 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         else
             GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + "DSU.StacksCount".Translate(StoredItems.Count));
     }
-    
-    
 }
