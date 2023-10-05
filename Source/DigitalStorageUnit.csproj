@@ -85,8 +85,6 @@
         <Compile Include="def\CompProperties_CompOutputAdjustable.cs" />
         <Compile Include="def\LostLinkComp.cs" />
         <Compile Include="def\LostLinkCompProperties.cs" />
-        <Compile Include="def\ITab_IOPortStorage.cs" />
-        <Compile Include="def\ITab_Items.cs" />
         <Compile Include="def\ModExtensionPortColor.cs" />
         <Compile Include="def\RenderLinkComp.cs" />
         <Compile Include="def\RenderLinkCompProperties.cs" />
@@ -102,13 +100,17 @@
         <Compile Include="obsolete\PlaceThingUtility.cs" />
         <Compile Include="ui\ActionRightLeftCommand.cs" />
         <Compile Include="ui\ITab_Filter.cs" />
+        <Compile Include="ui\ITab_IOPortStorage.cs" />
         <Compile Include="ui\LostLinkAlert.cs" />
         <Compile Include="util\ColorExtensions.cs" />
         <Compile Include="util\IForbidPawnInputItem.cs" />
         <Compile Include="util\IHoldMultipleThings.cs" />
         <Compile Include="util\ILwmDsLeaveMeAlonePlease.cs" />
         <Compile Include="util\IntVec3Extensions.cs" />
+        <Compile Include="util\ITab_Items.cs" />
         <Compile Include="util\MapExtension.cs" />
+        <Compile Include="util\ThingExtensions.cs" />
+        <Compile Include="util\ThingIconTextureData.cs" />
         <Compile Include="_harmony\Patch_Building_Storage_Accepts.cs" />
         <Compile Include="_harmony\Patch_Building_Storage_GetGizmos.cs" />
         <Compile Include="_harmony\Patch_CompressibilityDeciderUtility_IsSaveCompressible.cs" />
@@ -116,6 +118,7 @@
         <Compile Include="_harmony\Patch_FoodUtility_SpawnedFoodSearchInnerScan.cs" />
         <Compile Include="_harmony\Patch_ForbidUtility_IsForbidden.cs" />
         <Compile Include="_harmony\Patch_JobDriver_HaulToTransporter_Notify_Starting.cs" />
+        <Compile Include="_harmony\Patch_MainTabWindow_Inspect__OnClose.cs" />
         <Compile Include="_harmony\Patch_MinifiedThing_Print.cs" />
         <Compile Include="_harmony\Patch_Open_DS_Tab_On_Select_Postfix.cs" />
         <Compile Include="_harmony\Patch_PassingShip_c__DisplayClass24_0.cs" />

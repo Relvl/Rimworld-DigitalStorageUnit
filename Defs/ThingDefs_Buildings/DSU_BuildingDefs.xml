@@ -207,7 +207,6 @@
 
         <inspectorTabs>
             <li>DigitalStorageUnit.ITab_IOPortStorage</li>
-            <li>DigitalStorageUnit.ITab_Items</li>
         </inspectorTabs>
         <comps>
             <li Class="CompProperties_Power">
@@ -280,7 +279,6 @@
 
         <inspectorTabs>
             <li>DigitalStorageUnit.ITab_IOPortStorage</li>
-            <li>DigitalStorageUnit.ITab_Items</li>
         </inspectorTabs>
         <comps>
             <li Class="CompProperties_Power">
@@ -358,7 +356,6 @@
 
         <inspectorTabs>
             <li>DigitalStorageUnit.ITab_IOPortStorage</li>
-            <li>DigitalStorageUnit.ITab_Items</li>
         </inspectorTabs>
         <comps>
             <li Class="CompProperties_Power">

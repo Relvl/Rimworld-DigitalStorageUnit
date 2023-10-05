@@ -17,6 +17,8 @@
     <DSU.IItemsTab.Label>{0} stacks total, showing {1} result(s)</DSU.IItemsTab.Label>
     <DSU.IItemsTab.Label.Crate>{0} stacks, max {1}, showing {2} result(s)</DSU.IItemsTab.Label.Crate>
     <DSU.IItemsTab.Label.Empty>There are currently no items stored</DSU.IItemsTab.Label.Empty>
+    <DSU.IItemsTab.Caption>{0}: {1}/{2} stacks</DSU.IItemsTab.Caption>
+    <DSU.IItemsTab.Caption.Filtered>{0}: {1}/{2} stacks (found: {3})</DSU.IItemsTab.Caption.Filtered>
     <DSU.Rename>Rename</DSU.Rename>
     <DSU.Rename.Desc>Rename this building</DSU.Rename.Desc>
     <DSU.StacksCount>{0} stacks</DSU.StacksCount>
