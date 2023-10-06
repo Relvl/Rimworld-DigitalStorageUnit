@@ -14,6 +14,7 @@ public class DigitalStorageUnitConfig : ModSettings
     public bool CheapPathfinding = true;
     public bool HalfPathfinding = true;
     public float EnergyPerStack = 10;
+    public bool HeaterEnabled = false;
 
     public override void ExposeData()
     {
@@ -25,6 +26,7 @@ public class DigitalStorageUnitConfig : ModSettings
             Scribe_Values.Look(ref CheapPathfinding, "CheapPathfinding", true, true);
             Scribe_Values.Look(ref HalfPathfinding, "HalfPathfinding", true, true);
             Scribe_Values.Look(ref EnergyPerStack, "EnergyPerStack", 10, true);
+            Scribe_Values.Look(ref HeaterEnabled, "HeaterEnabled", false, true);
         }
         else
         {
@@ -67,6 +69,8 @@ public class DigitalStorageUnitConfig : ModSettings
             list.SliderLabeled("DSU.Config.EnergyPerStack".Translate(EnergyPerStack.ToString("0")), EnergyPerStack, 1, 50, tooltip: "DSU.Config.EnergyPerStack.Desc".Translate()),
             0
         );
+
+        list.CheckboxLabeled("DSU.Config.HeaterEnabled".Translate(), ref HeaterEnabled, "DSU.Config.HeaterEnabled.Desc".Translate());
 
         list.End();
     }

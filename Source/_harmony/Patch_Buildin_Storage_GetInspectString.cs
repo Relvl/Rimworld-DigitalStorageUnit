@@ -21,7 +21,7 @@ public static class Patch_Buildin_Storage_GetInspectString
         var patched = false;
         foreach (var instruction in instructions)
         {
-            if (instruction.opcode == OpCodes.Brfalse) brFalseCount++;
+            if (instruction.opcode == OpCodes.Brfalse) brFalseCount++; // todo! need more fuzzy search
             if (brFalseCount == 2 && !patched)
             {
                 yield return instruction;

@@ -15,6 +15,7 @@ namespace DigitalStorageUnit;
 public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem, IHoldMultipleThings.IHoldMultipleThings, ILwmDsLeaveMeAlonePlease
 {
     private CompPowerTrader _compPowerTrader;
+    private DsuHeaterComp _heaterComp;
     private bool _pawnAccess = true;
 
     public List<Building_StorageUnitIOBase> Ports = new();
@@ -24,13 +25,15 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
     public ModExtensionDsu Mod;
 
-    private bool CanStoreMoreItems => Powered && Spawned && (Mod == null || StoredItems.Count < MaxNumberItemsInternal);
+    private bool CanStoreMoreItems => CanWork && (Mod == null || StoredItems.Count < MaxNumberItemsInternal);
+
+    private bool InsideHermeticRoom => _heaterComp.IsRoomHermetic();
 
     private int MaxNumberItemsInternal => (Mod?.limit ?? int.MaxValue) - def.Size.Area + 1;
 
     public List<Thing> StoredItems { get; } = new();
     public bool Powered => _compPowerTrader?.PowerOn ?? false;
-    public bool CanReceiveIO => Powered && Spawned;
+    public bool CanWork => Powered && Spawned && (!DigitalStorageUnit.Config.HeaterEnabled || InsideHermeticRoom);
 
     public override string LabelNoCount => UniqueName ?? base.LabelNoCount;
     public override string LabelCap => UniqueName ?? base.LabelCap;
@@ -64,6 +67,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         base.SpawnSetup(map, respawningAfterLoad);
 
         _compPowerTrader ??= GetComp<CompPowerTrader>();
+        _heaterComp ??= GetComp<DsuHeaterComp>();
         Mod ??= def.GetModExtension<ModExtensionDsu>();
 
         map.GetDsuComponent().RegisterBuilding(this);
@@ -82,6 +86,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     {
         base.PostMapInit();
         _compPowerTrader ??= GetComp<CompPowerTrader>();
+        _heaterComp ??= GetComp<DsuHeaterComp>();
         RefreshStorage();
     }
 
@@ -113,7 +118,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
         foreach (var cell in AllSlotCells())
         {
-            foreach (var item in cell.GetThingList(Map))
+            foreach (var item in cell.GetThingList(Map).ToList())
             {
                 if (item.def.category != ThingCategory.Item) continue;
 
@@ -185,9 +190,6 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
     public bool StackableAt(Thing thing, IntVec3 cell, Map map) => CapacityAt(thing, cell, map, out _);
 
-    /// <summary>
-    /// TODO! Why without PowerTrader check?
-    /// </summary>
     public void HandleNewItem(Thing item, bool tryAbsorb = true)
     {
         if (item.Destroyed) return;
@@ -220,9 +222,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         //throw new System.NotImplementedException();
     }
 
-    public bool CanReciveThing(Thing item) => settings.AllowedToAccept(item) && CanReceiveIO && CanStoreMoreItems;
-
-    public bool HoldsPos(IntVec3 pos) => AllSlotCells()?.Contains(pos) ?? false;
+    public bool CanReciveThing(Thing item) => settings.AllowedToAccept(item) && CanWork && CanStoreMoreItems;
 
     private void UpdatePowerConsumption() => _compPowerTrader.powerOutputInt = -1 * StoredItems.Count * DigitalStorageUnit.Config.EnergyPerStack;
 

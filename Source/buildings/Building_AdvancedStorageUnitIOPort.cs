@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using DigitalStorageUnit.util;
+using RimWorld;
 using Verse;
 
 // ReSharper disable once CheckNamespace
@@ -25,6 +26,7 @@ public class Building_AdvancedStorageUnitIOPort : Building_StorageUnitIOBase
         if (BoundStorageUnit is null) return;
         if (PowerTrader is null || !PowerTrader.PowerOn) return;
         thing.Position = WorkPosition;
+        FleckMaker.ThrowLightningGlow(WorkPosition.ToVector3(), Map, 0.8f);
     }
 
     public override void Tick()

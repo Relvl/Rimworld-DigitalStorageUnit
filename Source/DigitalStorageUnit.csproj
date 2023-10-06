@@ -83,6 +83,8 @@
     <ItemGroup>
         <Compile Include="def\CompOutputAdjustable.cs" />
         <Compile Include="def\CompProperties_CompOutputAdjustable.cs" />
+        <Compile Include="def\DsuHeaterComp.cs" />
+        <Compile Include="def\DsuHeaterCompProperties.cs" />
         <Compile Include="def\LostLinkComp.cs" />
         <Compile Include="def\LostLinkCompProperties.cs" />
         <Compile Include="def\ModExtensionPortColor.cs" />
@@ -92,6 +94,7 @@
         <Compile Include="def\ModExtensionDsu.cs" />
         <Compile Include="def\PlaceWorkerIOPusherHilight.cs" />
         <Compile Include="DigitalStorageUnitConfig.cs" />
+        <Compile Include="map\DsuHeaterPlaceWorker.cs" />
         <Compile Include="map\DsuMapComponent.cs" />
         <Compile Include="map\OutputSettings.cs" />
         <Compile Include="ModInit.cs" />
@@ -99,6 +102,9 @@
         <Compile Include="obsolete\IPRF_Building.cs" />
         <Compile Include="obsolete\PlaceThingUtility.cs" />
         <Compile Include="ui\ActionRightLeftCommand.cs" />
+        <Compile Include="ui\DsuNonHermeticAlert.cs" />
+        <Compile Include="ui\DsuOverheatAlert.cs" />
+        <Compile Include="ui\DsuRoomRoleWorker.cs" />
         <Compile Include="ui\ITab_Filter.cs" />
         <Compile Include="ui\ITab_IOPortStorage.cs" />
         <Compile Include="ui\LostLinkAlert.cs" />

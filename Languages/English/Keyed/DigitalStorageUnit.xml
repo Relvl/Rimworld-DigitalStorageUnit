@@ -34,6 +34,12 @@
     <DSU.PawnAccess.Desc>Pawn access</DSU.PawnAccess.Desc>
     <DSU.Alert.LostLink.Label>DSU: port lost link</DSU.Alert.LostLink.Label>
     <DSU.Alert.LostLink.Desc>Port lost link. You sould connect it to on if Digital Storage Unit.</DSU.Alert.LostLink.Desc>
+    <DSU.Alert.DsuNonHermetic>DSU room lost a roof</DSU.Alert.DsuNonHermetic>
+    <DSU.Alert.DsuNonHermetic.Desc>The DSU should be placed in a full roofed room, but there is no ceiling or wall in the room.</DSU.Alert.DsuNonHermetic.Desc>
+    <DSU.Alert.DsuOverheat>DSU room temperature is critical</DSU.Alert.DsuOverheat>
+    <DSU.Alert.DsuOverheat.Desc>If the temperature keeps rising, the DSU, all stored items, and all other structures in the room will begin to receive damage. Disable the DSU or use a coolers!</DSU.Alert.DsuOverheat.Desc>
+
+    <DSU.PlaceWorker.ProperRoomNeeded>The DSU should be placed in a full roofed room</DSU.PlaceWorker.ProperRoomNeeded>
 
     <DSU.Config.UseCheapPathfinding>Cheap Access Point pathfinding</DSU.Config.UseCheapPathfinding>
     <DSU.Config.UseCheapPathfinding.Desc>Enables a simplified search for the "nearest" Access Point.\n\nWith this option enabled, the geographically closest DIRECT distance between the pawn, the Access Point, and the target location is using.\n\nWhen the option is disabled, this search will involve the pathfinding for the cheapest path.\n\n</DSU.Config.UseCheapPathfinding.Desc>

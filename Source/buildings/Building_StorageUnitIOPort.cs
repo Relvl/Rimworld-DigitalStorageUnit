@@ -65,7 +65,7 @@ public class Building_StorageUnitIOPort : Building_StorageUnitIOBase
         var currentItem = Position.GetFirstItem(Map);
         var storageSlotAvailable = currentItem == null ||
                                    (settings.AllowedToAccept(currentItem) && OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit));
-        if (BoundStorageUnit is not { CanReceiveIO: true }) return;
+        if (BoundStorageUnit is not { CanWork: true }) return;
 
         if (storageSlotAvailable)
         {
@@ -168,7 +168,7 @@ public class Building_StorageUnitIOPort : Building_StorageUnitIOBase
 
     public override bool OutputItem(Thing thing)
     {
-        if (BoundStorageUnit?.CanReceiveIO ?? false)
+        if (BoundStorageUnit?.CanWork ?? false)
         {
             return GenPlace.TryPlaceThing(
                 thing.SplitOff(thing.stackCount),

@@ -216,7 +216,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
             var currentItem = WorkPosition.GetFirstItem(Map);
             var storageSlotAvailable = currentItem == null ||
                                        (settings.AllowedToAccept(currentItem) && OutputSettings.SatisfiesMax(currentItem.stackCount, currentItem.def.stackLimit));
-            if (BoundStorageUnit != null && BoundStorageUnit.CanReceiveIO)
+            if (BoundStorageUnit != null && BoundStorageUnit.CanWork)
             {
                 if (storageSlotAvailable)
                 {
@@ -329,7 +329,7 @@ public abstract class Building_StorageUnitIOBase : Building_Storage, IForbidPawn
 
     public virtual bool OutputItem(Thing thing)
     {
-        if (BoundStorageUnit?.CanReceiveIO ?? false)
+        if (BoundStorageUnit?.CanWork ?? false)
         {
             return GenPlace.TryPlaceThing(
                 thing.SplitOff(thing.stackCount),

@@ -20,4 +20,5 @@ public static class TextureHolder
     public static readonly Material MatLostLink = MaterialPool.MatFrom("UI/too-far-from-roboport-icon", ShaderDatabase.MetaOverlay);
 
     public static readonly Color Yellow25 = Color.yellow.WithAlpha(0.25f);
+    public static readonly Color Red25 = Color.red.WithAlpha(0.25f);
 }

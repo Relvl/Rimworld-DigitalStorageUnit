@@ -148,7 +148,17 @@
             <li Class="CompProperties_Flickable"/>
             <li Class="DigitalStorageUnit.CompProperties_CompOutputAdjustable"/>
             <li Class="DigitalStorageUnit.RenderLinkCompProperties"/>
+            <li Class="DigitalStorageUnit.DsuHeaterCompProperties">
+                <HeatPerSecond>30</HeatPerSecond>
+                <MaxHeat>1000</MaxHeat>
+                <DamageAtHeat>200</DamageAtHeat>
+                <!-- (DamageAtHeat - current_temp) * DamageAtHeat -->
+                <DamageMultiplier>0.1</DamageMultiplier>
+            </li>
         </comps>
+        <placeWorkers>
+            <li>DigitalStorageUnit.DsuHeaterPlaceWorker</li>
+        </placeWorkers>
         <modExtensions>
             <li Class="DigitalStorageUnit.ModExtensionDsu">
                 <limit>768</limit>
