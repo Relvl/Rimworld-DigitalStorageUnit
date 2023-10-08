@@ -148,6 +148,7 @@
         <Compile Include="buildings\Building_StorageUnitIOPort.cs" />
         <Compile Include="_harmony\Patch_Thing_SetPosition.cs" />
         <Compile Include="_harmony\Patch_TradeUtility_AllLaunchableThingsForTrade.cs" />
+        <Compile Include="_harmony\Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod.cs" />
         <Compile Include="_harmony\Patch_WorkGiver_DoBill_TryStartNewDoBillJob.cs" />
     </ItemGroup>
     <ItemGroup>
