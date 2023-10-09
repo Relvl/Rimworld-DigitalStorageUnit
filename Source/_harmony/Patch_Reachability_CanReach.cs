@@ -65,14 +65,14 @@ public class Patch_Reachability_CanReach
         var bestWeight = __result ? component.GetTotalDistance(_cachedResult.JobPawn, dest.Cell, _cachedResult.JobDestination, true) : float.MaxValue;
         _cachedResult.DirectPathingWeight = bestWeight;
 
-        Building_AdvancedStorageUnitIOPort bestAccessPoint = null;
+        AccessPointPortBuilding bestAccessPoint = null;
         foreach (var accessPoint in component.AccessPointSet)
         {
             // Bound DSU is not the same - skip
             if (accessPoint.BoundStorageUnit != dsu) continue;
 
             // Access Point is powered. Let it provide all the requested items. Todo! Let's take a look what happens when we provide all the items...
-            if (!accessPoint.PowerTrader.PowerOn) continue;
+            if (!accessPoint.Powered) continue;
 
             // Total path weight (pawn -> item -> destination), this might be simplied by the settings
             var weight = component.GetTotalDistance(_cachedResult.JobPawn, accessPoint.Position, _cachedResult.JobDestination);
@@ -117,7 +117,7 @@ public class ReachabilityPatchResult
     /// <summary>
     /// Best Access Point that we found here.
     /// </summary>
-    public Building_AdvancedStorageUnitIOPort AccessPoint;
+    public AccessPointPortBuilding AccessPoint;
 
     /// <summary>
     /// Distance (pawn -> item -> destination)

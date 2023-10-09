@@ -14,7 +14,10 @@ public class DigitalStorageUnitConfig : ModSettings
     public bool CheapPathfinding = true;
     public bool HalfPathfinding = true;
     public float EnergyPerStack = 10;
-    public bool HeaterEnabled = false;
+    public bool HeaterEnabled;
+    public bool WorkGiverDoBillUnnecessaryFix = true;
+    public bool BillSearchRadiusFix = true;
+    public bool AutoBoundDsu = true;
 
     public override void ExposeData()
     {
@@ -27,6 +30,9 @@ public class DigitalStorageUnitConfig : ModSettings
             Scribe_Values.Look(ref HalfPathfinding, "HalfPathfinding", true, true);
             Scribe_Values.Look(ref EnergyPerStack, "EnergyPerStack", 10, true);
             Scribe_Values.Look(ref HeaterEnabled, "HeaterEnabled", false, true);
+            Scribe_Values.Look(ref WorkGiverDoBillUnnecessaryFix, "WorkGiverDoBillUnnecessaryFix", true, true);
+            Scribe_Values.Look(ref BillSearchRadiusFix, "BillSearchRadiusFix", true, true);
+            Scribe_Values.Look(ref AutoBoundDsu, "AutoBoundDsu", true, true);
         }
         else
         {
@@ -71,6 +77,16 @@ public class DigitalStorageUnitConfig : ModSettings
         );
 
         list.CheckboxLabeled("DSU.Config.HeaterEnabled".Translate(), ref HeaterEnabled, "DSU.Config.HeaterEnabled.Desc".Translate());
+
+        list.CheckboxLabeled(
+            "DSU.Config.WorkGiverDoBillUnnecessaryFix".Translate(),
+            ref WorkGiverDoBillUnnecessaryFix,
+            "DSU.Config.WorkGiverDoBillUnnecessaryFix.Desc".Translate()
+        );
+
+        list.CheckboxLabeled("DSU.Config.BillSearchRadiusFix".Translate(), ref BillSearchRadiusFix, "DSU.Config.BillSearchRadiusFix.Desc".Translate());
+
+        list.CheckboxLabeled("DSU.Config.AutoBoundDsu".Translate(), ref AutoBoundDsu, "DSU.Config.AutoBoundDsu.Desc".Translate());
 
         list.End();
     }

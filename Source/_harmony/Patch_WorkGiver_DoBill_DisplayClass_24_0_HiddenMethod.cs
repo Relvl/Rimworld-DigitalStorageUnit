@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -11,16 +11,23 @@ using Verse.AI;
 
 namespace DigitalStorageUnit._harmony;
 
+/// <summary>
+/// Allows bill to search intems through AccessPoint within ingredient search radius
+/// </summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 [HarmonyPatch]
-public class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
+public static class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
 {
     private static Type _hiddenClass;
     private static FieldInfo _regionsProcessed;
     private static FieldInfo _adjacentRegionsAvailable;
+    private static FieldInfo _relevantThings;
 
     private static Predicate<Thing> _thingValidator;
     private static Pawn _pawn;
-    private static readonly HashSet<DigitalStorageUnitBuilding> _linkedDsu = new();
+
+    private static readonly HashSet<DigitalStorageUnitBuilding> LinkedDsu = new();
 
     /// <summary>
     /// We can't mix TargetMethod and manual patch. So... Inner class, yeah.
@@ -30,18 +37,67 @@ public class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
     {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(WorkGiver_DoBill), "TryFindBestIngredientsHelper")]
-        public static void TryFindBestIngredientsHelper_Prefix(Predicate<Thing> thingValidator, Pawn pawn)
+        public static void TryFindBestIngredientsHelper_Prefix(Predicate<Thing> thingValidator, Pawn pawn, Thing billGiver, float searchRadius)
         {
+            LinkedDsu.Clear();
+
             _thingValidator = thingValidator;
             _pawn = pawn;
-            _linkedDsu.Clear();
+
+            if (billGiver is not null && DigitalStorageUnit.Config.BillSearchRadiusFix)
+            {
+                LinkedDsu.AddRange(
+                    billGiver.Map.listerBuildings.AllBuildingsColonistOfClass<AccessPointPortBuilding>()
+                        .Where(p => p.Spawned && p.Powered && p.BoundStorageUnit is not null)
+                        .Where(p => p.Position.DistanceToSquared(billGiver.Position) <= searchRadius * searchRadius)
+                        .Select(p => p.BoundStorageUnit)
+                );
+            }
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(WorkGiver_DoBill), "TryFindBestIngredientsInSet_NoMixHelper")]
-        public static void TryFindBestIngredientsInSet_NoMixHelper_Postfix(ref bool __result)
+        [HarmonyPatch(typeof(WorkGiver_DoBill), "TryFindBestIngredientsHelper")]
+        public static void TryFindBestIngredientsHelper_Postfix(Predicate<List<Thing>> foundAllIngredientsAndChoose, bool __result)
         {
-            Log.Warning($"--- TryFindBestIngredientsInSet_NoMixHelper_Postfix = {__result}");
+            if (!__result && DigitalStorageUnit.Config.WorkGiverDoBillUnnecessaryFix)
+            {
+                // Todo! chech if it was not called at all
+                _relevantThings ??= AccessTools.Field(typeof(WorkGiver_DoBill), "relevantThings");
+                foundAllIngredientsAndChoose(_relevantThings.GetValue(null) as List<Thing>);
+            }
+
+            _thingValidator = null;
+            _pawn = null;
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(WorkGiver_DoBill), "TryFindBestIngredientsHelper")]
+        public static IEnumerable<CodeInstruction> TryFindBestIngredientsHelper_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var unnecessaryFoundAllIngredientsAndChooseIndex = -1;
+            foreach (var instruction in instructions)
+            {
+                if (DigitalStorageUnit.Config.WorkGiverDoBillUnnecessaryFix)
+                {
+                    if (unnecessaryFoundAllIngredientsAndChooseIndex == -1 &&
+                        instruction.opcode == OpCodes.Call &&
+                        instruction.operand.ToString().StartsWith("Void AddRange[Thing]"))
+                    {
+                        unnecessaryFoundAllIngredientsAndChooseIndex = 0;
+                        yield return instruction;
+                        continue;
+                    }
+
+                    // Remove 364'th line:  int num = foundAllIngredientsAndChoose(WorkGiver_DoBill.relevantThings) ? 1 : 0;
+                    if (unnecessaryFoundAllIngredientsAndChooseIndex is >= 0 and <= 4)
+                    {
+                        unnecessaryFoundAllIngredientsAndChooseIndex++;
+                        continue;
+                    }
+                }
+
+                yield return instruction;
+            }
         }
     }
 
@@ -73,18 +129,13 @@ public class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
 
     public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        var sb = new StringBuilder();
-        sb.AppendLine("-------------");
         var regionsProcessedFound = false;
         var portSearchAdded = false;
 
         foreach (var instruction in instructions)
         {
-            sb.AppendLine($"{instruction.opcode} / {instruction.operand}");
-
             if (!regionsProcessedFound && instruction.opcode == OpCodes.Stfld && instruction.operand.ToString() == "System.Int32 regionsProcessed")
             {
-                sb.AppendLine("^^^ regionsProcessedFound");
                 regionsProcessedFound = true;
                 yield return instruction;
                 continue;
@@ -92,13 +143,11 @@ public class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
 
             if (regionsProcessedFound && !portSearchAdded)
             {
-                sb.AppendLine("^^^ portSearchAdded");
-                yield return new CodeInstruction(OpCodes.Ldarg_1); // Region r
-                // yield return new CodeInstruction(OpCodes.Ldsfld, _regionsProcessed);
-                // yield return new CodeInstruction(OpCodes.Ldsfld, _adjacentRegionsAvailable);
-                yield return new CodeInstruction(OpCodes.Ldc_I4, 0);
-                yield return new CodeInstruction(OpCodes.Ldc_I4, 1);
-                yield return new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(WorkGiver_DoBill), "relevantThings"));
+                yield return new CodeInstruction(OpCodes.Ldarg_0);
+                yield return new CodeInstruction(OpCodes.Ldfld, _regionsProcessed);
+                yield return new CodeInstruction(OpCodes.Ldarg_0);
+                yield return new CodeInstruction(OpCodes.Ldfld, _adjacentRegionsAvailable);
+                yield return new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(WorkGiver_DoBill), "newRelevantThings"));
                 yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod), nameof(ProcessRegion)));
 
                 portSearchAdded = true;
@@ -108,45 +157,24 @@ public class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
 
             yield return instruction;
         }
-
-        Log.Warning(sb.ToString());
     }
 
-    public static void ProcessRegion(Region region, Int32 regionsProcessed, Int32 adjacentRegionsAvailable, List<Thing> relevantThings)
+    public static void ProcessRegion(int regionsProcessed, int adjacentRegionsAvailable, List<Thing> relevantThings)
     {
-        foreach (var thing in region.ListerThings.AllThings)
+        if (!DigitalStorageUnit.Config.BillSearchRadiusFix) return;
+        if (_pawn is null || _thingValidator is null) return;
+        if (regionsProcessed <= adjacentRegionsAvailable) return;
+        foreach (var dsu in LinkedDsu)
         {
-            if (thing is not Building_AdvancedStorageUnitIOPort port) continue;
-            Log.Warning($"--- DSU port found: {port}");
-            if (port.PowerTrader.PowerOn && port.BoundStorageUnit is not null && port.BoundStorageUnit.CanWork)
+            foreach (var item in dsu.StoredItems)
             {
-                Log.Warning("--- DSU port added");
-                _linkedDsu.Add(port.BoundStorageUnit);
+                if (!item.Spawned) continue;
+                if (item.IsForbidden(_pawn)) continue;
+                if (!_pawn.CanReserve(item)) continue;
+                if (!_thingValidator(item)) continue;
+                if (relevantThings.Contains(item)) continue;
+                relevantThings.Add(item);
             }
-        }
-
-        if (regionsProcessed > adjacentRegionsAvailable)
-        {
-            Log.Warning($"--- DSU AddRelevantThings, _thingValidator = {_thingValidator}, _pawn = {_pawn}");
-            if (_thingValidator is null || _pawn is null) return;
-
-            Log.Warning($"--- DSU _linkedDsu = {string.Join(", ", _linkedDsu)}, relevantThings = {string.Join(", ", relevantThings)}");
-            foreach (var dsu in _linkedDsu)
-            {
-                foreach (var item in dsu.StoredItems)
-                {
-                    if (!item.Spawned) continue;
-                    if (item.IsForbidden(_pawn)) continue;
-                    if (!_pawn.CanReserve(item)) continue;
-                    if (!_thingValidator(item)) continue;
-                    if (relevantThings.Contains(item)) continue;
-                    relevantThings.Add(item);
-                    Log.Warning($"--- DSU add dsu holded item: {item.LabelCap}");
-                }
-            }
-
-            _thingValidator = null;
-            _pawn = null;
         }
     }
 }

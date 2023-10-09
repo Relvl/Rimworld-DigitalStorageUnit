@@ -114,9 +114,9 @@
                 </filter>
             </defaultStorageSettings>
             <relatedBuildCommands>
-                <li>DSU_InputBus_Building</li>
                 <li>DSU_AccessPoint_Building</li>
-                <li>DSU_Pusher_Building</li>
+                <li>DSU_InputBus_Building</li>
+                <li>DSU_OutputBus_Building</li>
             </relatedBuildCommands>
         </building>
         <size>(3,3)</size>
@@ -147,7 +147,9 @@
             </li>
             <li Class="CompProperties_Flickable"/>
             <li Class="DigitalStorageUnit.CompProperties_CompOutputAdjustable"/>
-            <li Class="DigitalStorageUnit.RenderLinkCompProperties"/>
+            <li>
+                <compClass>DigitalStorageUnit.RenderLinksComp</compClass>
+            </li>
             <li Class="DigitalStorageUnit.DsuHeaterCompProperties">
                 <HeatPerSecond>30</HeatPerSecond>
                 <MaxHeat>1000</MaxHeat>
@@ -172,7 +174,7 @@
         <defName>DSU_InputBus_Building</defName>
         <label>DSU Input Bus</label>
         <description>An input bus for the Digital Storage Unit. Pawns may store items into connected DSU through it.</description>
-        <thingClass>DigitalStorageUnit.Building_StorageUnitIOPort</thingClass>
+        <thingClass>DigitalStorageUnit.InputPortDsuBuilding</thingClass>
         <graphicData>
             <texPath>Storage/IO_Port</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -215,9 +217,6 @@
             <PRF_ElectronicChip_I>1</PRF_ElectronicChip_I>
         </costList>
 
-        <inspectorTabs>
-            <li>DigitalStorageUnit.ITab_IOPortStorage</li>
-        </inspectorTabs>
         <comps>
             <li Class="CompProperties_Power">
                 <compClass>CompPowerTrader</compClass>
@@ -228,8 +227,9 @@
                 <glowRadius>2</glowRadius>
                 <glowColor>(115,198,206,0)</glowColor>
             </li>
-            <li Class="DigitalStorageUnit.LostLinkCompProperties"/>
-            <li Class="DigitalStorageUnit.RenderLinkCompProperties"/>
+            <li>
+                <compClass>DigitalStorageUnit.RenderLinksComp</compClass>
+            </li>
         </comps>
         <modExtensions>
             <li Class="DigitalStorageUnit.ModExtensionPortColor">
@@ -244,7 +244,7 @@
         <defName>DSU_AccessPoint_Building</defName>
         <label>DSU Access Point</label>
         <description>An interactive connection bus for the Digital Storage Unit. Pawns may request any item from the conneted Digital Storage Unit.</description>
-        <thingClass>DigitalStorageUnit.Building_AdvancedStorageUnitIOPort</thingClass>
+        <thingClass>DigitalStorageUnit.AccessPointPortBuilding</thingClass>
         <graphicData>
             <texPath>Storage/IO_Port</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -287,9 +287,6 @@
             <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
         </costList>
 
-        <inspectorTabs>
-            <li>DigitalStorageUnit.ITab_IOPortStorage</li>
-        </inspectorTabs>
         <comps>
             <li Class="CompProperties_Power">
                 <compClass>CompPowerTrader</compClass>
@@ -300,8 +297,9 @@
                 <glowRadius>2</glowRadius>
                 <glowColor>(115,198,206,0)</glowColor>
             </li>
-            <li Class="DigitalStorageUnit.LostLinkCompProperties"/>
-            <li Class="DigitalStorageUnit.RenderLinkCompProperties"/>
+            <li>
+                <compClass>DigitalStorageUnit.RenderLinksComp</compClass>
+            </li>
         </comps>
         <modExtensions>
             <li Class="DigitalStorageUnit.ModExtensionPortColor">
@@ -310,82 +308,4 @@
             </li>
         </modExtensions>
     </ThingDef>
-
-    <!--============================== Pusher ==============================-->
-    <ThingDef ParentName="DSU_BuildingBase">
-        <defName>DSU_Pusher_Building</defName>
-        <label>DSU Pusher</label>
-        <description>This modified ouput bus allows you to push items directly into next cell, onto a belt, or anywhere else, saving space instead of using a puller.</description>
-        <thingClass>DigitalStorageUnit.Building_IOPusher</thingClass>
-        <rotatable>true</rotatable>
-        <graphicData>
-            <texPath>Storage/IO_Pusher</texPath>
-            <graphicClass>Graphic_Multi</graphicClass>
-            <shaderType>CutoutComplex</shaderType>
-            <damageData>
-                <rect>(0.05,0.1,0.9,0.9)</rect>
-                <cornerTL>Damage/Corner</cornerTL>
-                <cornerTR>Damage/Corner</cornerTR>
-            </damageData>
-        </graphicData>
-        <building>
-            <isHopper>true</isHopper>
-            <fixedStorageSettings>
-                <priority>Normal</priority>
-                <filter>
-                    <categories>
-                        <li>Root</li>
-                    </categories>
-                </filter>
-            </fixedStorageSettings>
-            <defaultStorageSettings>
-                <priority>Normal</priority>
-                <filter>
-                    <categories></categories>
-                </filter>
-            </defaultStorageSettings>
-        </building>
-        <statBases>
-            <WorkToBuild>1000</WorkToBuild>
-            <MaxHitPoints>150</MaxHitPoints>
-            <MarketValue>1956</MarketValue>
-            <Flammability>1.0</Flammability>
-            <Mass>30</Mass>
-        </statBases>
-        <costList>
-            <ComponentSpacer>1</ComponentSpacer>
-            <PRF_RoboticArm>1</PRF_RoboticArm>
-            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
-            <PRF_ElectronicChip_I>1</PRF_ElectronicChip_I>
-        </costList>
-
-        <placeWorkers>
-            <li>DigitalStorageUnit.PlaceWorkerIOPusherHilight</li>
-        </placeWorkers>
-        <drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
-
-        <inspectorTabs>
-            <li>DigitalStorageUnit.ITab_IOPortStorage</li>
-        </inspectorTabs>
-        <comps>
-            <li Class="CompProperties_Power">
-                <compClass>CompPowerTrader</compClass>
-                <basePowerConsumption>350</basePowerConsumption>
-            </li>
-            <li Class="CompProperties_Flickable"/>
-            <li Class="CompProperties_Glower">
-                <glowRadius>2</glowRadius>
-                <glowColor>(115,198,206,0)</glowColor>
-            </li>
-            <li Class="DigitalStorageUnit.LostLinkCompProperties"/>
-            <li Class="DigitalStorageUnit.RenderLinkCompProperties"/>
-        </comps>
-        <modExtensions>
-            <li Class="DigitalStorageUnit.ModExtensionPortColor">
-                <inColor>(144, 222, 255, 255)</inColor>
-                <outColor>(215, 169, 72, 255)</outColor>
-            </li>
-        </modExtensions>
-    </ThingDef>
-
 </Defs>

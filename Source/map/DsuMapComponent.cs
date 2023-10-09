@@ -10,9 +10,9 @@ public class DsuMapComponent : MapComponent
 {
     public HashSet<DigitalStorageUnitBuilding> DsuSet { get; } = new();
 
-    public HashSet<Building_StorageUnitIOPort> IoPortSet { get; } = new();
+    public HashSet<InputPortDsuBuilding> IoPortSet { get; } = new();
 
-    public HashSet<Building_AdvancedStorageUnitIOPort> AccessPointSet { get; } = new();
+    public HashSet<AccessPointPortBuilding> AccessPointSet { get; } = new();
 
     public Dictionary<IntVec3, DigitalStorageUnitBuilding> DsuOccupiedPoints { get; } = new();
 
@@ -28,10 +28,10 @@ public class DsuMapComponent : MapComponent
                 DsuSet.Add(dsu);
                 foreach (var point in dsu.OccupiedRect()) DsuOccupiedPoints[point] = dsu;
                 break;
-            case Building_AdvancedStorageUnitIOPort accessPoint:
+            case AccessPointPortBuilding accessPoint:
                 AccessPointSet.Add(accessPoint);
                 break;
-            case Building_StorageUnitIOPort ioport:
+            case InputPortDsuBuilding ioport:
                 IoPortSet.Add(ioport);
                 break;
         }
@@ -45,10 +45,10 @@ public class DsuMapComponent : MapComponent
                 DsuSet.Remove(dsu);
                 foreach (var point in dsu.OccupiedRect()) DsuOccupiedPoints.Remove(point);
                 break;
-            case Building_AdvancedStorageUnitIOPort accessPoint:
+            case AccessPointPortBuilding accessPoint:
                 AccessPointSet.Remove(accessPoint);
                 break;
-            case Building_StorageUnitIOPort ioport:
+            case InputPortDsuBuilding ioport:
                 IoPortSet.Remove(ioport);
                 break;
         }

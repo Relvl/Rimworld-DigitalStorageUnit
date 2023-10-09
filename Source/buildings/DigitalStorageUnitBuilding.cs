@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using System;
+using RimWorld;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -18,14 +19,14 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     private DsuHeaterComp _heaterComp;
     private bool _pawnAccess = true;
 
-    public List<Building_StorageUnitIOBase> Ports = new();
+    public HashSet<ABasePortDsuBuilding> Ports = new();
     public string UniqueName;
 
     public bool ForbidPawnInput => !_pawnAccess || !CanStoreMoreItems;
 
     public ModExtensionDsu Mod;
 
-    private bool CanStoreMoreItems => CanWork && (Mod == null || StoredItems.Count < MaxNumberItemsInternal);
+    [Obsolete] private bool CanStoreMoreItems => CanWork && (Mod == null || StoredItems.Count < MaxNumberItemsInternal);
 
     private bool InsideHermeticRoom => _heaterComp.IsRoomHermetic();
 
@@ -133,6 +134,8 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
                 }
             }
         }
+
+        foreach (var tabItems in GetInspectTabs().OfType<ITab_Items>()) tabItems.RecalculateList();
     }
 
     /// <summary>
@@ -222,7 +225,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         //throw new System.NotImplementedException();
     }
 
-    public bool CanReciveThing(Thing item) => settings.AllowedToAccept(item) && CanWork && CanStoreMoreItems;
+    public bool CanReciveThing(Thing item) => settings.AllowedToAccept(item) && CanWork && CanStoreMoreItems && EmptySlotsCount != 0;
 
     private void UpdatePowerConsumption() => _compPowerTrader.powerOutputInt = -1 * StoredItems.Count * DigitalStorageUnit.Config.EnergyPerStack;
 
@@ -294,8 +297,12 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         base.DrawGUIOverlay();
         if (Current.CameraDriver.CurrentZoom > CameraZoomRange.Close) return;
         if (Mod is not null)
-            GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + "DSU.StacksCount.Detailed".Translate(StoredItems.Count, def.GetModExtension<ModExtensionDsu>().limit));
+            GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + "DSU.StacksCount.Detailed".Translate(StoredItems.Count, GetSlotLimit));
         else
             GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + "DSU.StacksCount".Translate(StoredItems.Count));
     }
+
+    public int GetSlotLimit => Mod.limit;
+
+    public int EmptySlotsCount => GetSlotLimit - StoredItems.Count;
 }

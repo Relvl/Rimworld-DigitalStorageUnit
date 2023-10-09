@@ -8,7 +8,7 @@ using Verse.AI;
 namespace DigitalStorageUnit._harmony;
 
 /// <summary>
-/// Patch for the Building_AdvancedStorageUnitIOPort
+/// Patch for the AccessPointPortBuilding
 /// Pawns starting Jobs check the IO Port for Items
 /// This affects mostly Bills on Workbenches
 /// </summary>
@@ -83,7 +83,7 @@ public class Patch_Pawn_JobTracker_StartJob
             if (result.Dsu is null || result.AccessPoint is null) continue; // Do nothig, let the game do it's things.
 
             // Add to queue and try to push item to the access point
-            result.AccessPoint.MoveItem(target.Thing);
+            result.AccessPoint.ProvideItem(target.Thing);
         }
 
         return true;

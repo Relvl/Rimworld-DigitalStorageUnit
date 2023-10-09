@@ -454,9 +454,23 @@
                         </value>
                     </li>
 
-                    <!-- i/o port -->
+                    <!-- i port -->
                     <li Class="PatchOperationReplace">
                         <xpath>Defs/ThingDef[defName="DSU_InputBus_Building"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <Mechanism>6</Mechanism>
+                                <ComponentAdvanced>2</ComponentAdvanced>
+                                <PRF_RoboticArm>2</PRF_RoboticArm>
+                                <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+                                <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+                    
+                    <!-- o port -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_OutputBus_Building"]/costList</xpath>
                         <value>
                             <costList>
                                 <Mechanism>6</Mechanism>
@@ -475,20 +489,6 @@
                             <costList>
                                 <AdvMechanism>6</AdvMechanism>
                                 <ComponentAdvanced>5</ComponentAdvanced>
-                                <PRF_RoboticArm>2</PRF_RoboticArm>
-                                <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
-                                <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
-                            </costList>
-                        </value>
-                    </li>
-
-                    <!-- i/o pusher -->
-                    <li Class="PatchOperationReplace">
-                        <xpath>Defs/ThingDef[defName="DSU_Pusher_Building"]/costList</xpath>
-                        <value>
-                            <costList>
-                                <Mechanism>6</Mechanism>
-                                <ComponentAdvanced>2</ComponentAdvanced>
                                 <PRF_RoboticArm>2</PRF_RoboticArm>
                                 <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
                                 <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>

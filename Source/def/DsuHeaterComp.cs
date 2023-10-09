@@ -11,6 +11,7 @@ public class DsuHeaterComp : ThingComp
     private DsuHeaterCompProperties Props => props as DsuHeaterCompProperties;
     private DigitalStorageUnitBuilding Dsu => parent as DigitalStorageUnitBuilding;
     private float _curTickTemperature;
+    private bool _criticalDamageMessage = false;
 
     /// <summary>
     /// Each tick (1/60 sec)
@@ -21,7 +22,6 @@ public class DsuHeaterComp : ThingComp
         if (Dsu is null) return;
         if (!Dsu.IsHashIntervalTick(60)) return;
         if (!Dsu.Powered) return;
-        if (Dsu.StoredItems.Count == 0) return;
 
         _curTickTemperature = GenTemperature.GetTemperatureForCell(Dsu.PositionHeld, Dsu.Map);
         if (_curTickTemperature >= Props.MaxHeat) return;
@@ -42,12 +42,21 @@ public class DsuHeaterComp : ThingComp
                 // Todo! Damage to all the buildings in the room
             }
         }
-        else if (_curTickTemperature > 100)
+        else if (_curTickTemperature > Props.DamageAtHeat / 2f)
         {
             if (isSecTick)
             {
                 FleckMaker.ThrowSmoke(Dsu.Position.ToVector3Shifted(), Dsu.Map, (float)Math.Round(parent.def.size.x * parent.def.size.z / 4d, 1));
             }
+        }
+        else if (_curTickTemperature > Props.DamageAtHeat / 1.15f && !_criticalDamageMessage)
+        {
+            Find.LetterStack.ReceiveLetter("DSU.Alert.DsuOverheat".Translate(), "DSU.Alert.DsuOverheat.Desc".Translate(), LetterDefOf.ThreatBig, parent);
+            _criticalDamageMessage = true;
+        }
+        else
+        {
+            _criticalDamageMessage = false;
         }
     }
 

@@ -106,8 +106,10 @@ public class ITab_Items : ITab
     }
 
     // Todo! Call this if items changed, uniquename changed, 
-    private void RecalculateList()
+    public void RecalculateList()
     {
+        if (Selected is null) return;
+
         _itemsToShow = Selected.StoredItems.Where(ThingFIlterPredicate)
             .OrderByDescending(ThingSortLabelPredicate)
             .ThenByDescending(ThingSortQualityPredicate)

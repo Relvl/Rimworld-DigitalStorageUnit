@@ -81,18 +81,18 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="buildings\ports\AccessPointPortBuilding.cs" />
+        <Compile Include="buildings\ports\InputPortDsuBuilding.cs" />
+        <Compile Include="buildings\ports\OutputPortDsuBuilding.cs" />
         <Compile Include="def\CompOutputAdjustable.cs" />
         <Compile Include="def\CompProperties_CompOutputAdjustable.cs" />
         <Compile Include="def\DsuHeaterComp.cs" />
         <Compile Include="def\DsuHeaterCompProperties.cs" />
-        <Compile Include="def\LostLinkComp.cs" />
-        <Compile Include="def\LostLinkCompProperties.cs" />
+        <Compile Include="def\RenderLinksComp.cs" />
         <Compile Include="def\ModExtensionPortColor.cs" />
-        <Compile Include="def\RenderLinkComp.cs" />
-        <Compile Include="def\RenderLinkCompProperties.cs" />
+        <Compile Include="def\PortPositionComp.cs" />
         <Compile Include="DigitalStorageUnit.cs" />
         <Compile Include="def\ModExtensionDsu.cs" />
-        <Compile Include="def\PlaceWorkerIOPusherHilight.cs" />
         <Compile Include="DigitalStorageUnitConfig.cs" />
         <Compile Include="map\DsuHeaterPlaceWorker.cs" />
         <Compile Include="map\DsuMapComponent.cs" />
@@ -106,14 +106,13 @@
         <Compile Include="ui\DsuOverheatAlert.cs" />
         <Compile Include="ui\DsuRoomRoleWorker.cs" />
         <Compile Include="ui\ITab_Filter.cs" />
-        <Compile Include="ui\ITab_IOPortStorage.cs" />
+        <Compile Include="ui\ITab_Items.cs" />
         <Compile Include="ui\LostLinkAlert.cs" />
         <Compile Include="util\ColorExtensions.cs" />
         <Compile Include="util\IForbidPawnInputItem.cs" />
         <Compile Include="util\IHoldMultipleThings.cs" />
         <Compile Include="util\ILwmDsLeaveMeAlonePlease.cs" />
         <Compile Include="util\IntVec3Extensions.cs" />
-        <Compile Include="util\ITab_Items.cs" />
         <Compile Include="util\MapExtension.cs" />
         <Compile Include="util\ThingExtensions.cs" />
         <Compile Include="util\ThingIconTextureData.cs" />
@@ -141,11 +140,8 @@
         <Compile Include="util\FuzzySearch.cs" />
         <Compile Include="util\StorageIOMode.cs" />
         <Compile Include="util\TextureHolder.cs" />
-        <Compile Include="buildings\Building_AdvancedStorageUnitIOPort.cs" />
-        <Compile Include="buildings\Building_IOPusher.cs" />
         <Compile Include="buildings\DigitalStorageUnitBuilding.cs" />
-        <Compile Include="buildings\Building_StorageUnitIOBase.cs" />
-        <Compile Include="buildings\Building_StorageUnitIOPort.cs" />
+        <Compile Include="buildings\ABasePortDsuBuilding.cs" />
         <Compile Include="_harmony\Patch_Thing_SetPosition.cs" />
         <Compile Include="_harmony\Patch_TradeUtility_AllLaunchableThingsForTrade.cs" />
         <Compile Include="_harmony\Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod.cs" />

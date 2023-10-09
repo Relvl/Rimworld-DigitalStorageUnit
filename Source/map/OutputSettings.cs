@@ -6,17 +6,15 @@ namespace DigitalStorageUnit;
 
 public class OutputSettings : IExposable
 {
-    public string MinTooltip;
-    public string MaxTooltip;
+    public readonly string MinTooltip = "DSU.Min.Desc";
+    public readonly string MaxTooltip = "DSU.Max.Desc";
     public bool UseMin;
     public bool UseMax;
     public int Min;
     public int Max;
 
-    public OutputSettings(string minTooltip, string maxTooltip)
+    public OutputSettings()
     {
-        MinTooltip = minTooltip;
-        MaxTooltip = maxTooltip;
         UseMin = false;
         UseMax = false;
         Min = 0;
@@ -25,8 +23,6 @@ public class OutputSettings : IExposable
 
     public void ExposeData()
     {
-        Scribe_Values.Look(ref MinTooltip, "minTooltip");
-        Scribe_Values.Look(ref MaxTooltip, "maxTooltip");
         Scribe_Values.Look(ref UseMin, "useMin");
         Scribe_Values.Look(ref UseMax, "useMax");
         Scribe_Values.Look(ref Min, "min");
@@ -44,8 +40,6 @@ public class OutputSettings : IExposable
 
     public void Copy(OutputSettings other)
     {
-        other.MinTooltip = MinTooltip;
-        other.MaxTooltip = MaxTooltip;
         other.UseMin = UseMin;
         other.UseMax = UseMax;
         other.Min = Min;

@@ -17,6 +17,7 @@ public class Patch_WorkGiver_DoBill_TryStartNewDoBillJob
 {
     public static void Postfix(ref Job __result)
     {
+        if (__result?.targetQueueB is null) return;
         var component = __result.targetA.Thing?.Map?.GetDsuComponent();
         if (component is null) return;
 

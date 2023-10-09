@@ -8,7 +8,6 @@
             <li>DSU_DigitalStorageUnit_Building</li>
             <li>DSU_InputBus_Building</li>
             <li>DSU_AccessPoint_Building</li>
-            <li>DSU_Pusher_Building</li>
         </defNames>
         <designationCategory>LWM_DS_Storage</designationCategory>
         <debug>false</debug>

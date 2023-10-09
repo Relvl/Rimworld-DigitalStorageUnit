@@ -20,7 +20,7 @@ public class LostLinkAlert : Alert
         // todo! should divide ticks or cache all the ports
         var portsWithoutLink = Find.Maps.Where(m => m.IsPlayerHome)
             .SelectMany(m => m.listerBuildings.allBuildingsColonist)
-            .Where(t => t is Building_StorageUnitIOBase { NoConnectionAlert: true })
+            .Where(t => t is ABasePortDsuBuilding { BoundStorageUnit: null })
             .Cast<Thing>()
             .ToList();
 

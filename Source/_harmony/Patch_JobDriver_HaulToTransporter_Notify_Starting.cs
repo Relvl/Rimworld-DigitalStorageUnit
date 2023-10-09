@@ -35,6 +35,6 @@ public class Patch_JobDriver_HaulToTransporter_Notify_Starting
         // todo! ___job.count <- splitoff
 
         if (reachabilityResult.Dsu is null || reachabilityResult.AccessPoint is null) return;
-        reachabilityResult.AccessPoint.MoveItem(__instance.job.targetA.Thing);
+        reachabilityResult.AccessPoint.ProvideItem(__instance.job.targetA.Thing);
     }
 }
