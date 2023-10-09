@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using DigitalStorageUnit.util;
 using RimWorld;
@@ -12,6 +13,9 @@ namespace DigitalStorageUnit;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class InputPortDsuBuilding : ABasePortDsuBuilding
 {
+    private PortPositionComp _portPosition;
+    private readonly Dictionary<IntVec3, int> _tickCooldown = new();
+
     public override StorageIOMode IOMode => StorageIOMode.Input;
 
     public override Graphic Graphic => base.Graphic.GetColoredVersion(base.Graphic.Shader, def.GetModExtension<ModExtensionPortColor>().inColor, Color.white);
@@ -19,27 +23,54 @@ public class InputPortDsuBuilding : ABasePortDsuBuilding
     public override void Notify_ReceivedThing(Thing newItem)
     {
         base.Notify_ReceivedThing(newItem);
-        SuckFirstItem();
+        SuckFirstItem(newItem.Position);
+    }
+
+    public override void PostMake()
+    {
+        base.PostMake();
+        _portPosition ??= GetComp<PortPositionComp>();
+    }
+
+    public override void SpawnSetup(Map map, bool respawningAfterLoad)
+    {
+        base.SpawnSetup(map, respawningAfterLoad);
+        _portPosition ??= GetComp<PortPositionComp>();
     }
 
     public override void Tick()
     {
-        if (!this.IsHashIntervalTick(10)) return;
+        base.Tick();
+
+        for (var i = _tickCooldown.Count - 1; i >= 0; i--)
+        {
+            var (key, value) = _tickCooldown.ElementAt(i);
+            if (value == 1) _tickCooldown.Remove(key);
+            else _tickCooldown[key] = value - 1;
+        }
+
         if (!Powered) return;
-        if (BoundStorageUnit is null || !BoundStorageUnit.CanWork) return;
+        if (BoundStorageUnit is null) return;
+        if (!BoundStorageUnit.CanWork) return;
+
         settings = BoundStorageUnit.settings ?? new StorageSettings(this);
-        SuckFirstItem();
+
+        foreach (var position in _portPosition.GetAvailablePositions())
+        {
+            if (_tickCooldown.ContainsKey(position)) continue;
+            SuckFirstItem(position);
+        }
     }
 
-    private void SuckFirstItem()
+    private void SuckFirstItem(IntVec3 position)
     {
-        foreach (var thing in Map.thingGrid.ThingsListAt(WorkPosition).ToList())
+        foreach (var thing in Map.thingGrid.ThingsListAt(position).ToList())
         {
             if (thing.def.category != ThingCategory.Item) continue;
             if (!BoundStorageUnit.CanReciveThing(thing)) continue;
             if (Map.reservationManager.AllReservedThings().Contains(thing)) continue;
             BoundStorageUnit.HandleNewItem(thing);
-            FleckMaker.ThrowLightningGlow(WorkPosition.ToVector3(), Map, 0.8f);
+            FleckMaker.ThrowLightningGlow(position.ToVector3(), Map, 0.8f);
             return;
         }
     }

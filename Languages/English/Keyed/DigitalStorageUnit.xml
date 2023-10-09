@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
     <DSU>Digital Storage Unit</DSU>
-    <DSU.AdjustOutputDirection>Adjust output direction</DSU.AdjustOutputDirection>
+    <DSU.AdjustOutputDirection>Adjust working area</DSU.AdjustOutputDirection>
     <DSU.MinMaxAmounts>Set min/max amounts</DSU.MinMaxAmounts>
     <DSU.UseMin>Use Min?</DSU.UseMin>
     <DSU.UseMax>Use Max?</DSU.UseMax>
