@@ -40,7 +40,7 @@ It has grown to a huge collection of talented people that have contributed to ma
 
 **Spdskatr** - Rimfactory original! [see here](https://github.com/spdskatr/ProjectRimFactory)
 
-**Nobo** / **Nullre** - For porting thing from NR_AutoMachineTools to prf and genral C#
+**Nobo** / **Nullre** - For porting thing from NR_AutoMachineTools to PRF and genral C#
 
 Coders: Spdskatr, Nobo, abnerchen, LWM, Sn1p3rr3c0n
 

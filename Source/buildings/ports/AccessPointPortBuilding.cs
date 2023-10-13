@@ -37,7 +37,7 @@ public class AccessPointPortBuilding : ABasePortDsuBuilding
         // Suck back unreserved items back to DSU 
         foreach (var thing in Map.thingGrid.ThingsListAt(WorkPosition).ToList()) // Todo! FirstHaulable
         {
-            if (thing.def.category != ThingCategory.Item) continue;
+            if (!thing.def.EverStorable(false)) continue;
             if (!BoundStorageUnit.CanReciveThing(thing)) continue;
             if (Map.reservationManager.AllReservedThings().Contains(thing)) continue;
             BoundStorageUnit.HandleNewItem(thing);

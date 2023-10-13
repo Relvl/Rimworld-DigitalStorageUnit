@@ -4,7 +4,6 @@
     <RecipeDef ParentName="DSU_BaseRecipe_Electronics">
         <defName>Make_DSU_ElectronicChip_I</defName>
         <label>make basic AI chip</label>
-        <description>Make basic AI chip</description>
         <jobString>Making basic AI chip</jobString>
         <workAmount>2000</workAmount>
         <ingredients>
@@ -32,7 +31,7 @@
             </thingDefs>
         </fixedIngredientFilter>
         <products>
-            <PRF_ElectronicChip_I>1</PRF_ElectronicChip_I>
+            <DSU_ElectronicChip_I>1</DSU_ElectronicChip_I>
         </products>
         <skillRequirements>
             <Crafting>8</Crafting>
@@ -43,7 +42,6 @@
     <RecipeDef ParentName="DSU_BaseRecipe_Electronics">
         <defName>Make_DSU_ElectronicChip_II</defName>
         <label>make advanced AI core</label>
-        <description>Make an advanced AI core</description>
         <jobString>Making Adv. AI core</jobString>
         <workAmount>4000</workAmount>
         <ingredients>
@@ -66,7 +64,7 @@
             <li>
                 <filter>
                     <thingDefs>
-                        <li>PRF_ElectronicChip_I</li>
+                        <li>DSU_ElectronicChip_I</li>
                     </thingDefs>
                 </filter>
                 <count>1</count>
@@ -84,12 +82,12 @@
             <thingDefs>
                 <li>ComponentSpacer</li>
                 <li>Steel</li>
-                <li>PRF_ElectronicChip_I</li>
+                <li>DSU_ElectronicChip_I</li>
                 <li>Plasteel</li>
             </thingDefs>
         </fixedIngredientFilter>
         <products>
-            <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
+            <DSU_ElectronicChip_II>1</DSU_ElectronicChip_II>
         </products>
         <skillRequirements>
             <Crafting>15</Crafting>

@@ -4,7 +4,7 @@
     <ThingDef ParentName="DSU_BuildingBase">
         <defName>DSU_DigitalStorageUnit_Building</defName>
         <label>Digital Storage Unit</label>
-        <description>A matter-energy conversion based storage unit which can hold a large number of stacks, consuming 10 W of power per stack of items.\nIn the event of a power outage, items already inside will be safe, but the DSU will not be able to store more.\nDon't break/deconstruct it - items inside will be destroyed!</description>
+        <description>A matter-energy conversion based storage unit which can hold a large number of stacks, consuming power per stack of items.\nIn the event of a power outage, items already inside will be safe, but the DSU will not be able to store more.\nDon't break/deconstruct it - items inside will be destroyed!</description>
         <thingClass>DigitalStorageUnit.DigitalStorageUnitBuilding</thingClass>
         <uiIconScale>0.9</uiIconScale>
         <pathCost>150</pathCost>
@@ -55,6 +55,7 @@
                 <li>DSU_AccessPoint_Building</li>
                 <li>DSU_InputBus_Building</li>
                 <li>DSU_OutputBus_Building</li>
+                <li>DSU_DataExtender</li>
             </relatedBuildCommands>
         </building>
         <size>(3,3)</size>
@@ -65,8 +66,8 @@
             <Plasteel>100</Plasteel>
             <ComponentIndustrial>100</ComponentIndustrial>
             <ComponentSpacer>15</ComponentSpacer>
-            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
-            <PRF_ElectronicChip_II>1</PRF_ElectronicChip_II>
+            <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+            <DSU_ElectronicChip_II>1</DSU_ElectronicChip_II>
         </costList>
 
         <inspectorTabs>
@@ -99,11 +100,5 @@
         <placeWorkers>
             <li>DigitalStorageUnit.DsuHeaterPlaceWorker</li>
         </placeWorkers>
-        <modExtensions>
-            <li Class="DigitalStorageUnit.ModExtensionDsu">
-                <limit>768</limit>
-                <destroyContainsItems>true</destroyContainsItems>
-            </li>
-        </modExtensions>
     </ThingDef>
 </Defs>

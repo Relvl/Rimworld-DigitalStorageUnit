@@ -55,11 +55,11 @@ public class Patch_Reachability_CanReach
         // We can't continue without the pawn
         if (_cachedResult.JobPawn is null) return; // as is
         //Ignore everything that is not a Item
-        if (dest.Thing?.def.category != ThingCategory.Item) return; // as is
+        if (!(dest.Thing?.def.EverStorable(false) ?? false)) return; // as is
 
         var component = ___map.GetDsuComponent();
         var dsu = component?.DsuOccupiedPoints.TryGetValue(dest.Thing.Position);
-        if (dsu is null || !dsu.Powered /* todo! if forbidden for pawn access directly */) return; // as is
+        if (dsu is null || !dsu.CanWork /* todo! if forbidden for pawn access directly */) return; // as is
 
         // Initial best distance - is Distance(pawn -> item -> destionation) multiplied on "avoid DSU factor" if needed
         var bestWeight = __result ? component.GetTotalDistance(_cachedResult.JobPawn, dest.Cell, _cachedResult.JobDestination, true) : float.MaxValue;

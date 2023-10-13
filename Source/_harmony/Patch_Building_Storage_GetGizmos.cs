@@ -36,7 +36,7 @@ internal class Patch_Building_Storage_GetGizmos
         var methodInfo = predicateClass.GetMethods(AccessTools.all).FirstOrDefault(t => t.Name.Contains("MoveNext"));
         if (methodInfo == null)
         {
-            Log.Error("PRF Harmony Error - methodInfo == null for Patch_Building_Storage_GetGizmos.TargetMethod()");
+            Log.Error("DSU Harmony Error - methodInfo == null for Patch_Building_Storage_GetGizmos.TargetMethod()");
         }
 
         return methodInfo;
@@ -63,7 +63,7 @@ internal class Patch_Building_Storage_GetGizmos
 
             if (!addedJump && Found_get_NumSelected && instruction.opcode == OpCodes.Ldarg_0)
             {
-                //Check if this is a PRF Storage Building
+                //Check if this is a DSU Storage Building
                 yield return new CodeInstruction(OpCodes.Ldarg_0);
                 yield return new CodeInstruction(OpCodes.Ldloc_2);
                 yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_Building_Storage_GetGizmos), nameof(IsDsuBuilding)));

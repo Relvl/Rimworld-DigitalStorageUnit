@@ -35,7 +35,7 @@ public class Patch_Pawn_JobTracker_StartJob
         if (newJob.def.defName == "HaulToInventory") return true;
 
         // Determines this is haul job (there is TargetA item) or not (otherwise this is possibly bill job)
-        var isHaulJobType = newJob.targetA.Thing?.def?.category == ThingCategory.Item;
+        var isHaulJobType = newJob.targetA.Thing?.def?.EverStorable(false) ?? false;
 
         // This is the Position where we need the Item to be at
         IntVec3 destinationPos;

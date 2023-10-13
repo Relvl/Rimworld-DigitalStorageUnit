@@ -110,7 +110,8 @@ public class ITab_Items : ITab
     {
         if (Selected is null) return;
 
-        _itemsToShow = Selected.StoredItems.Where(ThingFIlterPredicate)
+        var stored = Selected.GetStoredThings().ToList();
+        _itemsToShow = stored.Where(ThingFIlterPredicate)
             .OrderByDescending(ThingSortLabelPredicate)
             .ThenByDescending(ThingSortQualityPredicate)
             .ThenByDescending(ThingSortHitPointsPredicate)
@@ -120,8 +121,8 @@ public class ITab_Items : ITab
 
         Text.Font = GameFont.Medium;
         _windowCaption = string.IsNullOrEmpty(_searchQuery)
-            ? "DSU.IItemsTab.Caption".Translate(Selected.LabelCap, Selected.StoredItems.Count, Selected.Mod.limit)
-            : "DSU.IItemsTab.Caption.Filtered".Translate(Selected.LabelCap, Selected.StoredItems.Count, Selected.Mod.limit, _itemsToShow.Count);
+            ? "DSU.IItemsTab.Caption".Translate(Selected.LabelCap, stored.Count, Selected.GetSlotLimit)
+            : "DSU.IItemsTab.Caption.Filtered".Translate(Selected.LabelCap, stored.Count, Selected.GetSlotLimit, _itemsToShow.Count);
         _windowCaptionSize = Text.CalcHeight(_windowCaption, size.x - FramePadding * 2);
     }
 
@@ -309,10 +310,9 @@ public class ITab_Items : ITab
 
     private void DropThing(Thing thing)
     {
-        var found = Selected.StoredItems.Where(i => i == thing).ToList();
         var cell = Selected.GetComp<CompOutputAdjustable>()?.CurrentCell ?? Selected.Position + new IntVec3(0, 0, -2);
         var result = GenPlace.TryPlaceThing(
-            found[0].SplitOff(found[0].stackCount),
+            thing.SplitOff(thing.stackCount),
             cell,
             Selected.Map,
             ThingPlaceMode.Near,

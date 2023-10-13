@@ -4,7 +4,6 @@
     <RecipeDef ParentName="DSU_BaseRecipe_Mechanics">
         <defName>Make_DSU_RoboticArm</defName>
         <label>make robotic arm</label>
-        <description>Make a robotic arm</description>
         <jobString>Making robotic arm</jobString>
         <workAmount>1000</workAmount>
         <ingredients>
@@ -32,7 +31,7 @@
             </thingDefs>
         </fixedIngredientFilter>
         <products>
-            <PRF_RoboticArm>1</PRF_RoboticArm>
+            <DSU_RoboticArm>1</DSU_RoboticArm>
         </products>
         <skillRequirements>
             <Crafting>8</Crafting>
@@ -43,7 +42,6 @@
     <RecipeDef ParentName="DSU_BaseRecipe_Mechanics">
         <defName>Make_DSU_SmallFrame</defName>
         <label>make small machine frame</label>
-        <description>Make a small machine frame for use in factory buildings</description>
         <jobString>Making frame</jobString>
         <workAmount>1800</workAmount>
         <ingredients>
@@ -71,7 +69,7 @@
             </thingDefs>
         </fixedIngredientFilter>
         <products>
-            <PRF_MachineFrame_I>1</PRF_MachineFrame_I>
+            <DSU_MachineFrame_I>1</DSU_MachineFrame_I>
         </products>
         <skillRequirements>
             <Crafting>6</Crafting>
@@ -82,7 +80,6 @@
     <RecipeDef ParentName="DSU_BaseRecipe_Mechanics">
         <defName>Make_DSU_MediumFrame</defName>
         <label>make medium machine frame</label>
-        <description>Make a medium machine frame for factory building</description>
         <jobString>Making frame</jobString>
         <workAmount>3000</workAmount>
         <ingredients>
@@ -119,7 +116,7 @@
             </thingDefs>
         </fixedIngredientFilter>
         <products>
-            <PRF_MachineFrame_II>1</PRF_MachineFrame_II>
+            <DSU_MachineFrame_II>1</DSU_MachineFrame_II>
         </products>
         <skillRequirements>
             <Crafting>8</Crafting>
@@ -130,7 +127,6 @@
     <RecipeDef ParentName="DSU_BaseRecipe_Mechanics">
         <defName>Make_DSU_LargeFrame</defName>
         <label>make advanced machine frame</label>
-        <description>Make an advanced machine frame for factory buildings</description>
         <jobString>Making frame</jobString>
         <workAmount>4800</workAmount>
         <ingredients>
@@ -167,7 +163,7 @@
             </thingDefs>
         </fixedIngredientFilter>
         <products>
-            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
+            <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
         </products>
         <skillRequirements>
             <Crafting>8</Crafting>

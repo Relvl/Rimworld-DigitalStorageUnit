@@ -20,7 +20,7 @@ class Patch_ForbidUtility_IsForbidden
         __result = true;
 
         /*
-        if (t is not null && t.Map is not null && t.def.category == ThingCategory.Item)
+        if (t is not null && t.Map is not null && t.def.EverStorable(false))
         {
             if (t.Map.GetDsuComponent()?.ForbidItems.Contains(t.Position) ?? false)
             {

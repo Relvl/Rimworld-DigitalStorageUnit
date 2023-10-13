@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
     <DesignatorDropdownGroupDef>
-        <defName>PRF_StorageGroup</defName>
+        <defName>DSU_StorageGroup</defName>
     </DesignatorDropdownGroupDef>
 </Defs>

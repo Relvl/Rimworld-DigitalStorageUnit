@@ -21,7 +21,7 @@ internal static class Patch_TradeUtility_AllLaunchableThingsForTrade
         yieldedThings.AddRange(__result);
         foreach (var dsu in AllPowered(map))
         {
-            yieldedThings.AddRange(dsu.StoredItems);
+            yieldedThings.AddRange(dsu.GetStoredThings());
         }
 
         __result = yieldedThings;
@@ -31,7 +31,7 @@ internal static class Patch_TradeUtility_AllLaunchableThingsForTrade
     {
         foreach (var building in map.listerBuildings.AllBuildingsColonistOfClass<DigitalStorageUnitBuilding>())
         {
-            if (!building.Powered) continue;
+            if (!building.CanWork) continue;
             yield return building;
             if (any) break;
         }

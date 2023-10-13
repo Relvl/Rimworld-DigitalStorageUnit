@@ -37,7 +37,7 @@ public class DsuHeaterComp : ThingComp
                 var damage = Props.DamageMultiplier * (_curTickTemperature - Props.DamageAtHeat);
                 var damageInfo = new DamageInfo(DamageDefOf.Burn, damage, instigator: Dsu);
                 Dsu.TakeDamage(damageInfo);
-                Dsu.StoredItems.ToList().ForEach(i => i.TakeDamage(damageInfo));
+                foreach (var thing in Dsu.GetStoredThings()) thing.TakeDamage(damageInfo);
                 // Todo! Damage to all the pawns in the room
                 // Todo! Damage to all the buildings in the room
             }

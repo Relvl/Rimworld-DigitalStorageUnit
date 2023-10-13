@@ -27,14 +27,14 @@ public static class Patch_PassingShip_c__DisplayClass24_0
         hiddenClass = typeof(PassingShip).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName!.Contains("c__DisplayClass23_0"));
         if (hiddenClass == null)
         {
-            Log.Error("PRF Harmony Error - predicateClass == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
+            Log.Error("DSU Harmony Error - predicateClass == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
             return null;
         }
 
         var methodInfo = hiddenClass.GetMethods(AccessTools.all).FirstOrDefault(t => t.Name.Contains("b__1"));
         if (methodInfo == null)
         {
-            Log.Error("PRF Harmony Error - methodInfo == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
+            Log.Error("DSU Harmony Error - methodInfo == null for Patch_PassingShip_DSUisTradebeacon.TargetMethod()");
         }
 
         return methodInfo;

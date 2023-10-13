@@ -14,17 +14,22 @@ namespace DigitalStorageUnit._harmony;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public static class Patch_Thing_SetPosition
 {
-    public static void Prefix(Thing __instance, out DigitalStorageUnitBuilding __state)
+    public static void Prefix(Thing __instance, out IntVec3 __state)
     {
-        __state = null;
-        if (__instance.def.category == ThingCategory.Item && __instance.Position.IsValid && __instance.Map != null)
-        {
-            __state = __instance.Position.GetFirst<DigitalStorageUnitBuilding>(__instance.Map);
-        }
+        __state = __instance.Position;
     }
 
-    public static void Postfix(Thing __instance, DigitalStorageUnitBuilding __state)
+    public static void Postfix(Thing __instance, IntVec3 __state)
     {
-        __state?.Notify_LostThing(__instance);
+        if (__instance.Map is null) return;
+        if (__instance.Position == __state) return;
+        if (!__instance.def.EverStorable(false)) return;
+
+        var oldDsu = __state.IsValid ? __state.GetFirst<DigitalStorageUnitBuilding>(__instance.Map) : null;
+        var newDsu = __instance.Position.IsValid ? __instance.Position.GetFirst<DigitalStorageUnitBuilding>(__instance.Map) : null;
+        if (newDsu == oldDsu) return;
+
+        if (newDsu is not null) newDsu.Notify_ReceivedThing(__instance);
+        if (oldDsu is not null) oldDsu.Notify_LostThing(__instance);
     }
 }

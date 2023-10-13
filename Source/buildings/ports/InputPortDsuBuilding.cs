@@ -66,7 +66,7 @@ public class InputPortDsuBuilding : ABasePortDsuBuilding
     {
         foreach (var thing in Map.thingGrid.ThingsListAt(position).ToList())
         {
-            if (thing.def.category != ThingCategory.Item) continue;
+            if (!thing.def.EverStorable(false)) continue;
             if (!BoundStorageUnit.CanReciveThing(thing)) continue;
             if (Map.reservationManager.AllReservedThings().Contains(thing)) continue;
             BoundStorageUnit.HandleNewItem(thing);

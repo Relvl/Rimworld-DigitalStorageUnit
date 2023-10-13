@@ -81,6 +81,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="buildings\DataExtenderBuilding.cs" />
         <Compile Include="buildings\ports\AccessPointPortBuilding.cs" />
         <Compile Include="buildings\ports\InputPortDsuBuilding.cs" />
         <Compile Include="buildings\ports\OutputPortDsuBuilding.cs" />
@@ -88,13 +89,14 @@
         <Compile Include="def\CompProperties_CompOutputAdjustable.cs" />
         <Compile Include="def\DsuHeaterComp.cs" />
         <Compile Include="def\DsuHeaterCompProperties.cs" />
+        <Compile Include="def\ExtenderComp.cs" />
+        <Compile Include="def\placeworkers\DsuHeaterPlaceWorker.cs" />
+        <Compile Include="def\placeworkers\ExtenderPlaceWorker.cs" />
         <Compile Include="def\RenderLinksComp.cs" />
         <Compile Include="def\ModExtensionPortColor.cs" />
         <Compile Include="def\PortPositionComp.cs" />
         <Compile Include="DigitalStorageUnit.cs" />
-        <Compile Include="def\ModExtensionDsu.cs" />
         <Compile Include="DigitalStorageUnitConfig.cs" />
-        <Compile Include="map\DsuHeaterPlaceWorker.cs" />
         <Compile Include="map\DsuMapComponent.cs" />
         <Compile Include="map\OutputSettings.cs" />
         <Compile Include="ModInit.cs" />

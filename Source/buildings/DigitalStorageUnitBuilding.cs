@@ -1,5 +1,4 @@
-﻿using System;
-using RimWorld;
+﻿using RimWorld;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -18,40 +17,36 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     private CompPowerTrader _compPowerTrader;
     private DsuHeaterComp _heaterComp;
     private bool _pawnAccess = true;
+    private int _storedItemsCount = 0;
 
     public HashSet<ABasePortDsuBuilding> Ports = new();
     public string UniqueName;
 
-    public bool ForbidPawnInput => !_pawnAccess || !CanStoreMoreItems;
+    public bool ForbidPawnInput => !_pawnAccess || GetSlotLimit <= _storedItemsCount;
 
-    public ModExtensionDsu Mod;
-
-    [Obsolete] private bool CanStoreMoreItems => CanWork && (Mod == null || StoredItems.Count < MaxNumberItemsInternal);
-
-    private bool InsideHermeticRoom => _heaterComp.IsRoomHermetic();
-
-    private int MaxNumberItemsInternal => (Mod?.limit ?? int.MaxValue) - def.Size.Area + 1;
-
-    public List<Thing> StoredItems { get; } = new();
+    // Todo! Calc (base + extenders * rate) * efficiency
+    public int GetSlotLimit => 768;
     public bool Powered => _compPowerTrader?.PowerOn ?? false;
-    public bool CanWork => Powered && Spawned && (!DigitalStorageUnit.Config.HeaterEnabled || InsideHermeticRoom);
+    public bool CanWork => Powered && Spawned && (!DigitalStorageUnit.Config.HeaterEnabled || _heaterComp.IsRoomHermetic());
+
+    public bool CanReciveThing(Thing item) => CanWork && GetSlotLimit > _storedItemsCount && Accepts(item);
 
     public override string LabelNoCount => UniqueName ?? base.LabelNoCount;
     public override string LabelCap => UniqueName ?? base.LabelCap;
 
+    public IEnumerable<Thing> GetStoredThings() => GetSlotGroup().HeldThings;
+
     public override void Notify_ReceivedThing(Thing newItem)
     {
         base.Notify_ReceivedThing(newItem);
-        if (newItem.Position != Position) HandleNewItem(newItem);
-        RefreshStorage();
+        RearrangeItems();
         UpdatePowerConsumption();
     }
 
     public override void Notify_LostThing(Thing newItem)
     {
         base.Notify_LostThing(newItem);
-        StoredItems.Remove(newItem);
-        RefreshStorage();
+        RearrangeItems();
         UpdatePowerConsumption();
     }
 
@@ -69,11 +64,8 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
         _compPowerTrader ??= GetComp<CompPowerTrader>();
         _heaterComp ??= GetComp<DsuHeaterComp>();
-        Mod ??= def.GetModExtension<ModExtensionDsu>();
 
         map.GetDsuComponent().RegisterBuilding(this);
-
-        RefreshStorage();
 
         // Detaching ports in another maps
         foreach (var port in Ports)
@@ -81,6 +73,8 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
             if (!(port?.Spawned ?? false)) continue;
             if (port.Map != map) port.BoundStorageUnit = null;
         }
+
+        RearrangeItems();
     }
 
     public override void PostMapInit()
@@ -88,51 +82,37 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         base.PostMapInit();
         _compPowerTrader ??= GetComp<CompPowerTrader>();
         _heaterComp ??= GetComp<DsuHeaterComp>();
-        RefreshStorage();
+        RearrangeItems();
     }
 
     public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
     {
         // todo! another types? destroying by damage?
-        if (mode == DestroyMode.Deconstruct)
-            if (def.GetModExtension<ModExtensionDsu>()?.destroyContainsItems ?? false)
-                StoredItems.Where(t => !t.Destroyed).ToList().ForEach(x => x.Destroy());
-
-        // Unbulk the items
-        foreach (var thing in Position.GetThingList(Map).Where(thing => thing.def.category == ThingCategory.Item))
+        foreach (var thing in GetStoredThings())
         {
-            thing.DeSpawn();
-            GenPlace.TryPlaceThing(thing, Position, Map, ThingPlaceMode.Near);
+            if (mode == DestroyMode.Deconstruct)
+            {
+                thing.Destroy();
+            }
+            else
+            {
+                // Unbulk the items
+                thing.DeSpawn();
+                GenPlace.TryPlaceThing(thing, Position, Map, ThingPlaceMode.Near);
+            }
         }
 
         Map.GetDsuComponent().DeregisterBuilding(this);
-
         base.DeSpawn(mode);
     }
 
-    //TODO! Why do we need to clear StoredItems here (and anywhere else)?
-    private void RefreshStorage()
+    private void RearrangeItems()
     {
-        StoredItems.Clear();
-
-        if (!Spawned) return;
-
-        foreach (var cell in AllSlotCells())
+        _storedItemsCount = 0;
+        foreach (var thing in GetStoredThings())
         {
-            foreach (var item in cell.GetThingList(Map).ToList())
-            {
-                if (item.def.category != ThingCategory.Item) continue;
-
-                // TODO! Weird move... Why not just call HandleNewItem?
-                if (cell != Position)
-                    HandleNewItem(item);
-                else
-                {
-                    if (StoredItems.Contains(item)) continue;
-                    StoredItems.Add(item);
-                    Map.dynamicDrawManager.DeRegisterDrawable(item);
-                }
-            }
+            _storedItemsCount++;
+            if (thing.Position != Position) HandleNewItem(thing);
         }
 
         foreach (var tabItems in GetInspectTabs().OfType<ITab_Items>()) tabItems.RecalculateList();
@@ -145,49 +125,16 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     public bool CapacityAt(Thing thing, IntVec3 cell, Map map, out int capacity)
     {
         capacity = 0;
-
-        if (thing == null || map == null || map != Map || !Spawned) return false;
-
+        if (thing is null || map is null || map != Map || !CanWork) return false;
         thing = thing.GetInnerIfMinified();
-
-        //Check if thing can be stored based upon the storgae settings
-        if (!Accepts(thing))
+        if (!Accepts(thing)) return false;
+        foreach (var storedItem in GetStoredThings())
         {
-            return false;
+            if (storedItem.def != thing.def || (thing.def.MadeFromStuff && storedItem.Stuff != thing.Stuff)) continue;
+            capacity += thing.def.stackLimit - storedItem.stackCount;
         }
 
-        //TODO Check if we want to forbid access if power is off
-        //if (!GetComp<CompPowerTrader>().PowerOn) return false;
-
-        //Get List of items stored in the DSU
-        var storedItems = Position.GetThingList(Map).Where(t => t.def.category == ThingCategory.Item);
-
-        //Find the Stack size for the thing
-        var maxstacksize = thing.def.stackLimit;
-        //Get capacity of partial Stacks
-        //  So 45 Steel and 75 Steel and 11 Steel give 30+64 more capacity for steel
-        foreach (var partialStack in storedItems.Where(t => t.def == thing.def && t.stackCount < maxstacksize))
-        {
-            capacity += maxstacksize - partialStack.stackCount;
-        }
-
-        //capacity of empy slots
-        capacity += (MaxNumberItemsInternal - storedItems.Count()) * maxstacksize;
-
-        //Access point:
-        if (cell != Position)
-        {
-            var maybeThing = Map.thingGrid.ThingAt(cell, ThingCategory.Item);
-            if (maybeThing != null)
-            {
-                if (maybeThing.def == thing.def) capacity += thing.def.stackLimit - maybeThing.stackCount;
-            }
-            else
-            {
-                capacity += thing.def.stackLimit;
-            }
-        }
-
+        capacity += (GetSlotLimit - _storedItemsCount) * thing.def.stackLimit;
         return capacity > 0;
     }
 
@@ -198,7 +145,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         if (item.Destroyed) return;
         if (tryAbsorb)
         {
-            foreach (var storedThing in Position.GetThingList(Map))
+            foreach (var storedThing in Position.GetThingList(Map)) // Todo! StoredItems
             {
                 if (storedThing == item) continue;
                 storedThing.TryAbsorbStack(item, true);
@@ -206,52 +153,17 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
             }
         }
 
-        if (!StoredItems.Contains(item))
-        {
-            StoredItems.Add(item);
-        }
-
-        // TODO! Why not in block above?
-        if (CanStoreMoreItems) item.Position = Position;
-        // TODO! WTF? How do we add despawned item?
+        if (!CanReciveThing(item)) return;
+        item.Position = Position;
         if (!item.Spawned) item.SpawnSetup(Map, false);
-
         Map.dynamicDrawManager.DeRegisterDrawable(item);
     }
 
-    // TODO! WTF they means?..
-    public void HandleMoveItem(Thing item)
-    {
-        //throw new System.NotImplementedException();
-    }
-
-    public bool CanReciveThing(Thing item) => settings.AllowedToAccept(item) && CanWork && CanStoreMoreItems && EmptySlotsCount != 0;
-
-    private void UpdatePowerConsumption() => _compPowerTrader.powerOutputInt = -1 * StoredItems.Count * DigitalStorageUnit.Config.EnergyPerStack;
-
-    // TODO! I'm sure we can remove this refresh function...
-    protected override void ReceiveCompSignal(string signal)
-    {
-        base.ReceiveCompSignal(signal);
-        switch (signal)
-        {
-            case "PowerTurnedOn":
-                RefreshStorage();
-                break;
-        }
-    }
-
-    // TODO! Just because? Power update is unstable without ticks?
-    public override void Tick()
-    {
-        base.Tick();
-        if (this.IsHashIntervalTick(60)) UpdatePowerConsumption();
-    }
+    private void UpdatePowerConsumption() => _compPowerTrader.powerOutputInt = -1 * _storedItemsCount * DigitalStorageUnit.Config.EnergyPerStack;
 
     public override IEnumerable<Gizmo> GetGizmos()
     {
-        foreach (var g in base.GetGizmos())
-            yield return g;
+        foreach (var g in base.GetGizmos()) yield return g;
 
         yield return new Command_Action
         {
@@ -270,14 +182,6 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
             defaultLabel = "DSU.PawnAccess".Translate(),
             defaultDesc = "DSU.PawnAccess.Desc".Translate()
         };
-
-        if (Prefs.DevMode)
-        {
-            yield return new Command_Action
-            {
-                icon = TexUI.RotRightTex, action = RefreshStorage, defaultLabel = "DSU.Reorganize".Translate(), defaultDesc = "DSU.Reorganize.Desc".Translate()
-            };
-        }
     }
 
     public override string GetInspectString()
@@ -285,7 +189,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         var original = base.GetInspectString();
         var stringBuilder = new StringBuilder();
         if (!string.IsNullOrEmpty(original)) stringBuilder.AppendLine(original);
-        stringBuilder.Append("DSU.TotalStackNum".Translate(StoredItems.Count));
+        stringBuilder.Append("DSU.TotalStackNum".Translate(_storedItemsCount));
         return stringBuilder.ToString();
     }
 
@@ -296,13 +200,6 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     {
         base.DrawGUIOverlay();
         if (Current.CameraDriver.CurrentZoom > CameraZoomRange.Close) return;
-        if (Mod is not null)
-            GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + "DSU.StacksCount.Detailed".Translate(StoredItems.Count, GetSlotLimit));
-        else
-            GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + "DSU.StacksCount".Translate(StoredItems.Count));
+        GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + "DSU.StacksCount.Detailed".Translate(_storedItemsCount, GetSlotLimit));
     }
-
-    public int GetSlotLimit => Mod.limit;
-
-    public int EmptySlotsCount => GetSlotLimit - StoredItems.Count;
 }

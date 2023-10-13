@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+    <Make_DSU_RoboticArm.label>изготовить манипулятор</Make_DSU_RoboticArm.label>
+    <Make_DSU_SmallFrame.label>изготовить малый машинный корпус</Make_DSU_SmallFrame.label>
+    <Make_DSU_MediumFrame.label>изготовить средний машинный коорпус</Make_DSU_MediumFrame.label>
+    <Make_DSU_LargeFrame.label>изготовить продвинутый машинный корпус</Make_DSU_LargeFrame.label>
+    <Make_DSU_ElectronicChip_I.label>изготовить базовый чип ИИ</Make_DSU_ElectronicChip_I.label>
+    <Make_DSU_ElectronicChip_II.label>изготовить продвинутый чип ИИ</Make_DSU_ElectronicChip_II.label>
+    
+    <Make_DSU_RoboticArm.jobString>создаёт манипулятор</Make_DSU_RoboticArm.jobString>
+    <Make_DSU_SmallFrame.jobString>создаёт малый машинный корпус</Make_DSU_SmallFrame.jobString>
+    <Make_DSU_MediumFrame.jobString>создаёт средний машинный коорпус</Make_DSU_MediumFrame.jobString>
+    <Make_DSU_LargeFrame.jobString>создаёт продвинутый машинный корпус</Make_DSU_LargeFrame.jobString>
+    <Make_DSU_ElectronicChip_I.jobString>создаёт базовый чип ИИ</Make_DSU_ElectronicChip_I.jobString>
+    <Make_DSU_ElectronicChip_II.jobString>создаёт продвинутый чип ИИ</Make_DSU_ElectronicChip_II.jobString>
+</LanguageData>

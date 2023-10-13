@@ -22,7 +22,7 @@
             <li>BuildingsFurniture</li>
         </thingCategories>
         <designationCategory>Furniture</designationCategory>
-        <designatorDropdown>PRF_StorageGroup</designatorDropdown>
+        <designatorDropdown>DSU_StorageGroup</designatorDropdown>
         <uiIconScale>0.7</uiIconScale>
         <tradeTags>
             <!-- todo! HSK?-->

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
-    <ThingDef Name="PRF_ResourceBase" Abstract="True">
+    <ThingDef Name="DSU_ResourceBase" Abstract="True">
         <thingClass>ThingWithComps</thingClass>
         <category>Item</category>
         <resourceReadoutPriority>Middle</resourceReadoutPriority>
@@ -34,10 +34,10 @@
     </ThingDef>
 
     <!-- ================================== Robot arm ================================= -->
-    <ThingDef ParentName="PRF_ResourceBase">
-        <defName>PRF_RoboticArm</defName>
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_RoboticArm</defName>
         <label>Robotic Arm</label>
-        <description>An electrically powered robotic arm necessary for the construction of automated buildings. Can be crafted at the robotic machining table.</description>
+        <description>An electrically powered robotic arm necessary for the construction of automated buildings.</description>
         <graphicData>
             <texPath>Common/RoboticArm</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -51,10 +51,10 @@
     </ThingDef>
 
     <!-- ================================== Weak AI Chip (Tier 2) ================================= -->
-    <ThingDef ParentName="PRF_ResourceBase">
-        <defName>PRF_ElectronicChip_I</defName>
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_ElectronicChip_I</defName>
         <label>Basic AI Chip</label>
-        <description>A tensor processing unit containing the most rudimentary AI. Used for early machines and robots.</description>
+        <description>A tensor processing unit containing the most rudimentary AI.</description>
         <graphicData>
             <texPath>Common/WeakAICore</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -68,10 +68,10 @@
     </ThingDef>
 
     <!-- ================================== Advanced AI Core (Tier 3) ================================= -->
-    <ThingDef ParentName="PRF_ResourceBase">
-        <defName>PRF_ElectronicChip_II</defName>
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_ElectronicChip_II</defName>
         <label>Advanced AI Core</label>
-        <description>An advanced processing unit containing hi-tech AI, which is used for advanced machines and robots..</description>
+        <description>An advanced processing unit containing hi-tech AI, which is used for advanced machines and robots.</description>
         <graphicData>
             <texPath>Common/AdvancedAICore</texPath>
             <graphicClass>Graphic_Single</graphicClass>
@@ -85,8 +85,8 @@
     </ThingDef>
 
     <!--==================================== Small frame ===============================-->
-    <ThingDef ParentName="PRF_ResourceBase">
-        <defName>PRF_MachineFrame_I</defName>
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_MachineFrame_I</defName>
         <label>Small Machine Frame</label>
         <description>A small but simple machine frame used in the construction of automated buildings.</description>
         <graphicData>
@@ -103,8 +103,8 @@
     </ThingDef>
 
     <!--==================================== Medium frame ==============================-->
-    <ThingDef ParentName="PRF_ResourceBase">
-        <defName>PRF_MachineFrame_II</defName>
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_MachineFrame_II</defName>
         <label>Medium Machine Frame</label>
         <description>A medium-sized machine frame used for the construction of more complex and larger machines.</description>
         <graphicData>
@@ -121,8 +121,8 @@
     </ThingDef>
 
     <!--==================================== Large frame ===============================-->
-    <ThingDef ParentName="PRF_ResourceBase">
-        <defName>PRF_MachineFrame_III</defName>
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_MachineFrame_III</defName>
         <label>Advanced Machine Frame</label>
         <description>The empty shell of an advanced automation building.</description>
         <graphicData>

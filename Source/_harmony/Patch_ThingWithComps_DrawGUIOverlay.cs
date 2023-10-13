@@ -16,7 +16,7 @@ public class Patch_ThingWithComps_DrawGUIOverlay
 {
     public static bool Prefix(Thing __instance)
     {
-        if (__instance.def.category == ThingCategory.Item && (__instance.Map?.GetDsuComponent()?.DsuOccupiedPoints.ContainsKey(__instance.Position) ?? false))
+        if (__instance.def.EverStorable(false) && (__instance.Map?.GetDsuComponent()?.DsuOccupiedPoints.ContainsKey(__instance.Position) ?? false))
         {
             return false; // skip the original and next prefixes
         }

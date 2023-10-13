@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+    <DSU>Digital Storage Unit</DSU>
+    <DSU.AdjustOutputDirection>Настроить рабочую область</DSU.AdjustOutputDirection>
+    <DSU.MinMaxAmounts>Установить мин/макс</DSU.MinMaxAmounts>
+    <DSU.UseMin>Использовать минимум?</DSU.UseMin>
+    <DSU.UseMax>Использовать максимум?</DSU.UseMax>
+    <DSU.Max>Максимум</DSU.Max>
+    <DSU.Max.Desc>Когда включено, Шина Экспорта будет стараться поддерживать указанное количество предмета (но не более лимита стака)</DSU.Max.Desc>
+    <DSU.Min>МИнимум</DSU.Min>
+    <DSU.Min.Desc>When this is enabled, the I/O port will return the outputted item to the cargo platform if the item has less than X stack size. It will also only take items if there are enough items in storage to exceed the minimum.</DSU.Min.Desc>
+    <DSU.Min.Desc>Когда включено, Шина Экспорта будет стараться поддерживать предметы, но не менее X (если предметов меньше - они будут убраны)</DSU.Min.Desc>
+    <DSU.Limit.GetInspectString>Лимиты: {0} - {1}</DSU.Limit.GetInspectString>
+    <DSU.Drop>Выкинуть {0}</DSU.Drop>
+    <DSU.TotalStackNum>Суммарное количество стаков: {0}</DSU.TotalStackNum>
+    <DSU.IItemsTab>Предметы</DSU.IItemsTab>
+    <DSU.IItemsTab.Label.Empty>Нет предметов, или не найдено совпадений</DSU.IItemsTab.Label.Empty>
+    <DSU.IItemsTab.Caption>{0}: {1}/{2} стаков</DSU.IItemsTab.Caption>
+    <DSU.IItemsTab.Caption.Filtered>{0}: {1}/{2} стаков (найдено: {3})</DSU.IItemsTab.Caption.Filtered>
+    <DSU.Rename>Переименовать</DSU.Rename>
+    <DSU.Rename.Desc>Переименовывает эту систему хранения</DSU.Rename.Desc>
+    <DSU.StacksCount.Detailed>{0}/{1} стаков</DSU.StacksCount.Detailed>
+    <DSU.Output.Settings>Настройки лимитов...</DSU.Output.Settings>
+    <DSU.ItemSource>Источник предметов</DSU.ItemSource>
+    <DSU.PawnAccess>Доступ пешек</DSU.PawnAccess>
+    <DSU.PawnAccess.Desc>Переключает возможность пешек брать предметы из этого хранилища</DSU.PawnAccess.Desc>
+    <DSU.Alert.LostLink.Label>DSU: шина не имеет соединения</DSU.Alert.LostLink.Label>
+    <DSU.Alert.LostLink.Desc>Шина не имеет соединения. Вам следует указать одно из Цифровых Хранилищ в настройках шины.</DSU.Alert.LostLink.Desc>
+    <DSU.Alert.DsuNonHermetic>Комната DSU не герметична</DSU.Alert.DsuNonHermetic>
+    <DSU.Alert.DsuNonHermetic.Desc>Цифровое Хранилище должно быть установлено в комнате без соединения с улицей, но в комнате не хватает крыши или стены.</DSU.Alert.DsuNonHermetic.Desc>
+    <DSU.Alert.DsuOverheat>Перегрев DSU</DSU.Alert.DsuOverheat>
+    <DSU.Alert.DsuOverheat.Desc>Если температура в комнате Цифрового Хранилища продолжит расти - оно, хранимые предметы, и другие постройки в комнате начнут получать увеличивающиеся повреждения. Отключите Хранилище, или охладите помещение!</DSU.Alert.DsuOverheat.Desc>
+
+    <DSU.PlaceWorker.ProperRoomNeeded>Цифровое Хранилище должно быть помещено в герметичную комнату</DSU.PlaceWorker.ProperRoomNeeded>
+    <DSU.Message.AutoBoundTo>Назначено Цифровое Хранилище: {0}</DSU.Message.AutoBoundTo>
+
+    <DSU.Config.UseCheapPathfinding>Простой поиск пути до Точки Доступа</DSU.Config.UseCheapPathfinding>
+    <DSU.Config.UseCheapPathfinding.Desc>Включает упрощенный поиск пути до "ближайшей" Точки Доступа.\n\nСо включенной опцией, поиск будет осуществляться по прямому пути, без учета стоимости пути и стен.\n\nС выключенной опцией будет происходить полноценный поиск пути.</DSU.Config.UseCheapPathfinding.Desc>
+    <DSU.Config.UseCheapPathfinding.Desc.Caution>Внимание! Отключение этой опции серьезно снизит TPS, особено при большом количестве пешек в колонии. Взамет, поиск пути будет осуществляться более точно, что может сократить время, необходимое пешкам на переноску вещей до станков.</DSU.Config.UseCheapPathfinding.Desc.Caution>
+    <DSU.Config.DsuPathingMultiplier>Коэффициент увеличения пути до DSU: {0}</DSU.Config.DsuPathingMultiplier>
+    <DSU.Config.DsuPathingMultiplier.Desc>Этот коэффициент увеличивает дальность непосредственно до DSU, что привлечет пешек стараться использовать точки доступа.</DSU.Config.DsuPathingMultiplier.Desc>
+    <DSU.Config.EnergyPerStack>Потребление энергии за стак: {0}</DSU.Config.EnergyPerStack>
+    <DSU.Config.EnergyPerStack.Desc>DSU потребляет это количество энергии в тик за каждый хранимый стак предметов. Изменения вступят в силу в течение 60 тиков.</DSU.Config.EnergyPerStack.Desc>
+    <DSU.Config.HalfPathfinding>Поиск пути только между Точкой Доступа и станком</DSU.Config.HalfPathfinding>
+    <DSU.Config.HalfPathfinding.Desc>Как мне кажется, удачный компромисс между точностью поиска пути и уроном по TPS.</DSU.Config.HalfPathfinding.Desc>
+    <DSU.Config.HeaterEnabled>Сложно: Включение механики перегрева DSU</DSU.Config.HeaterEnabled>
+    <DSU.Config.HeaterEnabled.Desc>DSU начинает выделять большое количество тепла. Если DSU перегреется - оно, хранимые предметы, и все строения в комнате, начнут получать увеличивающиеся повреждения. Запаситесь кондиционерами!</DSU.Config.HeaterEnabled.Desc>
+    <DSU.Config.WorkGiverDoBillUnnecessaryFix>Фикс лишнего вызова DoBill</DSU.Config.WorkGiverDoBillUnnecessaryFix>
+    <DSU.Config.WorkGiverDoBillUnnecessaryFix.Desc>Немного снижает нагрузку от рецептов. Удаляет лишний вызов функции подсчета недостающих ингредиентов при назначении пешке приоритета работы за станком. Может вызвать баг, когда станок не сможет вычислить присутствующие ингредиенты и будет указывать на невозможность назначения приоритета.</DSU.Config.WorkGiverDoBillUnnecessaryFix.Desc>
+    <DSU.Config.BillSearchRadiusFix>Фикс радиуса поиска ингредиентов</DSU.Config.BillSearchRadiusFix>
+    <DSU.Config.BillSearchRadiusFix.Desc>Позволяет станкам с ограниченным радиусом поиска ингредиентов искать их через Точки Доступа в подключенном DSU.</DSU.Config.BillSearchRadiusFix.Desc>
+    <DSU.Config.AutoBoundDsu>Автоназначение DSU для новых Шин и Точек Доступа</DSU.Config.AutoBoundDsu>
+    <DSU.Config.AutoBoundDsu.Desc>Если на карте есть всего один DSU - все новые Точки Доступа и Шины будут автоматически подключены к нему.</DSU.Config.AutoBoundDsu.Desc>
+</LanguageData>

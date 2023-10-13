@@ -44,8 +44,8 @@
         </statBases>
         <costList>
             <ComponentSpacer>1</ComponentSpacer>
-            <PRF_MachineFrame_III>1</PRF_MachineFrame_III>
-            <PRF_ElectronicChip_I>1</PRF_ElectronicChip_I>
+            <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+            <DSU_ElectronicChip_I>1</DSU_ElectronicChip_I>
         </costList>
 
         <comps>

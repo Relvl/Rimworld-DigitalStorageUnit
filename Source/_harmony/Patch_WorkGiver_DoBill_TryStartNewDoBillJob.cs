@@ -29,7 +29,7 @@ public class Patch_WorkGiver_DoBill_TryStartNewDoBillJob
             if (dsu is null) return;
             var count = __result.countQueue[idx];
 
-            if (count > 0 && count < info.Thing.stackCount && dsu.Powered)
+            if (count > 0 && count < info.Thing.stackCount && dsu.CanWork)
             {
                 // SplitOff without merging. Possible to overflow the DSU for a 1 tick. Don't care.
                 var splitedThing = ThingMaker.MakeThing(info.Thing.def, info.Thing.Stuff);

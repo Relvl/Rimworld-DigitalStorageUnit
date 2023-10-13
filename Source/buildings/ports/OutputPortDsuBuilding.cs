@@ -79,7 +79,7 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding
         foreach (var position in _portPosition.GetAvailablePositions())
         {
             if (_tickCooldown.ContainsKey(position)) continue;
-            var thingsAtPosition = position.GetThingList(Map).Where(t => t.def.category == ThingCategory.Item).ToList();
+            var thingsAtPosition = position.GetThingList(Map).Where(t => t.def.EverStorable(false)).ToList();
 
             if (thingsAtPosition.Count == 0)
             {
@@ -90,9 +90,8 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding
             for (var idx = thingsAtPosition.Count - 1; idx >= 0; idx--)
             {
                 var thing = thingsAtPosition[idx];
-                if (thing.def.category != ThingCategory.Item) continue;
+                if (!thing.def.EverStorable(false)) continue;
                 if (Map.reservationManager.AllReservedThings().Contains(thing)) continue;
-
                 if (SuckDisalowed(thing, position)) continue;
                 if (SuckMoreThanFirst(thing, idx, position)) continue;
                 if (SuckMoreThanMax(thing, position)) continue;
@@ -112,7 +111,7 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding
             // Todo! Another unsupported building?
         }
 
-        foreach (var thing in BoundStorageUnit.StoredItems.Where(t => settings.AllowedToAccept(t)).ToList())
+        foreach (var thing in BoundStorageUnit.GetStoredThings().Where(t => settings.AllowedToAccept(t)).ToList())
         {
             var count = thing.stackCount;
             if (OutputSettings.UseMax) count = Math.Min(count, OutputSettings.Max);

@@ -4,7 +4,7 @@
         <defName>DSU_Research</defName>
         <tab>Main</tab>
         <label>Digital Storage Unit</label>
-        <description>TODO! add a description</description>
+        <description>Allows to create special storages that can hold a huge number of items, and provide access to them from anywhere on the map.</description>
         <baseCost>10000</baseCost>
         <researchViewX>15</researchViewX>
         <researchViewY>1.60</researchViewY>

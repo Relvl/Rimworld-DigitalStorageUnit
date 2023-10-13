@@ -21,7 +21,6 @@ public static class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
 {
     private static Type _hiddenClass;
     private static FieldInfo _regionsProcessed;
-    private static FieldInfo _adjacentRegionsAvailable;
     private static FieldInfo _relevantThings;
 
     private static Predicate<Thing> _thingValidator;
@@ -40,16 +39,20 @@ public static class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
         public static void TryFindBestIngredientsHelper_Prefix(Predicate<Thing> thingValidator, Pawn pawn, Thing billGiver, float searchRadius)
         {
             LinkedDsu.Clear();
-
             _thingValidator = thingValidator;
             _pawn = pawn;
-
             if (billGiver is not null && DigitalStorageUnit.Config.BillSearchRadiusFix)
             {
+                var radiusSq = searchRadius * searchRadius;
                 LinkedDsu.AddRange(
                     billGiver.Map.listerBuildings.AllBuildingsColonistOfClass<AccessPointPortBuilding>()
-                        .Where(p => p.Spawned && p.Powered && p.BoundStorageUnit is not null)
-                        .Where(p => p.Position.DistanceToSquared(billGiver.Position) <= searchRadius * searchRadius)
+                        .Where(
+                            p => p.Spawned &&
+                                 p.Powered &&
+                                 p.BoundStorageUnit is not null &&
+                                 p.BoundStorageUnit.CanWork &&
+                                 p.Position.DistanceToSquared(billGiver.Position) <= radiusSq
+                        )
                         .Select(p => p.BoundStorageUnit)
                 );
             }
@@ -115,7 +118,6 @@ public static class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
         }
 
         _regionsProcessed = _hiddenClass.GetFields(AccessTools.all).FirstOrDefault(t => t.Name.EndsWith("regionsProcessed"));
-        _adjacentRegionsAvailable = _hiddenClass.GetFields(AccessTools.all).FirstOrDefault(t => t.Name.EndsWith("adjacentRegionsAvailable"));
 
         var methodInfo = _hiddenClass.GetMethods(AccessTools.all).FirstOrDefault(t => t.Name.Contains("b__4"));
         if (methodInfo is null)
@@ -145,8 +147,6 @@ public static class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
             {
                 yield return new CodeInstruction(OpCodes.Ldarg_0);
                 yield return new CodeInstruction(OpCodes.Ldfld, _regionsProcessed);
-                yield return new CodeInstruction(OpCodes.Ldarg_0);
-                yield return new CodeInstruction(OpCodes.Ldfld, _adjacentRegionsAvailable);
                 yield return new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(WorkGiver_DoBill), "newRelevantThings"));
                 yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod), nameof(ProcessRegion)));
 
@@ -159,20 +159,23 @@ public static class Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod
         }
     }
 
-    public static void ProcessRegion(int regionsProcessed, int adjacentRegionsAvailable, List<Thing> relevantThings)
+    public static void ProcessRegion(int regionsProcessed, List<Thing> relevantThings)
     {
         if (!DigitalStorageUnit.Config.BillSearchRadiusFix) return;
         if (_pawn is null || _thingValidator is null) return;
-        if (regionsProcessed <= adjacentRegionsAvailable) return;
+
+        // https://discord.com/channels/272340793174392832/439514175245516800/1161722483502760016
+        // Well... The vanilla will traverse ALL the region if not found in radius... So...
+        if (regionsProcessed != 1) return; // 1 is cuz it's increments first. No any 0 there.
+
         foreach (var dsu in LinkedDsu)
         {
-            foreach (var item in dsu.StoredItems)
+            foreach (var item in dsu.GetStoredThings())
             {
-                if (!item.Spawned) continue;
+                if (relevantThings.Contains(item)) continue;
                 if (item.IsForbidden(_pawn)) continue;
                 if (!_pawn.CanReserve(item)) continue;
                 if (!_thingValidator(item)) continue;
-                if (relevantThings.Contains(item)) continue;
                 relevantThings.Add(item);
             }
         }
