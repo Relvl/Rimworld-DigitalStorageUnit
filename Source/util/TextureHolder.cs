@@ -9,7 +9,6 @@ public static class TextureHolder
     public static readonly Texture2D StoragePawnAccessSwitchIcon = ContentFinder<Texture2D>.Get("UI/dsu");
     public static readonly Texture2D CargoPlatform = ContentFinder<Texture2D>.Get("Storage/CargoPlatform");
     public static readonly Texture2D IoIcon = ContentFinder<Texture2D>.Get("UI/IoIcon");
-
     public static readonly Texture2D ForbidOn = ContentFinder<Texture2D>.Get("UI/Designators/ForbidOn");
     public static readonly Texture2D ForbidOff = ContentFinder<Texture2D>.Get("UI/Designators/ForbidOff");
     public static readonly Texture2D Arrow = ContentFinder<Texture2D>.Get("UI/Overlays/Arrow");
@@ -21,4 +20,7 @@ public static class TextureHolder
 
     public static readonly Color Yellow25 = Color.yellow.WithAlpha(0.25f);
     public static readonly Color Red25 = Color.red.WithAlpha(0.25f);
+
+    public const float LineWidth = 0.1f;
+    public const float CircleRadius = 0.8f;
 }

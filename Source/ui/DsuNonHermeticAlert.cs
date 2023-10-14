@@ -16,8 +16,6 @@ public class DsuNonHermeticAlert : Alert
 
     public override AlertReport GetReport()
     {
-        if (!DigitalStorageUnit.Config.HeaterEnabled) return false;
-
         var unroofedDsus = Find.Maps.Where(m => m.IsPlayerHome)
             .SelectMany(m => m.listerBuildings.AllBuildingsColonistOfClass<DigitalStorageUnitBuilding>())
             .Where(

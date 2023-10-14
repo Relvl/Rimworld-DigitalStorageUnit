@@ -11,7 +11,6 @@ public class DsuHeaterPlaceWorker : PlaceWorker
 {
     public override AcceptanceReport AllowsPlacing(BuildableDef checkingDef, IntVec3 loc, Rot4 rot, Map map, Thing thingToIgnore = null, Thing thing = null)
     {
-        if (!DigitalStorageUnit.Config.HeaterEnabled) return AcceptanceReport.WasAccepted;
         var room = loc.GetRoom(map);
         if (room is null || room.TouchesMapEdge) return "MustBePlacedIndoors".Translate();
         if (room.OpenRoofCount > 0) return "DSU.PlaceWorker.ProperRoomNeeded".Translate();
@@ -20,6 +19,7 @@ public class DsuHeaterPlaceWorker : PlaceWorker
 
     public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing thing = null)
     {
+        if (!DigitalStorageUnit.Config.HeaterEnabled) return;
         var room = center.GetRoom(Find.CurrentMap);
         if (room == null || room.UsesOutdoorTemperature) return;
         GenDraw.DrawFieldEdges(room.Cells.ToList(), GenTemperature.ColorRoomHot);

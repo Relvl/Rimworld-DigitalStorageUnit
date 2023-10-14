@@ -85,7 +85,9 @@
                 <basePowerConsumption>0</basePowerConsumption>
             </li>
             <li Class="CompProperties_Flickable"/>
-            <li Class="DigitalStorageUnit.CompProperties_CompOutputAdjustable"/>
+            <li>
+                <compClass>DigitalStorageUnit.DsuDropAdjustComp</compClass>
+            </li>
             <li>
                 <compClass>DigitalStorageUnit.RenderLinksComp</compClass>
             </li>

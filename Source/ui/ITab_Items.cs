@@ -310,7 +310,7 @@ public class ITab_Items : ITab
 
     private void DropThing(Thing thing)
     {
-        var cell = Selected.GetComp<CompOutputAdjustable>()?.CurrentCell ?? Selected.Position + new IntVec3(0, 0, -2);
+        var cell = Selected.GetComp<DsuDropAdjustComp>()?.CurrentCell ?? Selected.Position + new IntVec3(0, 0, -2);
         var result = GenPlace.TryPlaceThing(
             thing.SplitOff(thing.stackCount),
             cell,

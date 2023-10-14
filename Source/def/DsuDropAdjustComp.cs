@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using DigitalStorageUnit.ui;
 using UnityEngine;
 using Verse;
@@ -6,7 +7,8 @@ using Verse;
 // ReSharper disable once CheckNamespace
 namespace DigitalStorageUnit;
 
-public class CompOutputAdjustable : ThingComp
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")] // def-injected
+public class DsuDropAdjustComp : ThingComp
 {
     private int _index;
     private List<IntVec3> _possibleOutputs = new();

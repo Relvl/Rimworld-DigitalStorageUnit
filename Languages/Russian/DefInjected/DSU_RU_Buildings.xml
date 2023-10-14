@@ -12,6 +12,6 @@
     <DSU_AccessPoint_Building.label>УЦХ Точка Доступа</DSU_AccessPoint_Building.label>
     <DSU_AccessPoint_Building.description>Шина, позволяющая пешкам запрашивать предметы из УЦХ для своих задач.\nНе может быть настроена на автоматическое перемещение предметов.</DSU_AccessPoint_Building.description>
 
-    <DSU_DataExtender.label>WIP! УЦХ Расширитель Хранения</DSU_DataExtender.label>
-    <DSU_DataExtender.description>НЕ РАБОТАЕТ! В ПРОЦЕССЕ РАЗРАБОТКИ!\n\nВнешнее хранилище для УЦХ. Увеличивает лимит хранения предметов.\nДолжно располагаться в одной комнате с УЦХ.</DSU_DataExtender.description>
+    <DSU_DataExtender.label>УЦХ Расширитель Хранения</DSU_DataExtender.label>
+    <DSU_DataExtender.description>Внешнее хранилище для УЦХ. Увеличивает лимит хранения предметов на 128.\nДолжно располагаться в одной комнате с УЦХ.</DSU_DataExtender.description>
 </LanguageData>

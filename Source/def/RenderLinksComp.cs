@@ -11,8 +11,6 @@ namespace DigitalStorageUnit;
 [SuppressMessage("ReSharper", "UnusedType.Global")] // def-injected
 public class RenderLinksComp : ThingComp
 {
-    private const float LineWidth = 0.1f;
-    private const float CircleRadius = 0.8f;
     private static readonly float BaseAlt = AltitudeLayer.MetaOverlays.AltitudeFor();
 
     public override void PostDraw()
@@ -30,21 +28,32 @@ public class RenderLinksComp : ThingComp
     {
         if (parent is ABasePortDsuBuilding { BoundStorageUnit: { } } iobase)
         {
-            GenDraw.DrawCircleOutline(iobase.TrueCenter(), CircleRadius, SimpleColor.Yellow);
-            GenDraw.DrawCircleOutline(iobase.BoundStorageUnit.TrueCenter(), CircleRadius, SimpleColor.Yellow);
-            GenDraw.DrawLineBetween(iobase.TrueCenter(), iobase.BoundStorageUnit.TrueCenter(), SimpleColor.Yellow, LineWidth);
+            GenDraw.DrawCircleOutline(iobase.TrueCenter(), TextureHolder.CircleRadius, SimpleColor.Yellow);
+            GenDraw.DrawCircleOutline(iobase.BoundStorageUnit.TrueCenter(), TextureHolder.CircleRadius, SimpleColor.Yellow);
+            GenDraw.DrawLineBetween(iobase.TrueCenter(), iobase.BoundStorageUnit.TrueCenter(), SimpleColor.Yellow, TextureHolder.LineWidth);
         }
 
         if (parent is DigitalStorageUnitBuilding dsu)
         {
-            if (dsu.Ports.Any())
+            var drawDsu = false;
+
+            foreach (var port in dsu.Ports)
             {
-                GenDraw.DrawCircleOutline(dsu.TrueCenter(), CircleRadius, SimpleColor.Yellow);
-                foreach (var port in dsu.Ports)
-                {
-                    GenDraw.DrawCircleOutline(port.TrueCenter(), CircleRadius, SimpleColor.Yellow);
-                    GenDraw.DrawLineBetween(dsu.TrueCenter(), port.TrueCenter(), SimpleColor.Yellow, LineWidth);
-                }
+                drawDsu = true;
+                GenDraw.DrawCircleOutline(port.TrueCenter(), TextureHolder.CircleRadius, SimpleColor.Yellow);
+                GenDraw.DrawLineBetween(dsu.TrueCenter(), port.TrueCenter(), SimpleColor.Yellow, TextureHolder.LineWidth);
+            }
+
+            foreach (var extender in dsu.Extenders)
+            {
+                drawDsu = true;
+                GenDraw.DrawCircleOutline(extender.TrueCenter(), TextureHolder.CircleRadius, SimpleColor.Cyan);
+                GenDraw.DrawLineBetween(dsu.TrueCenter(), extender.TrueCenter(), SimpleColor.Cyan, TextureHolder.LineWidth);
+            }
+
+            if (drawDsu)
+            {
+                GenDraw.DrawCircleOutline(dsu.TrueCenter(), TextureHolder.CircleRadius, SimpleColor.Yellow);
             }
         }
     }

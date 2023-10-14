@@ -20,14 +20,17 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     private int _storedItemsCount = 0;
 
     public HashSet<ABasePortDsuBuilding> Ports = new();
+    public readonly HashSet<DataExtenderBuilding> Extenders = new();
     public string UniqueName;
 
     public bool ForbidPawnInput => !_pawnAccess || GetSlotLimit <= _storedItemsCount;
 
-    // Todo! Calc (base + extenders * rate) * efficiency
-    public int GetSlotLimit => 768;
+    // Todo! Technology
+    private float Efficiency => DigitalStorageUnit.Config.HeaterEnabled ? 1.4f : 1.0f;
+
+    public int GetSlotLimit => (int)(( /*todo!settings*/256 + Extenders.Count(e => e.Powered) * /*todo!settings*/128) * Efficiency);
     public bool Powered => _compPowerTrader?.PowerOn ?? false;
-    public bool CanWork => Powered && Spawned && (!DigitalStorageUnit.Config.HeaterEnabled || _heaterComp.IsRoomHermetic());
+    public bool CanWork => Powered && Spawned && _heaterComp.IsRoomHermetic();
 
     public bool CanReciveThing(Thing item) => CanWork && GetSlotLimit > _storedItemsCount && Accepts(item);
 
@@ -159,7 +162,8 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         Map.dynamicDrawManager.DeRegisterDrawable(item);
     }
 
-    private void UpdatePowerConsumption() => _compPowerTrader.powerOutputInt = -1 * _storedItemsCount * DigitalStorageUnit.Config.EnergyPerStack;
+    private void UpdatePowerConsumption() =>
+        _compPowerTrader.powerOutputInt = -1 * _storedItemsCount * DigitalStorageUnit.Config.EnergyPerStack * (DigitalStorageUnit.Config.HeaterEnabled ? 0.9f : 1f);
 
     public override IEnumerable<Gizmo> GetGizmos()
     {

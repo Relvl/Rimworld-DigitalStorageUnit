@@ -1,4 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using DigitalStorageUnit.util;
+using RimWorld;
+using UnityEngine;
 using Verse;
 
 // ReSharper disable once CheckNamespace
@@ -20,5 +24,17 @@ public class ExtenderPlaceWorker : PlaceWorker
         if (dsuInTheRoomCount <= 0) return "DSU.PlaceWorker.DsuNeeded".Translate();
         if (dsuInTheRoomCount > 1) return "DSU.PlaceWorker.OnlyOneDsuNeeded".Translate();
         return AcceptanceReport.WasAccepted;
+    }
+
+    public override void DrawGhost(ThingDef def, IntVec3 center, Rot4 rot, Color ghostCol, Thing thing = null)
+    {
+        var room = center.GetRoom(Find.CurrentMap);
+        if (room == null || room.UsesOutdoorTemperature) return;
+        var dsuList = room.ContainedAndAdjacentThings.Where(t => t is DigitalStorageUnitBuilding).ToList();
+        foreach (var dsu in dsuList)
+        {
+            GenDraw.DrawCircleOutline(dsu.TrueCenter(), TextureHolder.CircleRadius, SimpleColor.Yellow);
+            GenDraw.DrawLineBetween(dsu.TrueCenter(), GenThing.TrueCenter(center, rot, def.size, def.Altitude), SimpleColor.Yellow, TextureHolder.LineWidth);
+        }
     }
 }

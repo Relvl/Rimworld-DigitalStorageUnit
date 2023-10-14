@@ -85,11 +85,9 @@
         <Compile Include="buildings\ports\AccessPointPortBuilding.cs" />
         <Compile Include="buildings\ports\InputPortDsuBuilding.cs" />
         <Compile Include="buildings\ports\OutputPortDsuBuilding.cs" />
-        <Compile Include="def\CompOutputAdjustable.cs" />
-        <Compile Include="def\CompProperties_CompOutputAdjustable.cs" />
+        <Compile Include="def\DsuDropAdjustComp.cs" />
         <Compile Include="def\DsuHeaterComp.cs" />
         <Compile Include="def\DsuHeaterCompProperties.cs" />
-        <Compile Include="def\ExtenderComp.cs" />
         <Compile Include="def\placeworkers\DsuHeaterPlaceWorker.cs" />
         <Compile Include="def\placeworkers\ExtenderPlaceWorker.cs" />
         <Compile Include="def\RenderLinksComp.cs" />

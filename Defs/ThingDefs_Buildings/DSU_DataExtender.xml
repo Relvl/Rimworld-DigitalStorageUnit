@@ -2,8 +2,8 @@
 <Defs>
     <ThingDef ParentName="DSU_BuildingBase">
         <defName>DSU_DataExtender</defName>
-        <label>WIP! DSU Data Extender</label>
-        <description>External data extender. Allows the connected DSU to hold 100 more stacks.</description>
+        <label>DSU Data Extender</label>
+        <description>External data extender. Allows the connected DSU to hold 128 more stacks.</description>
         <thingClass>DigitalStorageUnit.DataExtenderBuilding</thingClass>
 
         <graphicData>
@@ -54,9 +54,6 @@
             <li Class="CompProperties_Glower">
                 <glowRadius>2</glowRadius>
                 <glowColor>(115,198,206,0)</glowColor>
-            </li>
-            <li>
-                <compClass>DigitalStorageUnit.ExtenderComp</compClass>
             </li>
         </comps>
 
