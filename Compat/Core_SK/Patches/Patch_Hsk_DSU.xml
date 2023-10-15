@@ -10,22 +10,28 @@
                         <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/prerequisites</xpath>
                         <value>
                             <prerequisites>
-                                <li>Storage_C2</li>
+                                <li>Storage_D1</li>
                                 <li>Electricity</li>
                                 <li>MicroelectronicsBasics</li>
                             </prerequisites>
                         </value>
                     </li>
                     <li Class="PatchOperationReplace">
+                        <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/techLevel</xpath>
+                        <value>
+                            <techLevel>Spacer</techLevel>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationReplace">
                         <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/researchViewX</xpath>
                         <value>
-                            <researchViewX>11.00</researchViewX>
+                            <researchViewX>18.00</researchViewX>
                         </value>
                     </li>
                     <li Class="PatchOperationReplace">
                         <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/researchViewY</xpath>
                         <value>
-                            <researchViewY>13.00</researchViewY>
+                            <researchViewY>12.00</researchViewY>
                         </value>
                     </li>
                     <li Class="PatchOperationFindMod">
