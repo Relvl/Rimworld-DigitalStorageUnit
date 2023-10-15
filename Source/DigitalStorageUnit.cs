@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using System;
+using System.Linq;
 using System.Reflection;
+using DigitalStorageUnit._harmony;
 using UnityEngine;
 using Verse;
 
@@ -11,6 +13,7 @@ namespace DigitalStorageUnit;
 public class DigitalStorageUnit : Mod
 {
     private static readonly string ModID = "Relvl.DigitalStorageUnit";
+    public static readonly bool IsDeepStorage = ModsConfig.ActiveModsInLoadOrder.Any(m => "LWM.DeepStorage".EqualsIgnoreCase(m.packageIdLowerCase));
 
     public static DigitalStorageUnitConfig Config { get; private set; } = new();
 
@@ -25,9 +28,26 @@ public class DigitalStorageUnit : Mod
             // Init the configs
             Config = GetSettings<DigitalStorageUnitConfig>();
             DigitalStorageUnitConfig.ModInstance = this;
+            
             // Init the Harmony
-            HarmonyInstance = new Harmony(ModID);
-            HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
+            var harmonyInstance = new Harmony(ModID);
+            harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
+
+            if (IsDeepStorage)
+            {
+                try
+                {
+                    var dsPatchPostfix = AccessTools.Method("LWM.DeepStorage.Open_DS_Tab_On_Select:Postfix");
+                    var dsuPatchPrefix = AccessTools.Method(nameof(Patch_Open_DS_Tab_On_Select_Postfix) + ":Prefix");
+                    harmonyInstance.Patch(dsPatchPostfix, prefix: new HarmonyMethod(dsuPatchPrefix));
+                    Log.Message("DigitalStorageUnit: LWM.DeepStorage.Open_DS_Tab_On_Select:Postfix patched");
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.ToString());
+                }
+            }
+
             // Okay now
             Log.Message($"DigitalStorageUnit {typeof(DigitalStorageUnit).Assembly.GetName().Version} - Harmony patches successful");
         }
@@ -38,8 +58,6 @@ public class DigitalStorageUnit : Mod
     }
 
     public override void DoSettingsWindowContents(Rect inRect) => Config.DoSettingsWindowContents(inRect);
-
-    public Harmony HarmonyInstance { get; }
 
     public override string SettingsCategory() => "DSU".Translate();
 }

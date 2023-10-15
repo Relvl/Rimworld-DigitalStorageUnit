@@ -3,6 +3,11 @@
   <Excluded>
     <exclude>.git</exclude>
     <exclude>.idea</exclude>
+    <exclude>DigitalStorageUnit.sln</exclude>
+    <exclude>LWMDeepStorageCompat\bin</exclude>
+    <exclude>LWMDeepStorageCompat\obj</exclude>
+    <exclude>LWMDeepStorageCompat\Properties</exclude>
+    <exclude>packages</exclude>
     <exclude>Source</exclude>
   </Excluded>
 </Configuration>

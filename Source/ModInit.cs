@@ -14,7 +14,7 @@ public class ModInit
 {
     static ModInit()
     {
-        if (!ModsConfig.ActiveModsInLoadOrder.Any(m => "LWM.DeepStorage".EqualsIgnoreCase(m.packageIdLowerCase))) return;
+        if (!DigitalStorageUnit.IsDeepStorage) return;
 
         foreach (var thingDef in DefDatabase<ThingDef>.AllDefsListForReading)
         {

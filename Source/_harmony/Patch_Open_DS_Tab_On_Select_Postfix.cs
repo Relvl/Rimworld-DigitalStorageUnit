@@ -14,7 +14,7 @@ namespace DigitalStorageUnit._harmony;
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-[HarmonyPatch("LWM.DeepStorage.Open_DS_Tab_On_Select", "Postfix")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class Patch_Open_DS_Tab_On_Select_Postfix
 {
     public static bool Prefix()
