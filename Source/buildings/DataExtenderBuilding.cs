@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using DigitalStorageUnit.util;
 using RimWorld;
@@ -7,16 +8,17 @@ using Verse;
 namespace DigitalStorageUnit;
 
 /// <summary>
-/// TODO!
-/// Снизить лимит хранения у ДСУ
-/// Увеличивает лимит хранения на +100 стаков
-/// Немного снижает нагрев ДСУ
+///     TODO!
+///     Снизить лимит хранения у ДСУ
+///     Увеличивает лимит хранения на +100 стаков
+///     Немного снижает нагрев ДСУ
 /// </summary>
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")] // def
 public class DataExtenderBuilding : Building
 {
-    private bool _firstTickProcessed;
     private DigitalStorageUnitBuilding _boundStorageUnit;
     private CompPowerTrader _compPowerTrader;
+    private bool _firstTickProcessed;
 
     public bool Powered
     {
@@ -46,7 +48,6 @@ public class DataExtenderBuilding : Building
     {
         base.Tick();
         if (_firstTickProcessed && !this.IsHashIntervalTick(60)) return;
-
         var dsuList = this.GetRoom().ContainedAndAdjacentThings.Where(t => t is DigitalStorageUnitBuilding).Cast<DigitalStorageUnitBuilding>().ToList();
         var newDsu = dsuList.Count == 1 ? dsuList.FirstOrDefault() : null;
         if (newDsu != _boundStorageUnit)

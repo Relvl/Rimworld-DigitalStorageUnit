@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <ThingDef ParentName="DSU_BuildingBase">
+        <defName>DSU_DataExtender</defName>
+        <label>DSU Data Extender</label>
+        <description>External data extender. Allows the connected DSU to hold 128 more stacks.</description>
+        <thingClass>DigitalStorageUnit.DataExtenderBuilding</thingClass>
+
+        <graphicData>
+            <texPath>Storage/DsuDataExtender</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+            <drawSize>(2,2)</drawSize>
+            <damageData>
+                <rect>(0,0,1,2)</rect>
+            </damageData>
+        </graphicData>
+
+        <building>
+            <relatedBuildCommands>
+                <li>DSU_AccessPoint_Building</li>
+                <li>DSU_InputBus_Building</li>
+                <li>DSU_OutputBus_Building</li>
+                <li>DSU_DigitalStorageUnit_Building</li>
+            </relatedBuildCommands>
+        </building>
+        <rotatable>false</rotatable>
+        <size>(2,2)</size>
+        <passability>Impassable</passability>
+        <!-- WTF is this??? we should use <fillPercent>1</fillPercent> but it looks to break the room... -->
+        <disableImpassableShotOverConfigError>true</disableImpassableShotOverConfigError>
+
+        <statBases>
+            <WorkToBuild>2500</WorkToBuild>
+            <MaxHitPoints>150</MaxHitPoints>
+            <MarketValue>15000</MarketValue>
+            <Flammability>1.0</Flammability>
+            <Mass>80</Mass>
+            <Beauty>0.5</Beauty>
+        </statBases>
+
+        <costList>
+            <Gold>100</Gold>
+            <Uranium>100</Uranium>
+            <Plasteel>100</Plasteel>
+            <ComponentSpacer>50</ComponentSpacer>
+            <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+            <DSU_ElectronicChip_II>3</DSU_ElectronicChip_II>
+        </costList>
+
+        <comps>
+            <li Class="CompProperties_Power">
+                <compClass>CompPowerTrader</compClass>
+                <basePowerConsumption>500</basePowerConsumption>
+            </li>
+            <li Class="CompProperties_Flickable"/>
+            <li Class="CompProperties_Glower">
+                <glowRadius>2</glowRadius>
+                <glowColor>(115,198,206,0)</glowColor>
+            </li>
+        </comps>
+
+        <placeWorkers>
+            <li>DigitalStorageUnit.ExtenderPlaceWorker</li>
+        </placeWorkers>
+
+        <researchPrerequisites>
+            <!-- todo! dedicated research -->
+            <li>DSU_Research</li>
+        </researchPrerequisites>
+
+    </ThingDef>
+</Defs>

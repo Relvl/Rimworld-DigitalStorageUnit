@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <!--==================== Digital Storage Unit ====================-->
+    <ThingDef ParentName="DSU_BuildingBase">
+        <defName>DSU_DigitalStorageUnit_Building</defName>
+        <label>Digital Storage Unit</label>
+        <description>A matter-energy conversion based storage unit which can hold a large number of stacks, consuming power per stack of items.\nIn the event of a power outage, items already inside will be safe, but the DSU will not be able to store more.\nDon't break/deconstruct it - items inside will be destroyed!</description>
+        <thingClass>DigitalStorageUnit.DigitalStorageUnitBuilding</thingClass>
+        <uiIconScale>0.9</uiIconScale>
+        <pathCost>150</pathCost>
+        <blockWind>true</blockWind>
+        <fillPercent>1.0</fillPercent>
+        <drawGUIOverlay>true</drawGUIOverlay>
+        <terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+        <staticSunShadowHeight>0.5</staticSunShadowHeight>
+        <drawerType>MapMeshAndRealTime</drawerType>
+        <graphicData>
+            <texPath>Storage/CargoPlatform</texPath>
+            <drawSize>(3,3)</drawSize>
+            <damageData>
+                <rect>(0.0,0,2.9,2.9)</rect>
+                <cornerBL>Damage/Corner</cornerBL>
+                <cornerTR>Damage/Corner</cornerTR>
+            </damageData>
+        </graphicData>
+        <statBases>
+            <Mass>50</Mass>
+            <MaxHitPoints>450</MaxHitPoints>
+            <WorkToBuild>5000</WorkToBuild>
+            <MarketValue>10880</MarketValue>
+            <Flammability>0.05</Flammability>
+            <Beauty>0.5</Beauty>
+        </statBases>
+        <building>
+            <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
+            <ignoreStoredThingsBeauty>true</ignoreStoredThingsBeauty>
+            <defaultStorageSettings>
+                <priority>Normal</priority>
+                <filter>
+                    <categories>
+                        <li>Manufactured</li>
+                        <li>ResourcesRaw</li>
+                        <li>Items</li>
+                        <li>BuildingsArt</li>
+                        <li>Weapons</li>
+                        <li>Apparel</li>
+                        <li>BodyParts</li>
+                    </categories>
+                    <specialFiltersToDisallow>
+                        <li>AllowRotten</li>
+                    </specialFiltersToDisallow>
+                </filter>
+            </defaultStorageSettings>
+            <relatedBuildCommands>
+                <li>DSU_AccessPoint_Building</li>
+                <li>DSU_InputBus_Building</li>
+                <li>DSU_OutputBus_Building</li>
+                <li>DSU_DataExtender</li>
+            </relatedBuildCommands>
+        </building>
+        <size>(3,3)</size>
+        <costList>
+            <Steel>300</Steel>
+            <Gold>50</Gold>
+            <Uranium>20</Uranium>
+            <Plasteel>100</Plasteel>
+            <ComponentIndustrial>100</ComponentIndustrial>
+            <ComponentSpacer>15</ComponentSpacer>
+            <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+            <DSU_ElectronicChip_II>1</DSU_ElectronicChip_II>
+        </costList>
+
+        <inspectorTabs>
+            <li>ITab_Storage</li>
+            <li>DigitalStorageUnit.ITab_Items</li>
+        </inspectorTabs>
+        <comps>
+            <li Class="CompProperties_Glower">
+                <glowRadius>6</glowRadius>
+                <glowColor>(115,198,206,0)</glowColor>
+            </li>
+            <li Class="CompProperties_Power">
+                <compClass>CompPowerTrader</compClass>
+                <shortCircuitInRain>true</shortCircuitInRain>
+                <basePowerConsumption>0</basePowerConsumption>
+            </li>
+            <li Class="CompProperties_Flickable"/>
+            <li>
+                <compClass>DigitalStorageUnit.DsuDropAdjustComp</compClass>
+            </li>
+            <li>
+                <compClass>DigitalStorageUnit.RenderLinksComp</compClass>
+            </li>
+            <li Class="DigitalStorageUnit.DsuHeaterCompProperties">
+                <HeatPerSecond>30</HeatPerSecond>
+                <MaxHeat>1000</MaxHeat>
+                <DamageAtHeat>200</DamageAtHeat>
+                <!-- (DamageAtHeat - current_temp) * DamageAtHeat -->
+                <DamageMultiplier>0.1</DamageMultiplier>
+            </li>
+        </comps>
+        <placeWorkers>
+            <li>DigitalStorageUnit.DsuHeaterPlaceWorker</li>
+        </placeWorkers>
+    </ThingDef>
+</Defs>

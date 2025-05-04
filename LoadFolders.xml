@@ -1,7 +1,12 @@
 <loadFolders>
   <v1.4>
-    <li>/</li>
-    <li IfModActive="skyarkhangel.HSK">Compat/Core_SK</li>
-    <li IfModActive="LWM.DeepStorage">Compat/LWM_DeepStorage</li>
+    <li>1.4</li>
+    <li IfModActive="skyarkhangel.HSK">1.4/Compat/Core_SK</li>
+    <li IfModActive="LWM.DeepStorage">1.4/Compat/LWM_DeepStorage</li>
   </v1.4>
+  <v1.5>
+    <li>1.5</li>
+    <li IfModActive="skyarkhangel.HSK">1.5/Compat/Core_SK</li>
+    <li IfModActive="LWM.DeepStorage">1.5/Compat/LWM_DeepStorage</li>
+  </v1.5>
 </loadFolders>

@@ -26,7 +26,7 @@ internal class Patch_Building_Storage_GetGizmos
     /// <returns>GetGizmos iterator</returns>
     public static MethodBase TargetMethod()
     {
-        var predicateClass = typeof(Building_Storage).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName!.Contains("d__43"));
+        var predicateClass = typeof(Building_Storage).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName!.Contains("d__52"));
         if (predicateClass == null)
         {
             Log.Error("DSU Harmony Error - predicateClass == null for Patch_Building_Storage_GetGizmos.TargetMethod()");

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+    <DSU>Digital Storage Unit</DSU>
+    <DSU.AdjustOutputDirection>Adjust working area</DSU.AdjustOutputDirection>
+    <DSU.MinMaxAmounts>Set min/max amounts</DSU.MinMaxAmounts>
+    <DSU.UseMin>Use Min?</DSU.UseMin>
+    <DSU.UseMax>Use Max?</DSU.UseMax>
+    <DSU.Max>Maximum</DSU.Max>
+    <DSU.Max.Desc>When this is enabled, the Output Bus will stop taking items if either the stack is full, or the stack size is greater than or equal to X.</DSU.Max.Desc>
+    <DSU.Min>Minimum</DSU.Min>
+    <DSU.Min.Desc>When this is enabled, the Output Bus will return the outputted item to the cargo platform if the item has less than X stack size. It will also only take items if there are enough items in storage to exceed the minimum.</DSU.Min.Desc>
+    <DSU.Limit.GetInspectString>Limits: {0} - {1}</DSU.Limit.GetInspectString>
+    <DSU.Drop>Drop {0}</DSU.Drop>
+    <DSU.TotalStackNum>Total number of stacks: {0}</DSU.TotalStackNum>
+    <DSU.IItemsTab>Items</DSU.IItemsTab>
+    <DSU.IItemsTab.Label.Empty>There are currently no items stored</DSU.IItemsTab.Label.Empty>
+    <DSU.IItemsTab.Caption>{0}: {1}/{2} stacks</DSU.IItemsTab.Caption>
+    <DSU.IItemsTab.Caption.Filtered>{0}: {1}/{2} stacks (found: {3})</DSU.IItemsTab.Caption.Filtered>
+    <DSU.Rename>Rename</DSU.Rename>
+    <DSU.Rename.Desc>Rename this building</DSU.Rename.Desc>
+    <DSU.StacksCount.Detailed>{0}/{1} stacks</DSU.StacksCount.Detailed>
+    <DSU.Output.Settings>Output settings...</DSU.Output.Settings>
+    <DSU.ItemSource>Item source</DSU.ItemSource>
+    <DSU.PawnAccess>Pawn access</DSU.PawnAccess>
+    <DSU.PawnAccess.Desc>Pawn access</DSU.PawnAccess.Desc>
+    <DSU.Alert.LostLink.Label>DSU: port lost link</DSU.Alert.LostLink.Label>
+    <DSU.Alert.LostLink.Desc>Port lost link. You sould connect it to on if Digital Storage Unit.</DSU.Alert.LostLink.Desc>
+    <DSU.Alert.DsuNonHermetic>DSU room lost a roof</DSU.Alert.DsuNonHermetic>
+    <DSU.Alert.DsuNonHermetic.Desc>The DSU should be placed in a full roofed room, but there is no ceiling or wall in the room.</DSU.Alert.DsuNonHermetic.Desc>
+    <DSU.Alert.DsuOverheat>DSU room temperature is critical</DSU.Alert.DsuOverheat>
+    <DSU.Alert.DsuOverheat.Desc>If the temperature keeps rising, the DSU, all stored items, and all other structures in the room will begin to receive damage. Disable the DSU or use a coolers!</DSU.Alert.DsuOverheat.Desc>
+
+    <DSU.PlaceWorker.ProperRoomNeeded>The DSU should be placed in a full roofed room</DSU.PlaceWorker.ProperRoomNeeded>
+    <DSU.Message.AutoBoundTo>Auto bound to DSU: {0}</DSU.Message.AutoBoundTo>
+
+    <DSU.Config.UseCheapPathfinding>Cheap Access Point pathfinding</DSU.Config.UseCheapPathfinding>
+    <DSU.Config.UseCheapPathfinding.Desc>Enables a simplified search for the "nearest" Access Point.\n\nWith this option enabled, the geographically closest DIRECT distance between the pawn, the Access Point, and the target location is using.\n\nWhen the option is disabled, this search will involve the pathfinding for the cheapest path.</DSU.Config.UseCheapPathfinding.Desc>
+    <DSU.Config.UseCheapPathfinding.Desc.Caution>CAUTION! Disabling this option can seriously hit the TPS and performance! This will be especially noticeable if there are a lot of pawns in the colony.</DSU.Config.UseCheapPathfinding.Desc.Caution>
+    <DSU.Config.DsuPathingMultiplier>DSU simple pathfinding factor: {0}</DSU.Config.DsuPathingMultiplier>
+    <DSU.Config.DsuPathingMultiplier.Desc>This factor multiplies calculated range from pawn to DSU and target. This enforced a pawns to use access ports instead DSU.</DSU.Config.DsuPathingMultiplier.Desc>
+    <DSU.Config.EnergyPerStack>DSU energy consume per holded item stack: {0}</DSU.Config.EnergyPerStack>
+    <DSU.Config.EnergyPerStack.Desc>The changes will be applied within 60 ticks</DSU.Config.EnergyPerStack.Desc>
+    <DSU.Config.HalfPathfinding>Pathfinding only from item to bill giver</DSU.Config.HalfPathfinding>
+    <DSU.Config.HalfPathfinding.Desc>As it seemed to me, this is a good compromise between the accuracy of choosing an access point and a decrease in performance from pathfinding.</DSU.Config.HalfPathfinding.Desc>
+    <DSU.Config.HeaterEnabled>Hardmode: DSU heating mechanics enabled</DSU.Config.HeaterEnabled>
+    <DSU.Config.HeaterEnabled.Desc>Enables DSU heating mechanics. It begins to emit a lot of heat when working, which you have to take away. If the DSU overheats - itself, the objects stored by it, and the buildings in its room will be damaged. Stock up on air conditioners or freezers!</DSU.Config.HeaterEnabled.Desc>
+    <DSU.Config.WorkGiverDoBillUnnecessaryFix>Unnecessary DoBill ingredients count fix</DSU.Config.WorkGiverDoBillUnnecessaryFix>
+    <DSU.Config.WorkGiverDoBillUnnecessaryFix.Desc>It can cause a bug in which the number of missing ingredients is not displayed when setting the priority for the pawn to perform work on this machine.\n\nSlightly unloads the logic of issuing work, increasing TPS.</DSU.Config.WorkGiverDoBillUnnecessaryFix.Desc>
+    <DSU.Config.BillSearchRadiusFix>Ingredient search radius fix</DSU.Config.BillSearchRadiusFix>
+    <DSU.Config.BillSearchRadiusFix.Desc>Count DSU stored items via Access Point for ingredients search radius</DSU.Config.BillSearchRadiusFix.Desc>
+    <DSU.Config.AutoBoundDsu>Auto bound ports to single DSU</DSU.Config.AutoBoundDsu>
+    <DSU.Config.AutoBoundDsu.Desc>If there is only one DSA on the map - all new ports will be automatically bound to it.</DSU.Config.AutoBoundDsu.Desc>
+</LanguageData>

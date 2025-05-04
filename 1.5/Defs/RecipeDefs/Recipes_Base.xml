@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <RecipeDef Name="DSU_BaseRecipe" Abstract="True">
+        <researchPrerequisite>DSU_Research</researchPrerequisite>
+        <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+        <effectWorking>Smith</effectWorking>
+        <soundWorking>Recipe_Machining</soundWorking>
+        <workSkill>Crafting</workSkill>
+    </RecipeDef>
+
+    <RecipeDef Name="DSU_BaseRecipe_Mechanics" ParentName="DSU_BaseRecipe" Abstract="True">
+        <!-- For patching purposes ;) -->
+        <recipeUsers>
+            <li>FabricationBench</li>
+        </recipeUsers>
+    </RecipeDef>
+
+    <RecipeDef Name="DSU_BaseRecipe_Electronics" ParentName="DSU_BaseRecipe" Abstract="True">
+        <!-- For patching purposes ;) -->
+        <recipeUsers>
+            <li>FabricationBench</li>
+        </recipeUsers>
+    </RecipeDef>
+
+</Defs>

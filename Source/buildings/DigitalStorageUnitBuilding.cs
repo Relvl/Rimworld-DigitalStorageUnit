@@ -1,29 +1,28 @@
-﻿using RimWorld;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using DigitalStorageUnit.ui;
 using DigitalStorageUnit.util;
+using RimWorld;
 using Verse;
 
 // ReSharper disable once CheckNamespace
 namespace DigitalStorageUnit;
 
 [StaticConstructorOnStartup]
-[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")] // def-reflected
-public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem, IHoldMultipleThings.IHoldMultipleThings, ILwmDsLeaveMeAlonePlease
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] // def-reflected
+public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem, IHoldMultipleThings.IHoldMultipleThings, ILwmDsLeaveMeAlonePlease, IRenameable
 {
+    public readonly HashSet<DataExtenderBuilding> Extenders = [];
     private CompPowerTrader _compPowerTrader;
     private DsuHeaterComp _heaterComp;
     private bool _pawnAccess = true;
-    private int _storedItemsCount = 0;
+    private int _storedItemsCount;
 
-    public HashSet<ABasePortDsuBuilding> Ports = new();
-    public readonly HashSet<DataExtenderBuilding> Extenders = new();
+    public HashSet<ABasePortDsuBuilding> Ports = [];
     public string UniqueName;
-
-    public bool ForbidPawnInput => !_pawnAccess || GetSlotLimit <= _storedItemsCount;
 
     // Todo! Technology
     private float Efficiency => DigitalStorageUnit.Config.HeaterEnabled ? 1.4f : 1.0f;
@@ -32,12 +31,10 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     public bool Powered => _compPowerTrader?.PowerOn ?? false;
     public bool CanWork => Powered && Spawned && _heaterComp.IsRoomHermetic();
 
-    public bool CanReciveThing(Thing item) => CanWork && GetSlotLimit > _storedItemsCount && Accepts(item);
-
     public override string LabelNoCount => UniqueName ?? base.LabelNoCount;
     public override string LabelCap => UniqueName ?? base.LabelCap;
 
-    public IEnumerable<Thing> GetStoredThings() => GetSlotGroup().HeldThings;
+    public bool ForbidPawnInput => !_pawnAccess || GetSlotLimit <= _storedItemsCount;
 
     public override void Notify_ReceivedThing(Thing newItem)
     {
@@ -51,6 +48,50 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         base.Notify_LostThing(newItem);
         RearrangeItems();
         UpdatePowerConsumption();
+    }
+
+    /// <summary>
+    ///     Pick Up And Haul compatibility.
+    ///     <returns>true if can store, capacity is how many can store (more than one stack possible)</returns>
+    /// </summary>
+    public bool CapacityAt(Thing thing, IntVec3 cell, Map map, out int capacity)
+    {
+        capacity = 0;
+        if (thing is null || map is null || map != Map || !CanWork) return false;
+        thing = thing.GetInnerIfMinified();
+        if (!Accepts(thing)) return false;
+        foreach (var storedItem in GetStoredThings())
+        {
+            if (storedItem.def != thing.def || (thing.def.MadeFromStuff && storedItem.Stuff != thing.Stuff)) continue;
+            capacity += thing.def.stackLimit - storedItem.stackCount;
+        }
+
+        capacity += (GetSlotLimit - _storedItemsCount) * thing.def.stackLimit;
+        return capacity > 0;
+    }
+
+    public bool StackableAt(Thing thing, IntVec3 cell, Map map)
+    {
+        return CapacityAt(thing, cell, map, out _);
+    }
+
+    public string RenamableLabel
+    {
+        get => UniqueName ?? LabelCapNoCount;
+        set => UniqueName = value;
+    }
+
+    public string BaseLabel => LabelCapNoCount;
+    public string InspectLabel => LabelCap;
+
+    public bool CanReciveThing(Thing item)
+    {
+        return CanWork && GetSlotLimit > _storedItemsCount && Accepts(item);
+    }
+
+    public IEnumerable<Thing> GetStoredThings()
+    {
+        return GetSlotGroup().HeldThings;
     }
 
     public override void ExposeData()
@@ -92,7 +133,6 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     {
         // todo! another types? destroying by damage?
         foreach (var thing in GetStoredThings())
-        {
             if (mode == DestroyMode.Deconstruct)
             {
                 thing.Destroy();
@@ -103,7 +143,6 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
                 thing.DeSpawn();
                 GenPlace.TryPlaceThing(thing, Position, Map, ThingPlaceMode.Near);
             }
-        }
 
         Map.GetDsuComponent().DeregisterBuilding(this);
         base.DeSpawn(mode);
@@ -121,40 +160,16 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         foreach (var tabItems in GetInspectTabs().OfType<ITab_Items>()) tabItems.RecalculateList();
     }
 
-    /// <summary>
-    /// Pick Up And Haul compatibility.
-    /// <returns>true if can store, capacity is how many can store (more than one stack possible)</returns>
-    /// </summary>
-    public bool CapacityAt(Thing thing, IntVec3 cell, Map map, out int capacity)
-    {
-        capacity = 0;
-        if (thing is null || map is null || map != Map || !CanWork) return false;
-        thing = thing.GetInnerIfMinified();
-        if (!Accepts(thing)) return false;
-        foreach (var storedItem in GetStoredThings())
-        {
-            if (storedItem.def != thing.def || (thing.def.MadeFromStuff && storedItem.Stuff != thing.Stuff)) continue;
-            capacity += thing.def.stackLimit - storedItem.stackCount;
-        }
-
-        capacity += (GetSlotLimit - _storedItemsCount) * thing.def.stackLimit;
-        return capacity > 0;
-    }
-
-    public bool StackableAt(Thing thing, IntVec3 cell, Map map) => CapacityAt(thing, cell, map, out _);
-
     public void HandleNewItem(Thing item, bool tryAbsorb = true)
     {
         if (item.Destroyed) return;
         if (tryAbsorb)
-        {
             foreach (var storedThing in Position.GetThingList(Map)) // Todo! StoredItems
             {
                 if (storedThing == item) continue;
                 storedThing.TryAbsorbStack(item, true);
                 if (item.Destroyed) return;
             }
-        }
 
         if (!CanReciveThing(item)) return;
         item.Position = Position;
@@ -162,8 +177,10 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         Map.dynamicDrawManager.DeRegisterDrawable(item);
     }
 
-    private void UpdatePowerConsumption() =>
+    private void UpdatePowerConsumption()
+    {
         _compPowerTrader.powerOutputInt = -1 * _storedItemsCount * DigitalStorageUnit.Config.EnergyPerStack * (DigitalStorageUnit.Config.HeaterEnabled ? 0.9f : 1f);
+    }
 
     public override IEnumerable<Gizmo> GetGizmos()
     {
@@ -198,7 +215,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     }
 
     /// <summary>
-    /// Render name and stack sount
+    ///     Render name and stack sount
     /// </summary>
     public override void DrawGUIOverlay()
     {

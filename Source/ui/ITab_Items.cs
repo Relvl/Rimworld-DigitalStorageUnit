@@ -258,7 +258,7 @@ public class ITab_Items : ITab
 
         if (thing.def.DrawMatSingle == null || thing.def.DrawMatSingle.mainTexture == null) return;
 
-        if (!ThingIconCache.ContainsKey(thing)) ThingIconCache.Add(thing, new ThingIconTextureData(thing.GetThingTextue(out var color), color));
+        if (!ThingIconCache.ContainsKey(thing)) ThingIconCache.Add(thing, new ThingIconTextureData(thing.GetThingTexture(out var color), color));
         var thingIconTextureData = ThingIconCache[thing];
 
         GUI.color = thingIconTextureData.Color;

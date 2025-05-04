@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <ThingDef Name="DSU_ResourceBase" Abstract="True">
+        <thingClass>ThingWithComps</thingClass>
+        <category>Item</category>
+        <resourceReadoutPriority>Middle</resourceReadoutPriority>
+        <useHitPoints>true</useHitPoints>
+        <selectable>true</selectable>
+        <altitudeLayer>Item</altitudeLayer>
+        <stackLimit>75</stackLimit>
+        <healthAffectsPrice>false</healthAffectsPrice>
+        <statBases>
+            <Beauty>0</Beauty>
+        </statBases>
+        <comps>
+            <li Class="CompProperties_Forbiddable"/>
+        </comps>
+        <alwaysHaulable>true</alwaysHaulable>
+        <drawGUIOverlay>true</drawGUIOverlay>
+        <rotatable>false</rotatable>
+        <pathCost>14</pathCost>
+        <tradeTags>
+            <li>ExoticMisc</li>
+        </tradeTags>
+        <researchPrerequisites>
+            <li>DSU_Research</li>
+        </researchPrerequisites>
+        <thingCategories>
+            <li>Manufactured</li>
+        </thingCategories>
+        <soundDrop>Metal_Drop</soundDrop>
+        <soundInteract>Metal_Drop</soundInteract>
+        <techLevel>Industrial</techLevel>
+    </ThingDef>
+
+    <!-- ================================== Robot arm ================================= -->
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_RoboticArm</defName>
+        <label>Robotic Arm</label>
+        <description>An electrically powered robotic arm necessary for the construction of automated buildings.</description>
+        <graphicData>
+            <texPath>Common/RoboticArm</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <statBases>
+            <MarketValue>200</MarketValue>
+            <MaxHitPoints>50</MaxHitPoints>
+            <WorkToMake>1000</WorkToMake>
+            <Mass>2</Mass>
+        </statBases>
+    </ThingDef>
+
+    <!-- ================================== Weak AI Chip (Tier 2) ================================= -->
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_ElectronicChip_I</defName>
+        <label>Basic AI Chip</label>
+        <description>A tensor processing unit containing the most rudimentary AI.</description>
+        <graphicData>
+            <texPath>Common/WeakAICore</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <statBases>
+            <MarketValue>350</MarketValue>
+            <MaxHitPoints>50</MaxHitPoints>
+            <WorkToMake>2000</WorkToMake>
+            <Mass>1</Mass>
+        </statBases>
+    </ThingDef>
+
+    <!-- ================================== Advanced AI Core (Tier 3) ================================= -->
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_ElectronicChip_II</defName>
+        <label>Advanced AI Core</label>
+        <description>An advanced processing unit containing hi-tech AI, which is used for advanced machines and robots.</description>
+        <graphicData>
+            <texPath>Common/AdvancedAICore</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <statBases>
+            <MarketValue>1615</MarketValue>
+            <MaxHitPoints>50</MaxHitPoints>
+            <WorkToMake>4000</WorkToMake>
+            <Mass>1</Mass>
+        </statBases>
+    </ThingDef>
+
+    <!--==================================== Small frame ===============================-->
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_MachineFrame_I</defName>
+        <label>Small Machine Frame</label>
+        <description>A small but simple machine frame used in the construction of automated buildings.</description>
+        <graphicData>
+            <texPath>Common/MachineFrameSmall</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <statBases>
+            <MarketValue>365</MarketValue>
+            <MaxHitPoints>50</MaxHitPoints>
+            <WorkToMake>1800</WorkToMake>
+            <Mass>10</Mass>
+        </statBases>
+        <stackLimit>5</stackLimit>
+    </ThingDef>
+
+    <!--==================================== Medium frame ==============================-->
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_MachineFrame_II</defName>
+        <label>Medium Machine Frame</label>
+        <description>A medium-sized machine frame used for the construction of more complex and larger machines.</description>
+        <graphicData>
+            <texPath>Common/MachineFrame</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <statBases>
+            <MarketValue>760</MarketValue>
+            <MaxHitPoints>50</MaxHitPoints>
+            <WorkToMake>3000</WorkToMake>
+            <Mass>20</Mass>
+        </statBases>
+        <stackLimit>5</stackLimit>
+    </ThingDef>
+
+    <!--==================================== Large frame ===============================-->
+    <ThingDef ParentName="DSU_ResourceBase">
+        <defName>DSU_MachineFrame_III</defName>
+        <label>Advanced Machine Frame</label>
+        <description>The empty shell of an advanced automation building.</description>
+        <graphicData>
+            <texPath>Common/MachineFrameLarge</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <statBases>
+            <MarketValue>1450</MarketValue>
+            <MaxHitPoints>150</MaxHitPoints>
+            <WorkToMake>4800</WorkToMake>
+            <Mass>40</Mass>
+        </statBases>
+        <stackLimit>5</stackLimit>
+    </ThingDef>
+
+</Defs>

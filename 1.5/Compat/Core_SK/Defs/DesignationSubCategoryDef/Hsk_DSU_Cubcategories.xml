@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <ArchitectSense.DesignationSubCategoryDef>
+        <defName>SubCategory_DSU</defName>
+        <label>digital storage unit</label>
+        <description>TODO! description here</description>
+        <defNames>
+            <li>DSU_DigitalStorageUnit_Building</li>
+            <li>DSU_InputBus_Building</li>
+            <li>DSU_AccessPoint_Building</li>
+        </defNames>
+        <designationCategory>LWM_DS_Storage</designationCategory>
+        <debug>false</debug>
+    </ArchitectSense.DesignationSubCategoryDef>
+</Defs>

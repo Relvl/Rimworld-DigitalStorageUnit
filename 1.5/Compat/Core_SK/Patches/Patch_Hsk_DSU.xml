@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+    <Operation Class="PatchOperationSequence">
+        <operations>
+
+            <!-- research -->
+            <li Class="PatchOperationSequence">
+                <operations>
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/prerequisites</xpath>
+                        <value>
+                            <prerequisites>
+                                <li>Storage_D1</li>
+                                <li>Electricity</li>
+                                <li>MicroelectronicsBasics</li>
+                            </prerequisites>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/techLevel</xpath>
+                        <value>
+                            <techLevel>Spacer</techLevel>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/researchViewX</xpath>
+                        <value>
+                            <researchViewX>18.00</researchViewX>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ResearchProjectDef[defName="DSU_Research"]/researchViewY</xpath>
+                        <value>
+                            <researchViewY>12.00</researchViewY>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationFindMod">
+                        <mods>
+                            <li>Research Tree SK</li>
+                        </mods>
+                        <match Class="PatchOperationAddModExtension">
+                            <xpath>Defs/ResearchProjectDef[defName="DSU_Research" and not(modExtensions/li[@Class="ResearchTreeSK.ResearchTreeSKModExtension"])]</xpath>
+                            <value>
+                                <li Class="ResearchTreeSK.ResearchTreeSKModExtension"/>
+                            </value>
+                        </match>
+                    </li>
+                </operations>
+            </li>
+
+            <!-- recipes -->
+            <li Class="PatchOperationSequence">
+                <operations>
+                    <!-- recipe base: electronics -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Electronics"]/recipeUsers/li[text()="FabricationBench"]</xpath>
+                        <value>
+                            <li>TableElectronics</li>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationAdd">
+                        <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Electronics"]</xpath>
+                        <value>
+                            <workSpeedStat>ElectronicCraftingSpeed</workSpeedStat>
+                        </value>
+                    </li>
+
+                    <!-- recipe base: mechanics -->
+                    <li Class="PatchOperationAdd">
+                        <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Mechanics"]</xpath>
+                        <value>
+                            <workSpeedStat>SmithingSpeed</workSpeedStat>
+                        </value>
+                    </li>
+                    <li Class="PatchOperationAdd">
+                        <xpath>Defs/RecipeDef[@Name="DSU_BaseRecipe_Mechanics"]/recipeUsers</xpath>
+                        <value>
+                            <li>AdvToolBench</li>
+                        </value>
+                    </li>
+
+                    <!-- chip i -> Make_DSU_ElectronicChip_I -->
+                    <li Class="PatchOperationSequence">
+                        <operations>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_ElectronicChip_I"]/ingredients</xpath>
+                                <value>
+                                    <ingredients>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>ElectronicComponents</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>3</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>Plastic</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>5</count>
+                                        </li>
+                                    </ingredients>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_ElectronicChip_I"]/fixedIngredientFilter</xpath>
+                                <value>
+                                    <fixedIngredientFilter>
+                                        <thingDefs>
+                                            <li>ElectronicComponents</li>
+                                            <li>Plastic</li>
+                                        </thingDefs>
+                                    </fixedIngredientFilter>
+                                </value>
+                            </li>
+                        </operations>
+                    </li>
+
+                    <!-- chip ii -> Make_DSU_ElectronicChip_II -->
+                    <li Class="PatchOperationSequence">
+                        <operations>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_ElectronicChip_II"]/ingredients</xpath>
+                                <value>
+                                    <ingredients>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>DSU_ElectronicChip_I</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>4</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>Plastic</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>2</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>ElectronicComponents</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>6</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>Microchips</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>2</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>GoldBar</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>2</count>
+                                        </li>
+                                    </ingredients>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_ElectronicChip_II"]/fixedIngredientFilter</xpath>
+                                <value>
+                                    <fixedIngredientFilter>
+                                        <thingDefs>
+                                            <li>GoldBar</li>
+                                            <li>Microchips</li>
+                                            <li>ElectronicComponents</li>
+                                            <li>Plastic</li>
+                                            <li>DSU_ElectronicChip_I</li>
+                                        </thingDefs>
+                                    </fixedIngredientFilter>
+                                </value>
+                            </li>
+                        </operations>
+                    </li>
+
+                    <!-- robotic arm -> Make_DSU_RoboticArm -->
+                    <li Class="PatchOperationSequence">
+                        <operations>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_RoboticArm"]/ingredients</xpath>
+                                <value>
+                                    <ingredients>
+                                        <li>
+                                            <filter>
+                                                <categories>
+                                                    <li>SLDBar</li>
+                                                    <li>USLDBar</li>
+                                                </categories>
+                                            </filter>
+                                            <count>10</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>Plastic</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>5</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>Mechanism</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>2</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>ComponentIndustrial</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>2</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>ElectronicComponents</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>4</count>
+                                        </li>
+                                    </ingredients>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_RoboticArm"]/fixedIngredientFilter</xpath>
+                                <value>
+                                    <fixedIngredientFilter>
+                                        <categories>
+                                            <li>SLDBar</li>
+                                            <li>USLDBar</li>
+                                        </categories>
+                                        <thingDefs>
+                                            <li>Plastic</li>
+                                            <li>Mechanism</li>
+                                            <li>ComponentIndustrial</li>
+                                            <li>ElectronicComponents</li>
+                                        </thingDefs>
+                                    </fixedIngredientFilter>
+                                </value>
+                            </li>
+                        </operations>
+                    </li>
+
+                    <!-- small frame -> Make_DSU_SmallFrame -->
+                    <li Class="PatchOperationSequence">
+                        <operations>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_SmallFrame"]/ingredients</xpath>
+                                <value>
+                                    <ingredients>
+                                        <li>
+                                            <filter>
+                                                <categories>
+                                                    <li>SLDBar</li>
+                                                    <li>USLDBar</li>
+                                                </categories>
+                                            </filter>
+                                            <count>10</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>ComponentIndustrial</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>2</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>Plastic</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>6</count>
+                                        </li>
+                                    </ingredients>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_SmallFrame"]/fixedIngredientFilter</xpath>
+                                <value>
+                                    <fixedIngredientFilter>
+                                        <categories>
+                                            <li>SLDBar</li>
+                                            <li>USLDBar</li>
+                                        </categories>
+                                        <thingDefs>
+                                            <li>ComponentIndustrial</li>
+                                            <li>Plastic</li>
+                                        </thingDefs>
+                                    </fixedIngredientFilter>
+                                </value>
+                            </li>
+                        </operations>
+                    </li>
+
+                    <!-- medium frame -> Make_DSU_MediumFrame -->
+                    <li Class="PatchOperationSequence">
+                        <operations>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_MediumFrame"]/ingredients</xpath>
+                                <value>
+                                    <ingredients>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>DSU_MachineFrame_I</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>1</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>ComponentAdvanced</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>2</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>Plastic</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>6</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <categories>
+                                                    <li>HCMBar</li>
+                                                </categories>
+                                            </filter>
+                                            <count>10</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>ElectronicComponents</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>2</count>
+                                        </li>
+                                    </ingredients>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_MediumFrame"]/fixedIngredientFilter</xpath>
+                                <value>
+                                    <fixedIngredientFilter>
+                                        <categories>
+                                            <li>HCMBar</li>
+                                        </categories>
+                                        <thingDefs>
+                                            <li>ElectronicComponents</li>
+                                            <li>Plastic</li>
+                                            <li>Plastic</li>
+                                            <li>ComponentAdvanced</li>
+                                            <li>DSU_MachineFrame_I</li>
+                                        </thingDefs>
+                                    </fixedIngredientFilter>
+                                </value>
+                            </li>
+                        </operations>
+                    </li>
+
+                    <!-- advanced frame -> Make_DSU_LargeFrame -->
+                    <li Class="PatchOperationSequence">
+                        <operations>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_LargeFrame"]/ingredients</xpath>
+                                <value>
+                                    <ingredients>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>DSU_MachineFrame_II</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>1</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>ComponentAdvanced</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>2</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <categories>
+                                                    <li>USLDBar</li>
+                                                </categories>
+                                            </filter>
+                                            <count>10</count>
+                                        </li>
+                                        <li>
+                                            <filter>
+                                                <thingDefs>
+                                                    <li>Rubber</li>
+                                                </thingDefs>
+                                            </filter>
+                                            <count>6</count>
+                                        </li>
+                                    </ingredients>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationReplace">
+                                <xpath>Defs/RecipeDef[defName="Make_DSU_LargeFrame"]/fixedIngredientFilter</xpath>
+                                <value>
+                                    <fixedIngredientFilter>
+                                        <categories>
+                                            <li>USLDBar</li>
+                                        </categories>
+                                        <thingDefs>
+                                            <li>DSU_MachineFrame_II</li>
+                                            <li>ComponentAdvanced</li>
+                                            <li>Rubber</li>
+                                        </thingDefs>
+                                    </fixedIngredientFilter>
+                                </value>
+                            </li>
+                        </operations>
+                    </li>
+
+                </operations>
+            </li>
+
+            <!-- buildings -->
+            <li Class="PatchOperationSequence">
+                <operations>
+
+                    <!-- digital storage unit -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_DigitalStorageUnit_Building"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <AdvMechanism>5</AdvMechanism>
+                                <DSU_RoboticArm>4</DSU_RoboticArm>
+                                <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+                                <DSU_ElectronicChip_II>2</DSU_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+
+                    <!-- data extender -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_DataExtender"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <AdvMechanism>2</AdvMechanism>
+                                <ComponentSpacer>5</ComponentSpacer>
+                                <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+                                <DSU_ElectronicChip_II>3</DSU_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+
+                    <!-- i port -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_InputBus_Building"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <Mechanism>6</Mechanism>
+                                <ComponentAdvanced>2</ComponentAdvanced>
+                                <DSU_RoboticArm>2</DSU_RoboticArm>
+                                <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+                                <DSU_ElectronicChip_II>1</DSU_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+
+                    <!-- o port -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_OutputBus_Building"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <Mechanism>6</Mechanism>
+                                <ComponentAdvanced>2</ComponentAdvanced>
+                                <DSU_RoboticArm>2</DSU_RoboticArm>
+                                <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+                                <DSU_ElectronicChip_II>1</DSU_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+
+                    <!-- advanced i/o port -->
+                    <li Class="PatchOperationReplace">
+                        <xpath>Defs/ThingDef[defName="DSU_AccessPoint_Building"]/costList</xpath>
+                        <value>
+                            <costList>
+                                <AdvMechanism>6</AdvMechanism>
+                                <ComponentAdvanced>5</ComponentAdvanced>
+                                <DSU_RoboticArm>2</DSU_RoboticArm>
+                                <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+                                <DSU_ElectronicChip_II>1</DSU_ElectronicChip_II>
+                            </costList>
+                        </value>
+                    </li>
+
+                    <!-- remove dropdown -->
+                    <li Class="PatchOperationRemove">
+                        <xpath>Defs/ThingDef[@Name="DSU_BuildingBase"]/designatorDropdown</xpath>
+                    </li>
+
+                </operations>
+            </li>
+
+        </operations>
+    </Operation>
+</Patch>
