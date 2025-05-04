@@ -6,21 +6,25 @@ using Verse.AI;
 
 namespace DigitalStorageUnit._harmony;
 
-/// <summary>
-/// This patch simulates reservation for ports.
-/// TODO! Looks broken, at least with LWM's DS
-/// </summary>
-[HarmonyPatch(typeof(ReservationManager), nameof(ReservationManager.Reserve))]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedParameter.Global")]
-public class Patch_Reservation_Reserve
+[HarmonyPatch(typeof(ReservationManager))]
+public static class Patch_Reservation
 {
-    public static bool Prefix(Pawn claimant, Job job, LocalTargetInfo target, ref bool __result, Map ___map)
+    
+    /// <summary>
+    /// This patch simulates reservation for ports.
+    /// TODO! Looks broken, at least with LWM's DS
+    /// </summary>
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(ReservationManager.Reserve))]
+    public static bool Reserve(Pawn claimant, Job job, LocalTargetInfo target, ref bool __result, Map ___map)
     {
         if (target.HasThing || ___map == null || !target.Cell.InBounds(___map)) return true;
         var port = target.Cell.GetThingList(___map).FirstOrDefault(t => t is ABasePortDsuBuilding);
+        
         if (port is ABasePortDsuBuilding { IOMode: StorageIOMode.Input }) // Todo! Replace with AlwaysCanReserveComp OR ModExtension
         {
             __result = true; // Always return "yes can reserve" for input ports

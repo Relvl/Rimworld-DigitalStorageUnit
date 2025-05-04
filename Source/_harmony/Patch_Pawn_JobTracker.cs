@@ -1,24 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using DigitalStorageUnit.util;
+using DigitalStorageUnit.extensions;
 using HarmonyLib;
 using Verse;
 using Verse.AI;
 
 namespace DigitalStorageUnit._harmony;
 
-/// <summary>
-/// Patch for the AccessPointPortBuilding
-/// Pawns starting Jobs check the IO Port for Items
-/// This affects mostly Bills on Workbenches
-/// </summary>
-[HarmonyPatch(typeof(Pawn_JobTracker), nameof(Pawn_JobTracker.StartJob))]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public class Patch_Pawn_JobTracker_StartJob
+[HarmonyPatch(typeof(Pawn_JobTracker))]
+public class Patch_Pawn_JobTracker
 {
-    public static bool Prefix(Job newJob,
+    /// <summary>
+    ///     Patch for the AccessPointPortBuilding
+    ///     Pawns starting Jobs check the IO Port for Items
+    ///     This affects mostly Bills on Workbenches
+    /// </summary>
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(Pawn_JobTracker.StartJob))]
+    public static bool StartJob(Job newJob,
         ref Pawn ___pawn,
         JobCondition lastJobEndCondition = JobCondition.None,
         ThinkNode jobGiver = null,
@@ -30,7 +32,7 @@ public class Patch_Pawn_JobTracker_StartJob
         bool canReturnCurJobToPool = false)
     {
         // No random moths eating my cloths
-        if (___pawn?.Faction == null || !___pawn.Faction.IsPlayer) return true;
+        if (___pawn?.Faction is not { IsPlayer: true }) return true;
         // PickUpAndHaul "Compatibility" (by not messing with it)
         if (newJob.def.defName == "HaulToInventory") return true;
 
@@ -57,13 +59,13 @@ public class Patch_Pawn_JobTracker_StartJob
         if (isHaulJobType)
         {
             // Haul Type Job
-            targetItems = new List<LocalTargetInfo> { newJob.targetA };
+            targetItems = [newJob.targetA];
         }
         else
         {
             // Bill Type Job
             if (newJob.targetQueueB == null || newJob.targetQueueB.Count == 0)
-                targetItems = new List<LocalTargetInfo> { newJob.targetB };
+                targetItems = [newJob.targetB];
             else
                 targetItems = newJob.targetQueueB;
         }
@@ -71,13 +73,13 @@ public class Patch_Pawn_JobTracker_StartJob
         var component = ___pawn.Map.GetDsuComponent();
         if (component is null) return true; // as is
 
-        // So, go over every job's targets. For a bill job - there is all the ingredients. Also
+        // So, go over every job's targets. For a bill job - there is all the ingredients.
         foreach (var target in targetItems)
         {
             if (!target.HasThing) continue; // Do nothig, let the game do it's things.
 
             // Dirty contracted hack o-0, where we do a dirty things. See summary.
-            var result = Patch_Reachability_CanReach.CanReachAndFindAccessPoint(___pawn, target.Thing, destinationPos, PathEndMode.Touch, TraverseParms.For(___pawn));
+            var result = Patch_Reachability.CanReachAndFindAccessPoint(___pawn, target.Thing, destinationPos, PathEndMode.Touch, TraverseParms.For(___pawn));
 
             // If there are no DSU/point - let the game alone.
             if (result.Dsu is null || result.AccessPoint is null) continue; // Do nothig, let the game do it's things.

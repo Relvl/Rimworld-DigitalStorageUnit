@@ -12,7 +12,7 @@ namespace DigitalStorageUnit;
 [StaticConstructorOnStartup]
 public class DigitalStorageUnit : Mod
 {
-    private static readonly string ModID = "Relvl.DigitalStorageUnit";
+    private const string ModID = "Relvl.DigitalStorageUnit";
     public static readonly bool IsDeepStorage = ModsConfig.ActiveModsInLoadOrder.Any(m => "LWM.DeepStorage".EqualsIgnoreCase(m.packageIdLowerCase));
 
     public static DigitalStorageUnitConfig Config { get; private set; } = new();
@@ -38,7 +38,8 @@ public class DigitalStorageUnit : Mod
                 try
                 {
                     var dsPatchPostfix = AccessTools.Method("LWM.DeepStorage.Open_DS_Tab_On_Select:Postfix");
-                    var dsuPatchPrefix = AccessTools.Method(nameof(Patch_Open_DS_Tab_On_Select_Postfix) + ":Prefix");
+                    // todo! wtf with this ":Prefis" when we're using a Postfix???
+                    var dsuPatchPrefix = AccessTools.Method(nameof(SubPatch_Open_DS_Tab_On_Select_Postfix) + ":Prefix");
                     harmonyInstance.Patch(dsPatchPostfix, prefix: new HarmonyMethod(dsuPatchPrefix));
                     Log.Message("DigitalStorageUnit: LWM.DeepStorage.Open_DS_Tab_On_Select:Postfix patched");
                 }

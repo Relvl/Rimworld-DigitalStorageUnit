@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using DigitalStorageUnit.extensions;
 using DigitalStorageUnit.ui;
 using DigitalStorageUnit.util;
 using RimWorld;
@@ -174,7 +175,9 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         if (!CanReciveThing(item)) return;
         item.Position = Position;
         if (!item.Spawned) item.SpawnSetup(Map, false);
-        Map.dynamicDrawManager.DeRegisterDrawable(item);
+        
+        if (item.def.drawerType is DrawerType.MapMeshAndRealTime or DrawerType.RealtimeOnly)
+            Map.dynamicDrawManager.DeRegisterDrawable(item);
     }
 
     private void UpdatePowerConsumption()

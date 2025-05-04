@@ -4,24 +4,22 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using DigitalStorageUnit.extensions;
 using HarmonyLib;
 using RimWorld;
 using Verse;
 
 namespace DigitalStorageUnit._harmony;
 
-/// <summary>
-/// This Patch Allows the player to start an orbital Trade without a Trade beacon but with a DSU.
-/// Without this patch a player would need a dummy beacon to use items in the orbital trade.
-/// </summary>
-[HarmonyPatch]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public static class Patch_PassingShip_c__DisplayClass24_0
+[HarmonyPatch]
+public static class Patch_PassingShip
 {
     private static Type hiddenClass;
 
+    [HarmonyTargetMethod]
     public static MethodBase TargetMethod() //The target method is found using the custom logic defined here
     {
         hiddenClass = typeof(PassingShip).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName!.Contains("c__DisplayClass23_0"));
@@ -40,6 +38,12 @@ public static class Patch_PassingShip_c__DisplayClass24_0
         return methodInfo;
     }
 
+    /// <summary>
+    /// This Patch Allows the player to start an orbital Trade without a Trade beacon but with a DSU.
+    /// Without this patch a player would need a dummy beacon to use items in the orbital trade.
+    /// todo! configs!
+    /// </summary>
+    [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
         var foundLocaterString = false;
@@ -69,8 +73,10 @@ public static class Patch_PassingShip_c__DisplayClass24_0
                 yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(hiddenClass, "<>4__this"));
                 yield return new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(PassingShip), "Map")); // PassingShip::Map
                 //Call --> DigitalStorageUnitBuilding.AnyPowerd with the above as an argument
-                yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_PassingShip_c__DisplayClass24_0), nameof(AnyPowerd), new[] { typeof(Map) }));
+                yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_PassingShip), nameof(AnyPowered), [typeof(Map)]));
                 yield return new CodeInstruction(OpCodes.Brtrue_S, instruction.operand);
+                
+                Log.Message("DSU: Patch_PassingShip_c__DisplayClass24_0 OK");
                 continue;
             }
 
@@ -79,5 +85,5 @@ public static class Patch_PassingShip_c__DisplayClass24_0
         }
     }
 
-    public static bool AnyPowerd(Map map) => Patch_TradeUtility_AllLaunchableThingsForTrade.AllPowered(map, true).Any();
+    public static bool AnyPowered(Map map) => map.GetAllPoweredDSU(true).Any();
 }

@@ -1,23 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using DigitalStorageUnit.util;
+using System.Linq;
+using DigitalStorageUnit.extensions;
 using Verse;
 
 namespace DigitalStorageUnit.map;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")] // All MapComponents are initiated when the colony map is created. The tick starts with the first world tick.
-public class DsuMapComponent : MapComponent
+public class DsuMapComponent(Map map) : MapComponent(map)
 {
-    public HashSet<DigitalStorageUnitBuilding> DsuSet { get; } = new();
+    public HashSet<DigitalStorageUnitBuilding> DsuSet { get; } = [];
 
-    public HashSet<InputPortDsuBuilding> IoPortSet { get; } = new();
+    public HashSet<InputPortDsuBuilding> IoPortSet { get; } = [];
 
-    public HashSet<AccessPointPortBuilding> AccessPointSet { get; } = new();
+    public HashSet<AccessPointPortBuilding> AccessPointSet { get; } = [];
 
     public Dictionary<IntVec3, DigitalStorageUnitBuilding> DsuOccupiedPoints { get; } = new();
 
-    public DsuMapComponent(Map map) : base(map)
+    public bool IsDSUOnPoint(IntVec3 point)
     {
+        return DsuOccupiedPoints.ContainsKey(point);
     }
 
     public void RegisterBuilding(Building building)
@@ -58,10 +60,7 @@ public class DsuMapComponent : MapComponent
     {
         // This is cheap, but just a direct distance without a walls etc
         // 1 Call ~ 0.2us
-        if (DigitalStorageUnit.Config.CheapPathfinding)
-        {
-            return pawn.Position.DistanceTo(middlePos) + middlePos.DistanceTo(destinationPos) * (isDsu ? DigitalStorageUnit.Config.DsuPathingMultiplier : 1);
-        }
+        if (DigitalStorageUnit.Config.CheapPathfinding) return pawn.Position.DistanceTo(middlePos) + middlePos.DistanceTo(destinationPos) * (isDsu ? DigitalStorageUnit.Config.DsuPathingMultiplier : 1);
 
         var secondPathCost = pawn.Map.pathFinder.FindPath(middlePos, destinationPos, pawn).TotalCost;
         if (DigitalStorageUnit.Config.HalfPathfinding) return secondPathCost;
@@ -73,7 +72,23 @@ public class DsuMapComponent : MapComponent
         return pawn.Map.pathFinder.FindPath(pawn.Position, middlePos, pawn).TotalCost + secondPathCost;
     }
 
-    public DigitalStorageUnitBuilding GetDsuHoldingItem(Thing item) => DsuOccupiedPoints.TryGetValue(item.Position);
+    public DigitalStorageUnitBuilding GetDsuHoldingItem(Thing item)
+    {
+        return DsuOccupiedPoints.TryGetValue(item.Position);
+    }
 
-    public override void MapRemoved() => MapExtension.OnMapRemoved(map);
+    public override void MapRemoved()
+    {
+        MapExtension.OnMapRemoved(map);
+    }
+
+    public IEnumerable<AccessPointPortBuilding> GetAccessPoints(DigitalStorageUnitBuilding dsu = null, bool powered = true)
+    {
+        return AccessPointSet.Where(ap =>
+        {
+            if (dsu != null && ap.BoundStorageUnit != dsu) return false;
+            if (powered && !ap.Powered) return false;
+            return true;
+        });
+    }
 }

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Manifest>
+    <version>1.5.0</version>
+    <manifestUri>https://raw.githubusercontent.com/Relvl/Rimworld-DigitalStorageUnit/master/About/Manifest.xml</manifestUri>
+    <downloadUri>https://github.com/Relvl/Rimworld-DigitalStorageUnit/releases</downloadUri>
+    <dependencies>
+        <li>brrainz.harmony</li>
+    </dependencies>
+    <incompatibleWith>
+    </incompatibleWith>
+    <loadBefore>
+        <li>aRandomKiwi.PowerPP</li>
+        <li>Krkr.RocketMan</li>
+        <li>trinity.RuntimeGCupdated</li>
+    </loadBefore>
+    <loadAfter>
+        <li>brrainz.harmony</li>
+        <li>UnlimitedHugs.HugsLib</li>
+        <li>skyarkhangel.HSK</li>
+        <li>Mehni.PickUpAndHaul</li>
+        <li>LWM.DeepStorage</li>
+        <li>historic.IndustrialRollers</li>
+        <li>essecoisa.Floored</li>
+        <li>oskarpotocki.vanillafactionsexpanded.core</li>
+    </loadAfter>
+    <showCrossPromotions>false</showCrossPromotions>
+</Manifest>

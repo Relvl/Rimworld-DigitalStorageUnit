@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using DigitalStorageUnit.extensions;
 using DigitalStorageUnit.util;
 using HarmonyLib;
 using Verse;
@@ -6,18 +7,12 @@ using Verse.AI;
 
 namespace DigitalStorageUnit._harmony;
 
-/// <summary>
-/// This Patch allows Pawns to receive Items from a Advanced IO Port when the direct Path to the DSU(current Item Location) is Blocked
-/// This Patch has a noticeable Performance Impact and shall only be use if the Path is Blocked
-/// Causes recursive CanReach!!! Should be disabled thru the settings!
-/// </summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "ArrangeTypeMemberModifiers")]
-[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-[HarmonyPatch(typeof(Reachability), nameof(Reachability.CanReach), typeof(IntVec3), typeof(LocalTargetInfo), typeof(PathEndMode), typeof(TraverseParms))]
-public class Patch_Reachability_CanReach
+[HarmonyPatch(typeof(Reachability))]
+public static class Patch_Reachability
 {
     private static ReachabilityPatchResult _cachedResult;
 
@@ -46,7 +41,14 @@ public class Patch_Reachability_CanReach
         }
     }
 
-    public static void Postfix(IntVec3 start, LocalTargetInfo dest, PathEndMode peMode, TraverseParms traverseParams, ref bool __result, Map ___map, Reachability __instance)
+    /// <summary>
+    /// This Patch allows Pawns to receive Items from a Advanced IO Port when the direct Path to the DSU(current Item Location) is Blocked
+    /// This Patch has a noticeable Performance Impact and shall only be use if the Path is Blocked
+    /// Causes recursive CanReach!!! Should be disabled thru the settings!
+    /// </summary>
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(Reachability.CanReach), typeof(IntVec3), typeof(LocalTargetInfo), typeof(PathEndMode), typeof(TraverseParms))]
+    public static void CanReach(IntVec3 start, LocalTargetInfo dest, PathEndMode peMode, TraverseParms traverseParams, ref bool __result, Map ___map, Reachability __instance)
     {
         if (_cachedResult is null) return; // as is
         _cachedResult.OriginalCanReach = __result;
@@ -58,7 +60,7 @@ public class Patch_Reachability_CanReach
         if (!(dest.Thing?.def.EverStorable(false) ?? false)) return; // as is
 
         var component = ___map.GetDsuComponent();
-        var dsu = component?.DsuOccupiedPoints.TryGetValue(dest.Thing.Position);
+        var dsu =  component?.GetDsuHoldingItem(dest.Thing);
         if (dsu is null || !dsu.CanWork /* todo! if forbidden for pawn access directly */) return; // as is
 
         // Initial best distance - is Distance(pawn -> item -> destionation) multiplied on "avoid DSU factor" if needed
@@ -66,14 +68,8 @@ public class Patch_Reachability_CanReach
         _cachedResult.DirectPathingWeight = bestWeight;
 
         AccessPointPortBuilding bestAccessPoint = null;
-        foreach (var accessPoint in component.AccessPointSet)
+        foreach (var accessPoint in component.GetAccessPoints(dsu))
         {
-            // Bound DSU is not the same - skip
-            if (accessPoint.BoundStorageUnit != dsu) continue;
-
-            // Access Point is powered. Let it provide all the requested items. Todo! Let's take a look what happens when we provide all the items...
-            if (!accessPoint.Powered) continue;
-
             // Total path weight (pawn -> item -> destination), this might be simplied by the settings
             var weight = component.GetTotalDistance(_cachedResult.JobPawn, accessPoint.Position, _cachedResult.JobDestination);
 
@@ -139,5 +135,8 @@ public class ReachabilityPatchResult
     /// </summary>
     public float DirectDistanceToAccessPoint;
 
+    /// <summary>
+    /// 
+    /// </summary>
     public bool OriginalCanReach;
 }

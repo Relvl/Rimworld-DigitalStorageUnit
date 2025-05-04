@@ -12,10 +12,12 @@ namespace DigitalStorageUnit._harmony;
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 [SuppressMessage("ReSharper", "ArrangeTypeMemberModifiers")]
-[HarmonyPatch(typeof(ForbidUtility), nameof(ForbidUtility.IsForbidden), typeof(Thing), typeof(Pawn))]
-class Patch_ForbidUtility_IsForbidden
+[HarmonyPatch(typeof(ForbidUtility))]
+public static class Patch_ForbidUtility
 {
-    static bool Prefix(Thing t, Pawn pawn, out bool __result)
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(ForbidUtility.IsForbidden), typeof(Thing), typeof(Pawn))]
+    static bool IsForbidden(Thing t, Pawn pawn, out bool __result)
     {
         __result = true;
 

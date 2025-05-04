@@ -27,6 +27,9 @@
         <li>skyarkhangel.HSK</li>
         <li>Mehni.PickUpAndHaul</li>
         <li>LWM.DeepStorage</li>
+        <li>historic.IndustrialRollers</li>
+        <li>essecoisa.Floored</li>
+        <li>oskarpotocki.vanillafactionsexpanded.core</li>
     </forceLoadAfter>
     <forceLoadBefore>
         <li>Krkr.RocketMan</li>
@@ -37,4 +40,5 @@
         <li>spdskatr.projectrimfactory</li>
     </incompatibleWith>
 
+    <modIconPath IgnoreIfNoMatchingField="True">Storage/CargoPlatform</modIconPath>
 </ModMetaData>

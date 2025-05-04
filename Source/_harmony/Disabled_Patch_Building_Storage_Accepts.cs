@@ -13,8 +13,9 @@ namespace DigitalStorageUnit._harmony;
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 [SuppressMessage("ReSharper", "ArrangeTypeMemberModifiers")]
-[HarmonyPatch(typeof(Building_Storage), nameof(Building_Storage.Accepts), typeof(Thing))]
-class Patch_Building_Storage_Accepts
+// [HarmonyPatch(typeof(Building_Storage), nameof(Building_Storage.Accepts), typeof(Thing))]
+// Patch_StoreUtility_TryFindBestBetterStoreCellForWorker
+public static class Disabled_Patch_Building_Storage_Accepts
 {
     static bool Prefix(Building_Storage __instance, Thing t, out bool __result)
     {
