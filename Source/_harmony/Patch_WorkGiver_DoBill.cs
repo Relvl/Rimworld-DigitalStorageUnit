@@ -28,92 +28,126 @@ public static class Patch_WorkGiver_DoBill
     private static Predicate<Thing> _thingValidator;
     private static Pawn _pawn;
 
-    private static readonly HashSet<DigitalStorageUnitBuilding> LinkedDsu = new();
+    private static readonly HashSet<DigitalStorageUnitBuilding> FoundDsuWithPortsInRadius = [];
 
-    /// <summary>
-    ///     Method like about 380 line of WorkGiver_DoBill
-    ///     WorkGiver_DoBill.relevantThings.AddRange((IEnumerable Thing ) WorkGiver_DoBill.newRelevantThings); // We need to inject after this line
-    /// </summary>
-    [HarmonyTargetMethod]
-    public static MethodBase TargetMethod()
-    {
-        _hiddenClass = typeof(WorkGiver_DoBill).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName!.Contains("c__DisplayClass24_0"));
-        if (_hiddenClass is null)
-        {
-            Log.Error("DSU: Can't find WorkGiver_DoBill.c__DisplayClass24_0 class");
-            return null;
-        }
-
-        _regionsProcessed = _hiddenClass.GetFields(AccessTools.all).FirstOrDefault(t => t.Name.EndsWith("regionsProcessed"));
-
-        var methodInfo = _hiddenClass.GetMethods(AccessTools.all).FirstOrDefault(t => t.Name.Contains("b__4"));
-        if (methodInfo is null)
-        {
-            Log.Error("DSU: Can't find WorkGiver_DoBill.<>c__DisplayClass24_0.<TryFindBestIngredientsHelper>b__4 method");
-            return null;
-        }
-
-        return methodInfo;
-    }
-
-    [HarmonyTranspiler]
-    public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-    {
-        var regionsProcessedFound = false;
-        var patched = false;
-
-        foreach (var instruction in instructions)
-        {
-            if (!regionsProcessedFound && instruction.opcode == OpCodes.Stfld && instruction.operand.ToString() == "System.Int32 regionsProcessed")
-            {
-                regionsProcessedFound = true;
-                yield return instruction;
-                continue;
-            }
-
-            if (regionsProcessedFound && !patched)
-            {
-                yield return new CodeInstruction(OpCodes.Ldarg_0);
-                yield return new CodeInstruction(OpCodes.Ldfld, _regionsProcessed);
-                yield return new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(WorkGiver_DoBill), "newRelevantThings"));
-                yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Patch_WorkGiver_DoBill), nameof(ProcessRegion)));
-
-                Log.Message("DSU: Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod OK");
-
-                patched = true;
-                yield return instruction;
-                continue;
-            }
-
-            yield return instruction;
-        }
-    }
-
-    /// <summary>
-    ///     Called by instrumentation above
-    /// </summary>
-    public static void ProcessRegion(int regionsProcessed, List<Thing> relevantThings)
-    {
-        if (!DigitalStorageUnit.Config.BillSearchRadiusFix) return;
-        if (_pawn is null || _thingValidator is null) return;
-
-        // https://discord.com/channels/272340793174392832/439514175245516800/1161722483502760016
-        // Well... The vanilla will traverse ALL the region if not found in radius... So...
-        if (regionsProcessed != 1) return; // 1 is cuz it's increments first. No any 0 there.
-
-        foreach (var dsu in LinkedDsu)
-        foreach (var item in dsu.GetStoredThings())
-        {
-            if (relevantThings.Contains(item)) continue;
-            if (item.IsForbidden(_pawn)) continue;
-            if (!_pawn.CanReserve(item)) continue;
-            if (!_thingValidator(item)) continue;
-            relevantThings.Add(item);
-        }
-    }
 
     /// <summary>
     ///     We can't mix TargetMethod and manual patch. So... Inner class, yeah. That's better than two classes with shared vars.
+    ///     This patch allows to provide items for bill from the DSU's not in the radius, for Access Points in the radius.
+    /// </summary>
+    [HarmonyPatch(typeof(WorkGiver_DoBill))]
+    public static class InnerPatch_AddItemsFromFoundDsu
+    {
+        [HarmonyTargetMethod]
+        public static MethodBase TargetMethod()
+        {
+            // we need to find out an inner class, near the line like this:
+            // "RegionProcessor regionProcessor = (RegionProcessor) (r =>" around line 380 of the class.
+            // Look at similar name around there.
+            _hiddenClass = typeof(WorkGiver_DoBill).GetNestedTypes(AccessTools.all).FirstOrDefault(t => t.FullName!.Contains("c__DisplayClass24_0"));
+            if (_hiddenClass is null)
+            {
+                Log.Error("DSU: Can't find WorkGiver_DoBill.c__DisplayClass24_0 class");
+                return null;
+            }
+
+            _regionsProcessed = _hiddenClass.GetFields(AccessTools.all).FirstOrDefault(t => t.Name.EndsWith("regionsProcessed"));
+
+            // the orinignal IL is like this:
+            //     IL_01fd: ldloc.0      // V_0
+            // IL_01fe: ldftn        instance bool RimWorld.WorkGiver_DoBill/'<>c__DisplayClass24_0'::'<TryFindBestIngredientsHelper>b__4'(class Verse.Region)
+            // IL_0204: newobj       instance void Verse.RegionProcessor::.ctor(object, native int)
+            // IL_0209: stloc.3      // regionProcessor
+            // And we need to find a name for that method in the IL, loaded by "ldftn", and determine it somehow, mostly just by part of name
+            var methodInfo = _hiddenClass.GetMethods(AccessTools.all).FirstOrDefault(t => t.Name.Contains("b__4"));
+            if (methodInfo is null)
+            {
+                Log.Error("DSU: Can't find WorkGiver_DoBill.<>c__DisplayClass24_0.<TryFindBestIngredientsHelper>b__4 method");
+                return null;
+            }
+
+            return methodInfo;
+        }
+
+        /// <summary>
+        ///     Method like about 380 line of WorkGiver_DoBill.TryFindBestIngredientsHelper
+        ///     There is inner synthetic class like "RegionProcessor regionProcessor = (RegionProcessor) (r =>" we're needed to inject into it.
+        ///     WorkGiver_DoBill.relevantThings.AddRange((IEnumerable Thing ) WorkGiver_DoBill.newRelevantThings); // We need to inject around/before this line
+        ///     This thing looks around, collecting matching ingredients. If we've found an Access Point into the radius - we want to provide an item there.
+        /// </summary>
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var regionsProcessedFound = false;
+            var patched = false;
+
+            foreach (var instruction in instructions)
+            {
+                // ++regionsProcessed;  // <----- this one is found, we need to inject after it, before "> 0" comparsion
+                // if (WorkGiver_DoBill.newRelevantThings.Count > 0 && regionsProcessed > adjacentRegionsAvailable)
+                if (!regionsProcessedFound && instruction.opcode == OpCodes.Stfld && instruction.operand.ToString() == "System.Int32 regionsProcessed")
+                {
+                    regionsProcessedFound = true;
+                    yield return instruction;
+                    continue;
+                }
+
+                // just next to it:
+                // ++regionsProcessed;
+                // -----------> {inject here} <------------
+                // if (WorkGiver_DoBill.newRelevantThings.Count > 0 && regionsProcessed > adjacentRegionsAvailable)
+                if (regionsProcessedFound && !patched)
+                {
+                    // ldarg.0      this
+                    yield return new CodeInstruction(OpCodes.Ldarg_0);
+                    // ldfld        int32 RimWorld.WorkGiver_DoBill/'<>c__DisplayClass24_0'::regionsProcessed
+                    yield return new CodeInstruction(OpCodes.Ldfld, _regionsProcessed);
+                    // ldsfld       class [mscorlib]System.Collections.Generic.List`1<class Verse.Thing> RimWorld.WorkGiver_DoBill::newRelevantThings
+                    yield return new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(WorkGiver_DoBill), "newRelevantThings"));
+                    // add our call to Patch_WorkGiver_DoBill.ProcessRegion(regionsProcessed, relevantThings)
+                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(InnerPatch_AddItemsFromFoundDsu), nameof(Injected_AddThingsFromDSU)));
+
+                    Log.Message("DSU: Patch_WorkGiver_DoBill_DisplayClass_24_0_HiddenMethod OK");
+
+                    patched = true;
+                    yield return instruction;
+                    continue;
+                }
+
+                yield return instruction;
+            }
+        }
+
+        /// <summary>
+        ///     Called by instrumentation above
+        /// </summary>
+        public static void Injected_AddThingsFromDSU(int regionsProcessed, List<Thing> relevantThings)
+        {
+            if (!DigitalStorageUnit.Config.BillSearchRadiusFix) return;
+            if (_pawn is null || _thingValidator is null) return;
+
+            // https://discord.com/channels/272340793174392832/439514175245516800/1161722483502760016
+            // Well... The vanilla will traverse ALL the region if not found in radius... So...
+            if (regionsProcessed != 1) return; // 1 is cuz it's increments before injected call. No any 0's there.
+
+            // Afterall, these items will be provided to port if needed in Patch_Pawn_JobTracker
+
+            foreach (var dsu in FoundDsuWithPortsInRadius)
+            foreach (var item in dsu.GetStoredThings())
+            {
+                if (relevantThings.Contains(item)) continue;
+                if (item.IsForbidden(_pawn)) continue;
+                if (!_pawn.CanReserve(item)) continue;
+                if (!_thingValidator(item)) continue;
+                relevantThings.Add(item);
+            }
+        }
+    }
+
+
+    /// <summary>
+    ///     We can't mix TargetMethod and manual patch. So... Inner class, yeah. That's better than two classes with shared vars.
+    ///     This patch looks for DSU's that has Access Points in the bill radius, and after a search calls finalizing things.
     /// </summary>
     [HarmonyPatch(typeof(WorkGiver_DoBill))]
     public static class InnerPatch_TryFindBestIngredientsHelper
@@ -125,76 +159,33 @@ public static class Patch_WorkGiver_DoBill
         [HarmonyPatch("TryFindBestIngredientsHelper")]
         public static void TryFindBestIngredientsHelper_Prefix(Predicate<Thing> thingValidator, Pawn pawn, Thing billGiver, float searchRadius)
         {
-            LinkedDsu.Clear();
             _thingValidator = thingValidator;
             _pawn = pawn;
-            if (billGiver is not null && DigitalStorageUnit.Config.BillSearchRadiusFix)
-            {
-                var radiusSq = searchRadius * searchRadius;
-                LinkedDsu.AddRange(
-                    billGiver.Map.listerBuildings.AllBuildingsColonistOfClass<AccessPointPortBuilding>()
-                        .Where(
-                            p => p.Spawned &&
-                                 p.Powered &&
-                                 p.BoundStorageUnit is not null &&
-                                 p.BoundStorageUnit.CanWork &&
-                                 p.Position.DistanceToSquared(billGiver.Position) <= radiusSq
-                        )
-                        .Select(p => p.BoundStorageUnit)
-                );
-            }
+            if (billGiver is null || !DigitalStorageUnit.Config.BillSearchRadiusFix) return;
+            var radiusSq = searchRadius * searchRadius;
+            FoundDsuWithPortsInRadius.AddRange(
+                billGiver.Map.listerBuildings.AllBuildingsColonistOfClass<AccessPointPortBuilding>()
+                    .Where(
+                        p => p.Spawned &&
+                             p.Powered &&
+                             p.BoundStorageUnit is not null &&
+                             p.BoundStorageUnit.CanWork &&
+                             p.Position.DistanceToSquared(billGiver.Position) <= radiusSq
+                    )
+                    .Select(p => p.BoundStorageUnit)
+            );
         }
 
         /// <summary>
-        ///     Prevents premature call of foundAllIngredientsAndChoose()
-        ///     We need to collect items from all found DSU's before choose the ingredients.
-        /// </summary>
-        [HarmonyTranspiler]
-        [HarmonyPatch("TryFindBestIngredientsHelper")]
-        public static IEnumerable<CodeInstruction> TryFindBestIngredientsHelper_Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var unnecessaryFoundAllIngredientsAndChooseIndex = -1;
-            foreach (var instruction in instructions)
-            {
-                if (DigitalStorageUnit.Config.WorkGiverDoBillUnnecessaryFix)
-                {
-                    if (unnecessaryFoundAllIngredientsAndChooseIndex == -1 && instruction.opcode == OpCodes.Call && instruction.operand.ToString().StartsWith("Void AddRange[Thing]"))
-                    {
-                        unnecessaryFoundAllIngredientsAndChooseIndex = 0;
-                        yield return instruction;
-                        continue;
-                    }
-
-                    // Remove 373'th line:  int num = foundAllIngredientsAndChoose(WorkGiver_DoBill.relevantThings) ? 1 : 0;
-                    if (unnecessaryFoundAllIngredientsAndChooseIndex is >= 0 and <= 4)
-                    {
-                        unnecessaryFoundAllIngredientsAndChooseIndex++;
-                        continue;
-                    }
-                }
-
-                yield return instruction;
-            }
-        }
-
-        /// <summary>
-        ///     And now, when we collected all the items, we can choose the ingredient finally, calling prevented before foundAllIngredientsAndChoose()
+        ///     Cleanup saved things
         /// </summary>
         [HarmonyPostfix]
         [HarmonyPatch("TryFindBestIngredientsHelper")]
-        public static void TryFindBestIngredientsHelper_Postfix(Predicate<List<Thing>> foundAllIngredientsAndChoose, bool __result)
+        public static void TryFindBestIngredientsHelper_Postfix()
         {
-            // todo! really want to check for found result?..
-            if (!__result && DigitalStorageUnit.Config.WorkGiverDoBillUnnecessaryFix)
-            {
-                // Todo! chech if it was not called at all
-                // todo! do Harmony allows to access of private fields via "List<Thing> __relevantThings" ?
-                _relevantThings ??= AccessTools.Field(typeof(WorkGiver_DoBill), "relevantThings");
-                foundAllIngredientsAndChoose(_relevantThings.GetValue(null) as List<Thing>);
-            }
-
             _thingValidator = null;
             _pawn = null;
+            FoundDsuWithPortsInRadius.Clear();
         }
     }
 

@@ -49,6 +49,22 @@ public static class Patch_Building_Storage
         return building is DigitalStorageUnitBuilding;
     }
 
+    /// <summary>
+    ///     Adds GroupingLabel for DSU, replacing Building_Storage's one. Mostly for Dialog_BillConfig
+    /// </summary>
+    [HarmonyPrefix]
+    [HarmonyPatch("get_GroupingLabel")]
+    public static bool get_GroupingLabel(Building_Storage __instance, ref string __result)
+    {
+        if (__instance is DigitalStorageUnitBuilding dsub)
+        {
+            __result = dsub.LabelNoCount;
+            return false;
+        }
+
+        return true;
+    }
+
     [HarmonyPatch(typeof(Building_Storage))]
     public static class InnerPatch_GetGizmos
     {

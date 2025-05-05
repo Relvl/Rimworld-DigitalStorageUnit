@@ -226,4 +226,6 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         if (Current.CameraDriver.CurrentZoom > CameraZoomRange.Close) return;
         GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + "DSU.StacksCount.Detailed".Translate(_storedItemsCount, GetSlotLimit));
     }
+
+    // todo Dialog_BillConfig.cs:432 -> should do something with GroupingLabel in code instead of def, use the LabelCap
 }
