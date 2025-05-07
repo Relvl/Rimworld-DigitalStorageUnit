@@ -35,8 +35,8 @@
         <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="0Harmony, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-          <HintPath>..\packages\Lib.Harmony.2.3.0-prerelease.2\lib\net48\0Harmony.dll</HintPath>
+        <Reference Include="0Harmony">
+          <HintPath>..\..\Harmony\Current\Assemblies\0Harmony.dll</HintPath>
           <Private>False</Private>
         </Reference>
         <Reference Include="Assembly-CSharp">
@@ -119,6 +119,7 @@
         <Compile Include="util\ThingIconTextureData.cs" />
         <Compile Include="_harmony\Disabled_Patch_Building_Storage_Accepts.cs" />
         <Compile Include="_harmony\Patch_Building_Storage.cs" />
+        <Compile Include="_harmony\Patch_MouseoverReadout.cs" />
         <Compile Include="_harmony\Patch_CompressibilityDeciderUtility.cs" />
         <Compile Include="_harmony\Patch_FloatMenuMakerMap.cs" />
         <Compile Include="_harmony\Patch_FoodUtility.cs" />
@@ -148,7 +149,6 @@
     </ItemGroup>
     <ItemGroup>
       <None Include="App.config" />
-      <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="obsolete\readme.md" />

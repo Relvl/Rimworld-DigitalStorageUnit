@@ -18,6 +18,7 @@ public class DigitalStorageUnitConfig : ModSettings
     public bool WorkGiverDoBillUnnecessaryFix = true;
     public bool BillSearchRadiusFix = true;
     public bool AutoBoundDsu = true;
+    public bool CleanCellItemList = true;
 
     public override void ExposeData()
     {
@@ -33,6 +34,7 @@ public class DigitalStorageUnitConfig : ModSettings
             Scribe_Values.Look(ref WorkGiverDoBillUnnecessaryFix, "WorkGiverDoBillUnnecessaryFix", true, true);
             Scribe_Values.Look(ref BillSearchRadiusFix, "BillSearchRadiusFix", true, true);
             Scribe_Values.Look(ref AutoBoundDsu, "AutoBoundDsu", true, true);
+            Scribe_Values.Look(ref CleanCellItemList, "CleanCellItemList", true, true);
         }
         else
         {
@@ -87,6 +89,8 @@ public class DigitalStorageUnitConfig : ModSettings
         list.CheckboxLabeled("DSU.Config.BillSearchRadiusFix".Translate(), ref BillSearchRadiusFix, "DSU.Config.BillSearchRadiusFix.Desc".Translate());
 
         list.CheckboxLabeled("DSU.Config.AutoBoundDsu".Translate(), ref AutoBoundDsu, "DSU.Config.AutoBoundDsu.Desc".Translate());
+        
+        list.CheckboxLabeled("DSU.Config.CleanCellItemList".Translate(), ref CleanCellItemList, "DSU.Config.CleanCellItemList.Desc".Translate());
 
         list.End();
     }

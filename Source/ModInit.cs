@@ -14,7 +14,7 @@ public class ModInit
 {
     static ModInit()
     {
-        if (!DigitalStorageUnit.IsDeepStorage) return;
+        /*if (!DigitalStorageUnit.IsDeepStorage) return;
 
         foreach (var thingDef in DefDatabase<ThingDef>.AllDefsListForReading)
         {
@@ -38,6 +38,6 @@ public class ModInit
             }
         }
 
-        Log.Warning("DSU: LWM.DeepStorage.ITab_DeepStorage_Inventory removed from the mod buildings");
+        Log.Warning("DSU: LWM.DeepStorage.ITab_DeepStorage_Inventory removed from the mod buildings");*/
     }
 }
