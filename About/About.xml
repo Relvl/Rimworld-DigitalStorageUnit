@@ -30,6 +30,7 @@
         <li>historic.IndustrialRollers</li>
         <li>essecoisa.Floored</li>
         <li>oskarpotocki.vanillafactionsexpanded.core</li>
+        <li>adaptive.storage.framework</li>
     </forceLoadAfter>
     <forceLoadBefore>
         <li>Krkr.RocketMan</li>
