@@ -48,6 +48,9 @@
             <DSU_ElectronicChip_I>1</DSU_ElectronicChip_I>
         </costList>
 
+        <inspectorTabs>
+            <li>ITab_Storage</li>
+        </inspectorTabs>
         <comps>
             <li Class="CompProperties_Power">
                 <compClass>CompPowerTrader</compClass>

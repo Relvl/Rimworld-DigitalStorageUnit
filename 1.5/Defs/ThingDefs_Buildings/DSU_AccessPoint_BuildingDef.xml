@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <Defs>
     <!--============================== Access Point ==============================-->
     <ThingDef ParentName="DSU_BuildingBase">
@@ -48,12 +49,16 @@
             <DSU_ElectronicChip_II>1</DSU_ElectronicChip_II>
         </costList>
 
+        <inspectorTabs>
+            <li>ITab_Storage</li>
+        </inspectorTabs>
+
         <comps>
             <li Class="CompProperties_Power">
                 <compClass>CompPowerTrader</compClass>
                 <basePowerConsumption>300</basePowerConsumption>
             </li>
-            <li Class="CompProperties_Flickable"/>
+            <li Class="CompProperties_Flickable" />
             <li Class="CompProperties_Glower">
                 <glowRadius>2</glowRadius>
                 <glowColor>(115,198,206,0)</glowColor>

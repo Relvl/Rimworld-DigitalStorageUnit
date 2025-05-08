@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using DigitalStorageUnit.compat;
 using DigitalStorageUnit.extensions;
 using DigitalStorageUnit.ui;
 using DigitalStorageUnit.util;

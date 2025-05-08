@@ -1,0 +1,3 @@
+namespace DigitalStorageUnit.compat;
+
+public interface ILwmDsLeaveMeAlonePlease;

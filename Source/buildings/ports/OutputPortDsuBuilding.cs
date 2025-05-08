@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DigitalStorageUnit.compat;
 using DigitalStorageUnit.ui;
 using DigitalStorageUnit.util;
 using RimWorld;
@@ -22,7 +23,7 @@ namespace DigitalStorageUnit;
 /// Todo! Patch "unforbid all" if the item was "spawned" by the port? 
 /// Todo! Enable whole zone output - maaaaaybe after research?
 /// </summary>
-public class OutputPortDsuBuilding : ABasePortDsuBuilding
+public class OutputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspectionTab
 {
     private OutputSettings _outputSettings;
     private PortPositionComp _portPosition;

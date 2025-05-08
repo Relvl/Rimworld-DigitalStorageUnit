@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using DigitalStorageUnit.compat;
 using DigitalStorageUnit.util;
 using RimWorld;
 using UnityEngine;
@@ -9,7 +10,7 @@ using Verse;
 namespace DigitalStorageUnit;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")] // def-injected
-public class AccessPointPortBuilding : ABasePortDsuBuilding
+public class AccessPointPortBuilding : ABasePortDsuBuilding, IRemoveStorageInspectionTab
 {
     public override StorageIOMode IOMode => StorageIOMode.Output;
 

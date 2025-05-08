@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using DigitalStorageUnit.compat;
 using DigitalStorageUnit.util;
 using RimWorld;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace DigitalStorageUnit;
 
 [StaticConstructorOnStartup]
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-public class InputPortDsuBuilding : ABasePortDsuBuilding
+public class InputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspectionTab
 {
     private PortPositionComp _portPosition;
     private readonly Dictionary<IntVec3, int> _tickCooldown = new();

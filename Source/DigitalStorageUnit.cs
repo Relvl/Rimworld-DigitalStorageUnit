@@ -13,7 +13,6 @@ namespace DigitalStorageUnit;
 public class DigitalStorageUnit : Mod
 {
     private const string ModID = "Relvl.DigitalStorageUnit";
-    public static readonly bool IsDeepStorage = ModsConfig.ActiveModsInLoadOrder.Any(m => "LWM.DeepStorage".EqualsIgnoreCase(m.packageIdLowerCase));
 
     public static DigitalStorageUnitConfig Config { get; private set; } = new();
 
@@ -27,13 +26,12 @@ public class DigitalStorageUnit : Mod
         {
             // Init the configs
             Config = GetSettings<DigitalStorageUnitConfig>();
-            DigitalStorageUnitConfig.ModInstance = this;
-            
+
             // Init the Harmony
             var harmonyInstance = new Harmony(ModID);
             harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
 
-            if (IsDeepStorage)
+            if (ModsConfig.ActiveModsInLoadOrder.Any(m => "LWM.DeepStorage".EqualsIgnoreCase(m.packageIdLowerCase)))
             {
                 try
                 {
@@ -42,6 +40,21 @@ public class DigitalStorageUnit : Mod
                     var dsuPatchPrefix = AccessTools.Method(nameof(SubPatch_Open_DS_Tab_On_Select_Postfix) + ":Prefix");
                     harmonyInstance.Patch(dsPatchPostfix, prefix: new HarmonyMethod(dsuPatchPrefix));
                     Log.Message("DigitalStorageUnit: LWM.DeepStorage.Open_DS_Tab_On_Select:Postfix patched");
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.ToString());
+                }
+            }
+
+            if (ModsConfig.ActiveModsInLoadOrder.Any(m => "adaptive.storage.framework".EqualsIgnoreCase(m.packageIdLowerCase)))
+            {
+                try
+                {
+                    harmonyInstance.Patch(
+                        AccessTools.Method("AdaptiveStorage.HarmonyPatches.AddITabToLegacyStorages:Postfix"),
+                        prefix: AccessTools.Method(typeof(SubPatch_AdaptiveStorage_AddITabToLegacyStorages_Postfix), nameof(SubPatch_AdaptiveStorage_AddITabToLegacyStorages_Postfix.Prefix))
+                    );
                 }
                 catch (Exception e)
                 {

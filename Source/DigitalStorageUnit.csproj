@@ -85,6 +85,8 @@
         <Compile Include="buildings\ports\AccessPointPortBuilding.cs" />
         <Compile Include="buildings\ports\InputPortDsuBuilding.cs" />
         <Compile Include="buildings\ports\OutputPortDsuBuilding.cs" />
+        <Compile Include="compat\IRemoveStorageInspectionTab.cs" />
+        <Compile Include="compat\ILwmDsLeaveMeAlonePlease.cs" />
         <Compile Include="def\DsuDropAdjustComp.cs" />
         <Compile Include="def\DsuHeaterComp.cs" />
         <Compile Include="def\DsuHeaterCompProperties.cs" />
@@ -113,7 +115,6 @@
         <Compile Include="util\ColorExtensions.cs" />
         <Compile Include="util\IForbidPawnInputItem.cs" />
         <Compile Include="util\IHoldMultipleThings.cs" />
-        <Compile Include="util\ILwmDsLeaveMeAlonePlease.cs" />
         <Compile Include="util\IntVec3Extensions.cs" />
         <Compile Include="util\ThingExtensions.cs" />
         <Compile Include="util\ThingIconTextureData.cs" />
@@ -127,6 +128,7 @@
         <Compile Include="_harmony\Patch_JobDriver_HaulToTransporter.cs" />
         <Compile Include="_harmony\Patch_MainTabWindow_Inspect.cs" />
         <Compile Include="_harmony\Patch_MinifiedThing.cs" />
+        <Compile Include="_harmony\SubPatch_AdaptiveStorage_AddITabToLegacyStorages_Postfix.cs" />
         <Compile Include="_harmony\SubPatch_Open_DS_Tab_On_Select_Postfix.cs" />
         <Compile Include="_harmony\Patch_PassingShip.cs" />
         <Compile Include="_harmony\Patch_Pawn_JobTracker.cs" />

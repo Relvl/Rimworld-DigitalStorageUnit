@@ -8,7 +8,6 @@ public class DigitalStorageUnitConfig : ModSettings
 {
     // Please up this version only when breaking changes in the configs
     private const int Version = 1;
-    public static DigitalStorageUnit ModInstance;
 
     public float DsuPathingMultiplier = 1;
     public bool CheapPathfinding = true;
