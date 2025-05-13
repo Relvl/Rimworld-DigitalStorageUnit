@@ -68,7 +68,7 @@ public class InputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspecti
         foreach (var thing in Map.thingGrid.ThingsListAt(position).ToList())
         {
             if (!thing.def.EverStorable(false)) continue;
-            if (!BoundStorageUnit.CanReciveThing(thing)) continue;
+            if (!BoundStorageUnit.CanReceiveThing(thing)) continue;
             if (Map.reservationManager.AllReservedThings().Contains(thing)) continue;
             BoundStorageUnit.HandleNewItem(thing);
             FleckMaker.ThrowLightningGlow(position.ToVector3(), Map, 0.8f);

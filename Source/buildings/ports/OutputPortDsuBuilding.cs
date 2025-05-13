@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using DigitalStorageUnit.compat;
 using DigitalStorageUnit.ui;
@@ -23,6 +24,7 @@ namespace DigitalStorageUnit;
 /// Todo! Patch "unforbid all" if the item was "spawned" by the port? 
 /// Todo! Enable whole zone output - maaaaaybe after research?
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class OutputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspectionTab
 {
     private OutputSettings _outputSettings;
@@ -112,7 +114,7 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspect
             // Todo! Another unsupported building?
         }
 
-        foreach (var thing in BoundStorageUnit.GetStoredThings().Where(t => settings.AllowedToAccept(t)).ToList())
+        foreach (var thing in BoundStorageUnit.GetStoredThings().Where(t => settings.AllowedToAccept(t)))
         {
             var count = thing.stackCount;
             if (OutputSettings.UseMax) count = Math.Min(count, OutputSettings.Max);
@@ -128,7 +130,7 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspect
 
             if (thing.stackCount <= 0)
             {
-                if (thing.holdingOwner != null) thing.holdingOwner.Remove(thing);
+                thing.holdingOwner?.Remove(thing);
                 thing.DirtyMapMesh(thing.Map);
                 Map.listerMergeables.Notify_ThingStackChanged(thing);
                 thing.Destroy();
@@ -142,7 +144,7 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspect
     {
         if (settings.AllowedToAccept(thing)) return false;
         _tickCooldown[position] = 20;
-        if (!BoundStorageUnit.CanReciveThing(thing))
+        if (!BoundStorageUnit.CanReceiveThing(thing))
         {
             _tickCooldown[position] = 20;
             return true;
@@ -155,7 +157,7 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspect
     private bool SuckMoreThanFirst(Thing thing, int idx, IntVec3 position)
     {
         if (idx == 0) return false;
-        if (!BoundStorageUnit.CanReciveThing(thing))
+        if (!BoundStorageUnit.CanReceiveThing(thing))
         {
             _tickCooldown[position] = 20;
             return true;
@@ -170,7 +172,7 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspect
         if (!OutputSettings.UseMax) return false;
         var max = Math.Min(OutputSettings.Max, thing.def.stackLimit);
         if (thing.stackCount <= max) return false;
-        if (!BoundStorageUnit.CanReciveThing(thing))
+        if (!BoundStorageUnit.CanReceiveThing(thing))
         {
             _tickCooldown[position] = 20;
             return true;
@@ -195,7 +197,7 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspect
         if (!OutputSettings.UseMin) return false;
         var min = Math.Min(OutputSettings.Min, thing.def.stackLimit);
         if (thing.stackCount >= min) return false;
-        if (!BoundStorageUnit.CanReciveThing(thing))
+        if (!BoundStorageUnit.CanReceiveThing(thing))
         {
             _tickCooldown[position] = 20;
             return true;

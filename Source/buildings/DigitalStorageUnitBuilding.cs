@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -86,15 +87,12 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     public string BaseLabel => LabelCapNoCount;
     public string InspectLabel => LabelCap;
 
-    public bool CanReciveThing(Thing item)
+    public bool CanReceiveThing(Thing item)
     {
         return CanWork && GetSlotLimit > _storedItemsCount && Accepts(item);
     }
 
-    public IEnumerable<Thing> GetStoredThings()
-    {
-        return GetSlotGroup().HeldThings;
-    }
+    public List<Thing> GetStoredThings() => Map.thingGrid.ThingsListAtFast(Position).Where(t => t.def.EverStorable(false) && t != this).ToList();
 
     public override void ExposeData()
     {
@@ -141,6 +139,8 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
             }
             else
             {
+                Log.Warning($"DSU despawn mode: {mode}");
+
                 // Unbulk the items
                 thing.DeSpawn();
                 GenPlace.TryPlaceThing(thing, Position, Map, ThingPlaceMode.Near);
@@ -152,31 +152,47 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
     private void RearrangeItems()
     {
-        _storedItemsCount = 0;
-        foreach (var thing in GetStoredThings())
+        // _storedItemsCount = 0;
+
+        foreach (var cell in AllSlotCells())
         {
-            _storedItemsCount++;
-            if (thing.Position != Position) HandleNewItem(thing);
+            foreach (var thing in Map.thingGrid.ThingsListAtFast(cell).ToList())
+            {
+                if (!thing.def.EverStorable(false)) continue;
+                if (thing == this) continue;
+
+                if (thing.Position != Position)
+                    HandleNewItem(thing);
+
+                // _storedItemsCount++;
+            }
         }
 
-        foreach (var tabItems in GetInspectTabs().OfType<ITab_Items>()) tabItems.RecalculateList();
+        foreach (var tabItems in GetInspectTabs().OfType<ITab_Items>())
+            tabItems.RecalculateList();
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+        _storedItemsCount = GetStoredThings().Count;
     }
 
     public void HandleNewItem(Thing item, bool tryAbsorb = true)
     {
         if (item.Destroyed) return;
         if (tryAbsorb)
-            foreach (var storedThing in Position.GetThingList(Map)) // Todo! StoredItems
+            foreach (var storedThing in GetStoredThings())
             {
                 if (storedThing == item) continue;
                 storedThing.TryAbsorbStack(item, true);
                 if (item.Destroyed) return;
             }
 
-        if (!CanReciveThing(item)) return;
+        if (!CanReceiveThing(item)) return;
         item.Position = Position;
         if (!item.Spawned) item.SpawnSetup(Map, false);
-        
+
         if (item.def.drawerType is DrawerType.MapMeshAndRealTime or DrawerType.RealtimeOnly)
             Map.dynamicDrawManager.DeRegisterDrawable(item);
     }
@@ -227,6 +243,4 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         if (Current.CameraDriver.CurrentZoom > CameraZoomRange.Close) return;
         GenMapUI.DrawThingLabel(this, LabelCap + "\n\r" + "DSU.StacksCount.Detailed".Translate(_storedItemsCount, GetSlotLimit));
     }
-
-    // todo Dialog_BillConfig.cs:432 -> should do something with GroupingLabel in code instead of def, use the LabelCap
 }

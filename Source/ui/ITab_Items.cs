@@ -110,7 +110,7 @@ public class ITab_Items : ITab
     {
         if (Selected is null) return;
 
-        var stored = Selected.GetStoredThings().ToList();
+        var stored = Selected.GetStoredThings();
         _itemsToShow = stored.Where(ThingFIlterPredicate)
             .OrderByDescending(ThingSortLabelPredicate)
             .ThenByDescending(ThingSortQualityPredicate)
