@@ -77,10 +77,10 @@ public class Patch_FoodUtility
                 bestOptimality = currentOptimality;
             }
 
-            // If the food NOT inside a DSU -> part of orogonal code, same algorithm
+            // If the food NOT inside a DSU -> part of original code, same algorithm
             else
             {
-                if (result.DirectDistanceToTarget > maxDistance) continue; // There where always a DirectDistanceToTarget calculated
+                if (result.DirectDistanceToTarget > maxDistance) continue; // There were always a DirectDistanceToTarget calculated
                 var currentOptimality = FoodUtility.FoodOptimality(eater, foodSource, FoodUtility.GetFinalIngestibleDef(foodSource), result.DirectDistanceToTarget);
                 if (currentOptimality < bestOptimality) continue;
                 if (!result.OriginalCanReach) continue;

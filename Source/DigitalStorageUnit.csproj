@@ -120,12 +120,12 @@
         <Compile Include="util\ThingIconTextureData.cs" />
         <Compile Include="_harmony\Disabled_Patch_Building_Storage_Accepts.cs" />
         <Compile Include="_harmony\Patch_Building_Storage.cs" />
+        <Compile Include="_harmony\Patch_JobDriver_HaulToContainer.cs" />
         <Compile Include="_harmony\Patch_MouseoverReadout.cs" />
         <Compile Include="_harmony\Patch_CompressibilityDeciderUtility.cs" />
         <Compile Include="_harmony\Patch_FloatMenuMakerMap.cs" />
         <Compile Include="_harmony\Patch_FoodUtility.cs" />
         <Compile Include="_harmony\Patch_ForbidUtility.cs" />
-        <Compile Include="_harmony\Patch_JobDriver_HaulToTransporter.cs" />
         <Compile Include="_harmony\Patch_MainTabWindow_Inspect.cs" />
         <Compile Include="_harmony\Patch_MinifiedThing.cs" />
         <Compile Include="_harmony\SubPatch_AdaptiveStorage_AddITabToLegacyStorages_Postfix.cs" />
