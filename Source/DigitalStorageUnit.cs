@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using DigitalStorageUnit._harmony;
+using DigitalStorageUnit._harmony.rimfeller;
 using UnityEngine;
 using Verse;
 
@@ -54,6 +55,21 @@ public class DigitalStorageUnit : Mod
                     harmonyInstance.Patch(
                         AccessTools.Method("AdaptiveStorage.HarmonyPatches.AddITabToLegacyStorages:Postfix"),
                         prefix: AccessTools.Method(typeof(SubPatch_AdaptiveStorage_AddITabToLegacyStorages_Postfix), nameof(SubPatch_AdaptiveStorage_AddITabToLegacyStorages_Postfix.Prefix))
+                    );
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.ToString());
+                }
+            }
+
+            if (ModsConfig.ActiveModsInLoadOrder.Any(m => "Dubwise.Rimefeller".EqualsIgnoreCase(m.packageIdLowerCase)))
+            {
+                try
+                {
+                    harmonyInstance.Patch(
+                        AccessTools.Method("Rimefeller.CompRefinery:get_AdjacentHoppers"),
+                        prefix: AccessTools.Method(typeof(SubParch_Rimfeller_CompRefinery), nameof(SubParch_Rimfeller_CompRefinery.Prefix))
                     );
                 }
                 catch (Exception e)
