@@ -39,7 +39,7 @@ public class InputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspecti
         _portPosition ??= GetComp<PortPositionComp>();
     }
 
-    public override void Tick()
+    protected override void Tick()
     {
         base.Tick();
 

@@ -9,4 +9,9 @@
     <li IfModActive="skyarkhangel.HSK">1.5/Compat/Core_SK</li>
     <li IfModActive="LWM.DeepStorage">1.5/Compat/LWM_DeepStorage</li>
   </v1.5>
+  <v1.6>
+    <li>1.6</li>
+    <li IfModActive="skyarkhangel.HSK">1.6/Compat/Core_SK</li>
+    <li IfModActive="LWM.DeepStorage">1.6/Compat/LWM_DeepStorage</li>
+  </v1.6>
 </loadFolders>

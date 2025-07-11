@@ -29,7 +29,7 @@ public class AccessPointPortBuilding : ABasePortDsuBuilding, IRemoveStorageInspe
         FleckMaker.ThrowLightningGlow(WorkPosition.ToVector3(), Map, 0.8f);
     }
 
-    public override void Tick()
+    protected override void Tick()
     {
         if (!this.IsHashIntervalTick(10)) return;
         if (!Powered) return;

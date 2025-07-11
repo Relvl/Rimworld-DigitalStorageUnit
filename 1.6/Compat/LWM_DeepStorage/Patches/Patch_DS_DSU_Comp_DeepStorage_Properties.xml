@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="DSU_DigitalStorageUnit_Building"]/comps</xpath>
+        <value>
+            <li Class="LWM.DeepStorage.Properties">
+                <maxNumberStacks>768</maxNumberStacks>
+                <timeStoringTakes>10</timeStoringTakes>
+                <additionalTimeEachStack>0</additionalTimeEachStack>
+                <additionalTimeEachDef>0</additionalTimeEachDef>
+                <overlayType>None</overlayType>
+                <showContents>false</showContents>
+            </li>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="DSU_InputBus_Building"]/comps</xpath>
+        <value>
+            <li Class="LWM.DeepStorage.Properties">
+                <maxNumberStacks>10</maxNumberStacks>
+                <timeStoringTakes>60</timeStoringTakes>
+                <additionalTimeEachStack>0</additionalTimeEachStack>
+                <additionalTimeEachDef>0</additionalTimeEachDef>
+                <overlayType>None</overlayType>
+                <showContents>true</showContents>
+            </li>
+        </value>
+    </Operation>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ThingDef[defName="DSU_AccessPoint_Building"]/comps</xpath>
+        <value>
+            <li Class="LWM.DeepStorage.Properties">
+                <maxNumberStacks>10</maxNumberStacks>
+                <timeStoringTakes>60</timeStoringTakes>
+                <additionalTimeEachStack>0</additionalTimeEachStack>
+                <additionalTimeEachDef>0</additionalTimeEachDef>
+                <overlayType>None</overlayType>
+                <showContents>true</showContents>
+            </li>
+        </value>
+    </Operation>
+
+</Patch>

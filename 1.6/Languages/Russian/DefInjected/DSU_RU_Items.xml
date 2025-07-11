@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+    <DSU_RoboticArm.label>Манипулятор</DSU_RoboticArm.label>
+    <DSU_RoboticArm.description>Электрофицированный манипулятор, необходимый для создания УЦХ и сопутствующих устройств.\nНе является строением.</DSU_RoboticArm.description>
+
+    <DSU_ElectronicChip_I.label>Базовый Чип ИИ</DSU_ElectronicChip_I.label>
+    <DSU_ElectronicChip_I.description>Тензорный процессор, содержащий самый элементарный искусственный интеллект.</DSU_ElectronicChip_I.description>
+
+    <DSU_ElectronicChip_II.label>Продвинутый Чип ИИ</DSU_ElectronicChip_II.label>
+    <DSU_ElectronicChip_II.description>Усовершенствованный процессор, содержащий высокотехнологичный искусственный интеллект.</DSU_ElectronicChip_II.description>
+
+    <DSU_MachineFrame_I.label>Малый Машинный Корпус</DSU_MachineFrame_I.label>
+    <DSU_MachineFrame_I.description>Малый корпус для создания сопутствующих устройств УЦХ.</DSU_MachineFrame_I.description>
+
+    <DSU_MachineFrame_II.label>Средний Машинный Корпус</DSU_MachineFrame_II.label>
+    <DSU_MachineFrame_II.description>Средний корпус для создания сопутствующих устройств УЦХ..</DSU_MachineFrame_II.description>
+
+    <DSU_MachineFrame_III.label>Продвинутый Машинный Корпус</DSU_MachineFrame_III.label>
+    <DSU_MachineFrame_III.description>Продвинутый высокотехнологичный корпус для УЦХ.</DSU_MachineFrame_III.description>
+</LanguageData>

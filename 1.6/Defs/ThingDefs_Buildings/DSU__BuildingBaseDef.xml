@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <ThingDef Name="DSU_BuildingBase" Abstract="True">
+        <category>Building</category>
+        <altitudeLayer>Building</altitudeLayer>
+        <soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
+        <canOverlapZones>false</canOverlapZones>
+        <constructEffect>ConstructMetal</constructEffect>
+        <selectable>true</selectable>
+        <drawerType>RealtimeOnly</drawerType>
+        <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+        <repairEffect>Repair</repairEffect>
+        <leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+        <filthLeaving>Filth_RubbleBuilding</filthLeaving>
+        <statBases>
+            <SellPriceFactor>0.70</SellPriceFactor>
+            <Beauty>0</Beauty>
+            <Mass>10</Mass>
+            <Flammability>0.9</Flammability>
+        </statBases>
+        <thingCategories>
+            <li>BuildingsFurniture</li>
+        </thingCategories>
+        <designationCategory>Furniture</designationCategory>
+        <designatorDropdown>DSU_StorageGroup</designatorDropdown>
+        <uiIconScale>0.7</uiIconScale>
+        <tradeTags>
+            <!-- todo! HSK?-->
+            <li>Furniture</li>
+        </tradeTags>
+        <passability>PassThroughOnly</passability>
+        <pathCost>70</pathCost>
+        <fillPercent>0.5</fillPercent>
+        <castEdgeShadows>true</castEdgeShadows>
+        <rotatable>false</rotatable>
+        <minifiedDef>MinifiedThing</minifiedDef>
+        <staticSunShadowHeight>0.3</staticSunShadowHeight>
+        <surfaceType>Item</surfaceType>
+        <tickerType>Normal</tickerType>
+        <researchPrerequisites>
+            <li>DSU_Research</li>
+        </researchPrerequisites>
+        <constructionSkillPrerequisite>10</constructionSkillPrerequisite>
+        <graphicData>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <building>
+            <preventDeteriorationOnTop>true</preventDeteriorationOnTop>
+            <ignoreStoredThingsBeauty>true</ignoreStoredThingsBeauty>
+            <fixedStorageSettings>
+                <priority>Normal</priority>
+                <filter>
+                    <categories>
+                        <li>Root</li>
+                    </categories>
+                    <disallowedCategories>
+                        <li>Animals</li>
+                        <li>Plants</li>
+                    </disallowedCategories>
+                </filter>
+            </fixedStorageSettings>
+        </building>
+    </ThingDef>
+
+</Defs>

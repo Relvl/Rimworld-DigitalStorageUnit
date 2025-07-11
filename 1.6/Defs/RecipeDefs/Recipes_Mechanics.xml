@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <!-- robotic arm-->
+    <RecipeDef ParentName="DSU_BaseRecipe_Mechanics">
+        <defName>Make_DSU_RoboticArm</defName>
+        <label>make robotic arm</label>
+        <jobString>Making robotic arm</jobString>
+        <workAmount>1000</workAmount>
+        <ingredients>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>ComponentIndustrial</li>
+                    </thingDefs>
+                </filter>
+                <count>2</count>
+            </li>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>Steel</li>
+                    </thingDefs>
+                </filter>
+                <count>20</count>
+            </li>
+        </ingredients>
+        <fixedIngredientFilter>
+            <thingDefs>
+                <li>ComponentIndustrial</li>
+                <li>Steel</li>
+            </thingDefs>
+        </fixedIngredientFilter>
+        <products>
+            <DSU_RoboticArm>1</DSU_RoboticArm>
+        </products>
+        <skillRequirements>
+            <Crafting>8</Crafting>
+        </skillRequirements>
+    </RecipeDef>
+
+    <!-- small frame -->
+    <RecipeDef ParentName="DSU_BaseRecipe_Mechanics">
+        <defName>Make_DSU_SmallFrame</defName>
+        <label>make small machine frame</label>
+        <jobString>Making frame</jobString>
+        <workAmount>1800</workAmount>
+        <ingredients>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>ComponentIndustrial</li>
+                    </thingDefs>
+                </filter>
+                <count>5</count>
+            </li>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>Steel</li>
+                    </thingDefs>
+                </filter>
+                <count>30</count>
+            </li>
+        </ingredients>
+        <fixedIngredientFilter>
+            <thingDefs>
+                <li>ComponentIndustrial</li>
+                <li>Steel</li>
+            </thingDefs>
+        </fixedIngredientFilter>
+        <products>
+            <DSU_MachineFrame_I>1</DSU_MachineFrame_I>
+        </products>
+        <skillRequirements>
+            <Crafting>6</Crafting>
+        </skillRequirements>
+    </RecipeDef>
+
+    <!-- medium frame -->
+    <RecipeDef ParentName="DSU_BaseRecipe_Mechanics">
+        <defName>Make_DSU_MediumFrame</defName>
+        <label>make medium machine frame</label>
+        <jobString>Making frame</jobString>
+        <workAmount>3000</workAmount>
+        <ingredients>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>ComponentIndustrial</li>
+                    </thingDefs>
+                </filter>
+                <count>10</count>
+            </li>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>Steel</li>
+                    </thingDefs>
+                </filter>
+                <count>50</count>
+            </li>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>Plasteel</li>
+                    </thingDefs>
+                </filter>
+                <count>5</count>
+            </li>
+        </ingredients>
+        <fixedIngredientFilter>
+            <thingDefs>
+                <li>ComponentIndustrial</li>
+                <li>Steel</li>
+                <li>Plasteel</li>
+            </thingDefs>
+        </fixedIngredientFilter>
+        <products>
+            <DSU_MachineFrame_II>1</DSU_MachineFrame_II>
+        </products>
+        <skillRequirements>
+            <Crafting>8</Crafting>
+        </skillRequirements>
+    </RecipeDef>
+
+    <!-- advanced frame -->
+    <RecipeDef ParentName="DSU_BaseRecipe_Mechanics">
+        <defName>Make_DSU_LargeFrame</defName>
+        <label>make advanced machine frame</label>
+        <jobString>Making frame</jobString>
+        <workAmount>4800</workAmount>
+        <ingredients>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>ComponentIndustrial</li>
+                    </thingDefs>
+                </filter>
+                <count>20</count>
+            </li>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>Steel</li>
+                    </thingDefs>
+                </filter>
+                <count>80</count>
+            </li>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>Plasteel</li>
+                    </thingDefs>
+                </filter>
+                <count>20</count>
+            </li>
+        </ingredients>
+        <fixedIngredientFilter>
+            <thingDefs>
+                <li>ComponentIndustrial</li>
+                <li>Steel</li>
+                <li>Plasteel</li>
+            </thingDefs>
+        </fixedIngredientFilter>
+        <products>
+            <DSU_MachineFrame_III>1</DSU_MachineFrame_III>
+        </products>
+        <skillRequirements>
+            <Crafting>8</Crafting>
+        </skillRequirements>
+    </RecipeDef>
+
+</Defs>

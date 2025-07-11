@@ -62,7 +62,7 @@ public class OutputPortDsuBuilding : ABasePortDsuBuilding, IRemoveStorageInspect
     // Todo! Clear this
     private void OnOutputSettingsClosed() => SelectedPorts().ToList().ForEach(p => OutputSettings.Copy(p.OutputSettings));
 
-    public override void Tick()
+    protected override void Tick()
     {
         base.Tick();
 

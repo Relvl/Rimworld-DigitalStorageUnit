@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -92,7 +91,10 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         return CanWork && GetSlotLimit > _storedItemsCount && Accepts(item);
     }
 
-    public List<Thing> GetStoredThings() => Map.thingGrid.ThingsListAtFast(Position).Where(t => t.def.EverStorable(false) && t != this).ToList();
+    public List<Thing> GetStoredThings()
+    {
+        return Map.thingGrid.ThingsListAtFast(Position).Where(t => t.def.EverStorable(false) && t != this).ToList();
+    }
 
     public override void ExposeData()
     {
@@ -155,24 +157,21 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
         // _storedItemsCount = 0;
 
         foreach (var cell in AllSlotCells())
+        foreach (var thing in Map.thingGrid.ThingsListAtFast(cell).ToList())
         {
-            foreach (var thing in Map.thingGrid.ThingsListAtFast(cell).ToList())
-            {
-                if (!thing.def.EverStorable(false)) continue;
-                if (thing == this) continue;
+            if (!thing.def.EverStorable(false)) continue;
+            if (thing == this) continue;
 
-                if (thing.Position != Position)
-                    HandleNewItem(thing);
-
-                // _storedItemsCount++;
-            }
+            if (thing.Position != Position)
+                HandleNewItem(thing);
+            // _storedItemsCount++;
         }
 
         foreach (var tabItems in GetInspectTabs().OfType<ITab_Items>())
             tabItems.RecalculateList();
     }
 
-    public override void Tick()
+    protected override void Tick()
     {
         base.Tick();
         _storedItemsCount = GetStoredThings().Count;

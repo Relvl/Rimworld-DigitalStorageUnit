@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+    <DSU_DigitalStorageUnit_Building.label>Устройство Цифрового Хранения</DSU_DigitalStorageUnit_Building.label>
+    <DSU_DigitalStorageUnit_Building.description>Устройство хранения на основе принципа обмена матурии и энергии.\nСпособно хранить огромное количество предметов за счёт потребления энергии.\n\nВ случае отключения энергии, хранимые предметы не будут утеряны, но устройство не будет способно вместить новые предметы, либо предоставить их в Шины или Точки Доступа.\n\nВ случае разрушения или демонтажа, все хранимые предметы будут уничтожены!</DSU_DigitalStorageUnit_Building.description>
+
+    <DSU_InputBus_Building.label>УЦХ Шина Импорта</DSU_InputBus_Building.label>
+    <DSU_InputBus_Building.description>Шина, позволяющая перемещать предметы внутрь УЦХ.\nПешки могут относить предметы к ней, чтобы хранить их внутри УЦХ.\nМожет автоматически перемещать предметы поблизости.</DSU_InputBus_Building.description>
+
+    <DSU_OutputBus_Building.label>УЦХ Шина Экспорта</DSU_OutputBus_Building.label>
+    <DSU_OutputBus_Building.description>Шина, позволяющая извлекать указанные предметы из УЦХ, и складывать их поблизости.\nПешки не могут запросить предметы в ней.</DSU_OutputBus_Building.description>
+
+    <DSU_AccessPoint_Building.label>УЦХ Точка Доступа</DSU_AccessPoint_Building.label>
+    <DSU_AccessPoint_Building.description>Шина, позволяющая пешкам запрашивать предметы из УЦХ для своих задач.\nНе может быть настроена на автоматическое перемещение предметов.</DSU_AccessPoint_Building.description>
+
+    <DSU_DataExtender.label>УЦХ Расширитель Хранения</DSU_DataExtender.label>
+    <DSU_DataExtender.description>Внешнее хранилище для УЦХ. Увеличивает лимит хранения предметов на 128.\nДолжно располагаться в одной комнате с УЦХ.</DSU_DataExtender.description>
+</LanguageData>
