@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using DigitalStorageUnit.extensions;
 using DigitalStorageUnit.util;
 using RimWorld;
 using Verse;
@@ -18,7 +19,6 @@ public class DataExtenderBuilding : Building
 {
     private DigitalStorageUnitBuilding _boundStorageUnit;
     private CompPowerTrader _compPowerTrader;
-    private bool _firstTickProcessed;
 
     public bool Powered
     {
@@ -29,32 +29,27 @@ public class DataExtenderBuilding : Building
         }
     }
 
-    public override void SpawnSetup(Map map, bool respawningAfterLoad)
-    {
-        base.SpawnSetup(map, respawningAfterLoad);
-        _firstTickProcessed = false;
-    }
-
     public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
     {
         base.DeSpawn(mode);
         _boundStorageUnit = null;
         _boundStorageUnit?.Extenders.Remove(this);
-        _firstTickProcessed = false;
         _compPowerTrader = null;
     }
 
     protected override void Tick()
     {
         base.Tick();
-        if (_firstTickProcessed && !this.IsHashIntervalTick(60)) return;
-        var dsuList = this.GetRoom().ContainedAndAdjacentThings.Where(t => t is DigitalStorageUnitBuilding).Cast<DigitalStorageUnitBuilding>().ToList();
-        var newDsu = dsuList.Count == 1 ? dsuList.FirstOrDefault() : null;
+        if (!this.IsHashIntervalTick(60)) return;
+
+        var dsuListInRoom = Map.GetDsuComponent().DsuSet.Where(d => d.GetRoom() == this.GetRoom()).ToList();
+        var newDsu = dsuListInRoom.Count == 1 ? dsuListInRoom.FirstOrDefault() : null;
         if (newDsu != _boundStorageUnit)
         {
             _boundStorageUnit?.Extenders.Remove(this);
             _boundStorageUnit = newDsu;
             _boundStorageUnit?.Extenders.Add(this);
+            // yes, it also removes bound DSU if there is more than one DSU in a room.
         }
     }
 
