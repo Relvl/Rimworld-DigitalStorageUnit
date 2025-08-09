@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using DigitalStorageUnit.extensions;
 using DigitalStorageUnit.util;
@@ -52,11 +53,11 @@ public static class Patch_Reachability
     [HarmonyPatch(nameof(Reachability.CanReach), typeof(IntVec3), typeof(LocalTargetInfo), typeof(PathEndMode), typeof(TraverseParms))]
     public static void CanReach(IntVec3 start, LocalTargetInfo dest, PathEndMode peMode, TraverseParms traverseParams, ref bool __result, Map ___map, Reachability __instance)
     {
-        if (_cachedResult is null) 
+        if (_cachedResult is null)
             return; // as is
-        
+
         _cachedResult.OriginalCanReach = __result;
-        
+
         // Cannot be done without destination request
         if (_cachedResult.JobDestination == IntVec3.Invalid)
             return; // as is

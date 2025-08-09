@@ -82,7 +82,7 @@ public class Patch_Pawn_JobTracker
             var result = Patch_Reachability.CanReachAndFindAccessPoint(___pawn, target.Thing, destinationPos, PathEndMode.Touch, TraverseParms.For(___pawn));
 
             // If there are no DSU/point - let the game alone.
-            if (result.Dsu is null || result.AccessPoint is null) continue; // Do nothig, let the game do it's things.
+            if (result.Dsu is null || result.AccessPoint is null) continue; // Do nothing, let the game do its things.
 
             // Add to queue and try to push item to the access point
             result.AccessPoint.ProvideItem(target.Thing);

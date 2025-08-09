@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,7 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
     // Todo! Technology
     private float Efficiency => DigitalStorageUnit.Config.HeaterEnabled ? 1.4f : 1.0f;
 
-    public int GetSlotLimit => (int)(( /*todo!settings*/256 + Extenders.Count(e => e.Powered) * /*todo!settings*/128) * Efficiency);
+    public int GetSlotLimit => (int)(( DigitalStorageUnit.Config.BaseDsuStackSize + Extenders.Count(e => e.Powered) * DigitalStorageUnit.Config.ExtenderStackIncrease) * Efficiency);
     public bool Powered => _compPowerTrader?.PowerOn ?? false;
     public bool CanWork => Powered && Spawned && _heaterComp.IsRoomHermetic();
 
@@ -152,10 +153,9 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
     private void RearrangeItems()
     {
-        // _storedItemsCount = 0;
-
         foreach (var cell in AllSlotCells())
         {
+            if (cell == Position) continue;
             foreach (var thing in Map.thingGrid.ThingsListAtFast(cell).ToList())
             {
                 if (!thing.def.EverStorable(false)) continue;
@@ -163,8 +163,6 @@ public class DigitalStorageUnitBuilding : Building_Storage, IForbidPawnInputItem
 
                 if (thing.Position != Position)
                     HandleNewItem(thing);
-
-                // _storedItemsCount++;
             }
         }
 

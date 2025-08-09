@@ -53,4 +53,8 @@
     <DSU.Config.AutoBoundDsu.Desc>If there is only one DSA on the map - all new ports will be automatically bound to it.</DSU.Config.AutoBoundDsu.Desc>
     <DSU.Config.CleanCellItemList>Clean cell item list over DSU</DSU.Config.CleanCellItemList>
     <DSU.Config.CleanCellItemList.Desc>There is an items list on the left bottom corner of the screen, where listed all item under cursor. This option removes it, if cursor over DSU building center. Just for clean.</DSU.Config.CleanCellItemList.Desc>
+    <DSU.Config.BaseDsuStackSize>DSU holds items stack size: {0}</DSU.Config.BaseDsuStackSize>
+    <DSU.Config.BaseDsuStackSize.Desc>Count of stacks that DSU can hold without Extenders</DSU.Config.BaseDsuStackSize.Desc>
+    <DSU.Config.ExtenderStackIncrease>Extender stack increase: {0}</DSU.Config.ExtenderStackIncrease>
+    <DSU.Config.ExtenderStackIncrease.Desc>Each Extender in the DSU room adds {0} stacks limit to DSU</DSU.Config.ExtenderStackIncrease.Desc>
 </LanguageData>

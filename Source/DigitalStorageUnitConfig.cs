@@ -18,6 +18,8 @@ public class DigitalStorageUnitConfig : ModSettings
     public bool BillSearchRadiusFix = true;
     public bool AutoBoundDsu = true;
     public bool CleanCellItemList = true;
+    public int BaseDsuStackSize = 256;
+    public int ExtenderStackIncrease = 128;
 
     public override void ExposeData()
     {
@@ -34,6 +36,8 @@ public class DigitalStorageUnitConfig : ModSettings
             Scribe_Values.Look(ref BillSearchRadiusFix, "BillSearchRadiusFix", true, true);
             Scribe_Values.Look(ref AutoBoundDsu, "AutoBoundDsu", true, true);
             Scribe_Values.Look(ref CleanCellItemList, "CleanCellItemList", true, true);
+            Scribe_Values.Look(ref BaseDsuStackSize, "BaseDsuStackSize", 256, true);
+            Scribe_Values.Look(ref ExtenderStackIncrease, "ExtenderStackIncrease", 128, true);
         }
         else
         {
@@ -88,8 +92,18 @@ public class DigitalStorageUnitConfig : ModSettings
         list.CheckboxLabeled("DSU.Config.BillSearchRadiusFix".Translate(), ref BillSearchRadiusFix, "DSU.Config.BillSearchRadiusFix.Desc".Translate());
 
         list.CheckboxLabeled("DSU.Config.AutoBoundDsu".Translate(), ref AutoBoundDsu, "DSU.Config.AutoBoundDsu.Desc".Translate());
-        
+
         list.CheckboxLabeled("DSU.Config.CleanCellItemList".Translate(), ref CleanCellItemList, "DSU.Config.CleanCellItemList.Desc".Translate());
+
+        BaseDsuStackSize = (int)Math.Round(
+            list.SliderLabeled("DSU.Config.BaseDsuStackSize".Translate(BaseDsuStackSize.ToString("0")), BaseDsuStackSize, 256, 9999, tooltip: "DSU.Config.BaseDsuStackSize.Desc".Translate()),
+            0
+        );
+
+        ExtenderStackIncrease = (int)Math.Round(
+            list.SliderLabeled("DSU.Config.ExtenderStackIncrease".Translate(ExtenderStackIncrease.ToString("0")), ExtenderStackIncrease, 128, 9999, tooltip: "DSU.Config.ExtenderStackIncrease.Desc".Translate()),
+            0
+        );
 
         list.End();
     }
