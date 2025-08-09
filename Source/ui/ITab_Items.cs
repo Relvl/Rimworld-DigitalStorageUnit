@@ -98,7 +98,7 @@ public class ITab_Items : ITab
         GUI.color = Color.white;
     }
 
-    private bool ThingFIlterPredicate(Thing thing)
+    private bool ThingFilterPredicate(Thing thing)
     {
         if (string.IsNullOrEmpty(_searchQuery)) return true;
         // Todo! defName
@@ -111,7 +111,7 @@ public class ITab_Items : ITab
         if (Selected is null) return;
 
         var stored = Selected.GetStoredThings();
-        _itemsToShow = stored.Where(ThingFIlterPredicate)
+        _itemsToShow = stored.Where(ThingFilterPredicate)
             .OrderByDescending(ThingSortLabelPredicate)
             .ThenByDescending(ThingSortQualityPredicate)
             .ThenByDescending(ThingSortHitPointsPredicate)
