@@ -7,7 +7,7 @@
     <DSU.UseMax>Использовать максимум?</DSU.UseMax>
     <DSU.Max>Максимум</DSU.Max>
     <DSU.Max.Desc>Когда включено, Шина Экспорта будет стараться поддерживать указанное количество предмета (но не более лимита стака)</DSU.Max.Desc>
-    <DSU.Min>МИнимум</DSU.Min>
+    <DSU.Min>Минимум</DSU.Min>
     <DSU.Min.Desc>When this is enabled, the I/O port will return the outputted item to the cargo platform if the item has less than X stack size. It will also only take items if there are enough items in storage to exceed the minimum.</DSU.Min.Desc>
     <DSU.Min.Desc>Когда включено, Шина Экспорта будет стараться поддерживать предметы, но не менее X (если предметов меньше - они будут убраны)</DSU.Min.Desc>
     <DSU.Limit.GetInspectString>Лимиты: {0} - {1}</DSU.Limit.GetInspectString>
@@ -50,5 +50,7 @@
     <DSU.Config.BillSearchRadiusFix>Фикс радиуса поиска ингредиентов</DSU.Config.BillSearchRadiusFix>
     <DSU.Config.BillSearchRadiusFix.Desc>Позволяет станкам с ограниченным радиусом поиска ингредиентов искать их через Точки Доступа в подключенном DSU.</DSU.Config.BillSearchRadiusFix.Desc>
     <DSU.Config.AutoBoundDsu>Автоназначение DSU для новых Шин и Точек Доступа</DSU.Config.AutoBoundDsu>
-    <DSU.Config.AutoBoundDsu.Desc>Если на карте есть всего один DSU - все новые Точки Доступа и Шины будут автоматически подключены к нему.</DSU.Config.AutoBoundDsu.Desc>
+    <DSU.Config.AutoBoundDsu.Desc>Если на карте есть всего один DSU - все новые Точки Доступа и Шины будут автоматически подключены к нему при строительстве.</DSU.Config.AutoBoundDsu.Desc>
+    <DSU.Config.CleanCellItemList>Скрыть предметы под курсором над DSU</DSU.Config.CleanCellItemList>
+    <DSU.Config.CleanCellItemList.Desc>В левом нижнем углу экрана есть список предметов под курсором. Эта опция скрывает их, если курсор над центром DSU. Для чистоты.</DSU.Config.CleanCellItemList.Desc>
 </LanguageData>

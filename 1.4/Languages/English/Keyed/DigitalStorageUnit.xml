@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
+
 <LanguageData>
     <DSU>Digital Storage Unit</DSU>
     <DSU.AdjustOutputDirection>Adjust working area</DSU.AdjustOutputDirection>
@@ -50,4 +51,6 @@
     <DSU.Config.BillSearchRadiusFix.Desc>Count DSU stored items via Access Point for ingredients search radius</DSU.Config.BillSearchRadiusFix.Desc>
     <DSU.Config.AutoBoundDsu>Auto bound ports to single DSU</DSU.Config.AutoBoundDsu>
     <DSU.Config.AutoBoundDsu.Desc>If there is only one DSA on the map - all new ports will be automatically bound to it.</DSU.Config.AutoBoundDsu.Desc>
+    <DSU.Config.CleanCellItemList>Clean cell item list over DSU</DSU.Config.CleanCellItemList>
+    <DSU.Config.CleanCellItemList.Desc>There is an items list on the left bottom corner of the screen, where listed all item under cursor. This option removes it, if cursor over DSU building center. Just for clean.</DSU.Config.CleanCellItemList.Desc>
 </LanguageData>
