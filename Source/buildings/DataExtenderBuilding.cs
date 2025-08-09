@@ -37,7 +37,7 @@ public class DataExtenderBuilding : Building
         _compPowerTrader = null;
     }
 
-    protected override void Tick()
+    public override void Tick()
     {
         base.Tick();
         if (!this.IsHashIntervalTick(60)) return;

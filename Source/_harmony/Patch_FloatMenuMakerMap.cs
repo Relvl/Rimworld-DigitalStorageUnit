@@ -19,19 +19,16 @@ public static class Patch_FloatMenuMakerMap
     ///     Disables right clicks on items below the DigitalStorageUnitBuilding
     /// </summary>
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(FloatMenuMakerMap.GetOptions))]
-    static bool GetOptions(Vector3 clickPos, ref List<FloatMenuOption> __result, out FloatMenuContext context)
+    [HarmonyPatch(nameof(FloatMenuMakerMap.ChoicesAtFor), typeof(Vector3), typeof(Pawn), typeof(bool))]
+    static bool ChoicesAtFor(Vector3 clickPos, Pawn pawn, out List<FloatMenuOption> __result)
     {
-        if (Find.CurrentMap.IsDSUOnPoint(clickPos.ToIntVec3()))
+        if (pawn.IsDSUOnPoint(clickPos.ToIntVec3()))
         {
             __result = [];
-            context = null;
             return false;
         }
 
         __result = null;
-        context = null;
         return true;
     }
-    
 }
